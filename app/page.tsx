@@ -2,7 +2,7 @@
 import {Input} from "@mui/joy";
 import {useState} from "react";
 import _ from "lodash";
-import {Button, Checkbox, List, ListItem, Divider} from "@mui/material";
+import {Button, Checkbox, List, ListItem, Divider, Chip} from "@mui/material";
 
 export default function Home() {
 
@@ -11,6 +11,21 @@ export default function Home() {
     const [meldeliste, setMeldeListe] = useState<string[]>(["A", "B", "C", "D", "E", "F"])
     const [aufstellung, setAufstellung] = useState<Record<number, string>>({})
     const ready = Object.values(aufstellung).length >= 6
+    const [filters, setFilters] = useState<string[]>([])
+    const uniquePairs = _.sortBy(_.uniqBy(pairings.flat(), pair => `${pair[0]}, ${pair[1]}`), p => p[0]).map(doppel => {
+
+        const labelText = `${doppel[0]} & ${doppel[1]}`
+        const active = _.includes(filters, labelText)
+        if (active) {
+            return <Chip label={labelText} onDelete={() => {
+                setFilters(_.remove(filters, labelText))
+            }}/>
+        } else {
+            return <Chip label={labelText} onClick={() => {
+                setFilters([...filters, labelText])
+            }}/>
+        }
+    })
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
             <form
@@ -36,6 +51,11 @@ export default function Home() {
                     }
                 }}/> {entry} <Button variant="contained"
                                      onClick={() => setMeldeListe(_.without(meldeliste, entry))}> Remove </Button></p>)}
+            </div>
+            <div>
+                {
+                    ready && uniquePairs
+                }
             </div>
             <div>
                 {
