@@ -45,12 +45,15 @@ export default function Home() {
             <div>
                 {meldeliste.map((entry, index) => <p key={entry}><Checkbox onChange={(e) => {
                     if (e.target.checked) {
-                        setAufstellung({...aufstellung, [index+1]: entry})
+                        setAufstellung({...aufstellung, [index + 1]: entry})
                     } else {
-                        setAufstellung(_.omit(aufstellung, [index+1]))
+                        setAufstellung(_.omit(aufstellung, [index + 1]))
                     }
                 }}/> {entry} <Button variant="contained"
-                                     onClick={() => setMeldeListe(_.without(meldeliste, entry))}> Remove </Button></p>)}
+                                     onClick={() => {
+                                         setMeldeListe(_.without(meldeliste, entry))
+                                         setAufstellung(_.omit(aufstellung, [index + 1]))
+                                     }}> Remove </Button></p>)}
             </div>
             <div>
                 {
@@ -64,7 +67,7 @@ export default function Home() {
                         <List>
                             {pairings.map((doppelaufstellung, index) => <List key={index}> Variante {index}
                                 {doppelaufstellung.map(doppel =>
-                                    <ListItem>{Object.values(aufstellung)[doppel[0]-1]} + {Object.values(aufstellung)[doppel[1]-1]}</ListItem>)}</List>)}
+                                    <ListItem>{Object.values(aufstellung)[doppel[0] - 1]} + {Object.values(aufstellung)[doppel[1] - 1]}</ListItem>)}</List>)}
                             <Divider/>
                         </List>
                     </>
