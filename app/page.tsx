@@ -10,18 +10,18 @@ export default function Home() {
     const [inputText, setInputText] = useState("")
     const [meldeliste, setMeldeListe] = useState<string[]>(["A", "B", "C", "D", "E", "F"])
     const [aufstellung, setAufstellung] = useState<Record<number, string>>({})
-    const ready = Object.values(aufstellung).length >= 6
+    const ready = Object.values(aufstellung).length == 6
     const [filters, setFilters] = useState<string[]>([])
-    const uniquePairs = _.sortBy(_.uniqBy(pairings.flat(), pair => `${pair[0]}, ${pair[1]}`), p => p[0]).map(doppel => {
+    const uniquePairs = _.sortBy(_.uniqBy(pairings.flat(), pair => `${pair[0]}, ${pair[1]}`), p => p[0]).map((doppel, doppelIndex) => {
 
         const labelText = `${doppel[0]} & ${doppel[1]}`
         const active = _.includes(filters, labelText)
         if (active) {
-            return <Chip label={labelText} onDelete={() => {
+            return <Chip key={doppelIndex} label={labelText} onDelete={() => {
                 setFilters(_.remove(filters, labelText))
             }}/>
         } else {
-            return <Chip label={labelText} onClick={() => {
+            return <Chip key={doppelIndex} label={labelText} onClick={() => {
                 setFilters([...filters, labelText])
             }}/>
         }
@@ -45,9 +45,9 @@ export default function Home() {
             <div>
                 {meldeliste.map((entry, index) => <p key={entry}><Checkbox onChange={(e) => {
                     if (e.target.checked) {
-                        setAufstellung({...aufstellung, [index + 1]: entry})
+                        setAufstellung({...aufstellung, [index+1]: entry})
                     } else {
-                        setAufstellung(_.omit(aufstellung, [index + 1]))
+                        setAufstellung(_.omit(aufstellung, [index+1]))
                     }
                 }}/> {entry} <Button variant="contained"
                                      onClick={() => setMeldeListe(_.without(meldeliste, entry))}> Remove </Button></p>)}
@@ -62,9 +62,9 @@ export default function Home() {
                     ready && <>
                         Aufstellung:
                         <List>
-                            {pairings.map((doppelaufstellung, index) => <List> Variante {index}
+                            {pairings.map((doppelaufstellung, index) => <List key={index}> Variante {index}
                                 {doppelaufstellung.map(doppel =>
-                                    <ListItem>{aufstellung[doppel[0]]} + {aufstellung[doppel[1]]}</ListItem>)}</List>)}
+                                    <ListItem>{Object.values(aufstellung)[doppel[0]-1]} + {Object.values(aufstellung)[doppel[1]-1]}</ListItem>)}</List>)}
                             <Divider/>
                         </List>
                     </>
