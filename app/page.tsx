@@ -17,6 +17,13 @@ export default function Home() {
         _.sortBy(
             _.uniqBy(pairings.flat(), pair => `${pair[0]}, ${pair[1]}`), p => p[0]
         )
+    const filterPairing = (pairing: number[][]) => filters.reduce((acc, curr) => {
+        return acc && pairing.find(pair => pair[0] == curr[0] && pair[1] == curr[1]) != undefined
+    }, true)
+
+    let filteredPairings = pairings.filter(filterPairing);
+    const remainingFilters = _.uniqBy(filteredPairings.flat(), pair => `${pair[0]}+${pair[1]}`)
+
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
             <form
@@ -48,8 +55,8 @@ export default function Home() {
             </div>
             <div>
                 {
-                    ready && uniquePairs.map((doppel, doppelIndex) => {
-                        const labelText = `${doppel[0]} & ${doppel[1]}`
+                    ready && remainingFilters.map((doppel, doppelIndex) => {
+                        const labelText = `${Object.values(lineup)[doppel[0]-1]} & ${Object.values(lineup)[doppel[1]-1]}`
                         const active = filters.find(f => f[0] == doppel[0] && f[1] == doppel[1]) != undefined
                         if (active) {
                             return <Chip key={doppelIndex} label={labelText} onDelete={() => {
@@ -68,7 +75,7 @@ export default function Home() {
                     ready && <>
                         Aufstellung:
                         <List>
-                            {pairings.map((doppelaufstellung, index) => <List key={index}> Variante {index}
+                            {filteredPairings.map((doppelaufstellung, index) => <List key={index}> Variante {index}
                                 {doppelaufstellung.map(doppel =>
                                     <ListItem>{Object.values(lineup)[doppel[0] - 1]} + {Object.values(lineup)[doppel[1] - 1]}</ListItem>)}</List>)}
                             <Divider/>
