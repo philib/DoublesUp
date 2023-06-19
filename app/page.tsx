@@ -11,21 +11,12 @@ export default function Home() {
     const [players, setPlayers] = useState<string[]>(["A", "B", "C", "D", "E", "F"])
     const [lineup, setLineup] = useState<Record<number, string>>({})
     const ready = Object.values(lineup).length == 6
-    const [filters, setFilters] = useState<string[]>([])
-    const uniquePairs = _.sortBy(_.uniqBy(pairings.flat(), pair => `${pair[0]}, ${pair[1]}`), p => p[0]).map((doppel, doppelIndex) => {
-
-        const labelText = `${doppel[0]} & ${doppel[1]}`
-        const active = _.includes(filters, labelText)
-        if (active) {
-            return <Chip key={doppelIndex} label={labelText} onDelete={() => {
-                setFilters(_.remove(filters, labelText))
-            }}/>
-        } else {
-            return <Chip key={doppelIndex} label={labelText} onClick={() => {
-                setFilters([...filters, labelText])
-            }}/>
-        }
-    })
+    const [filters, setFilters] = useState<number[][]>([])
+    console.log(filters)
+    const uniquePairs =
+        _.sortBy(
+            _.uniqBy(pairings.flat(), pair => `${pair[0]}, ${pair[1]}`), p => p[0]
+        )
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
             <form
@@ -57,7 +48,19 @@ export default function Home() {
             </div>
             <div>
                 {
-                    ready && uniquePairs
+                    ready && uniquePairs.map((doppel, doppelIndex) => {
+                        const labelText = `${doppel[0]} & ${doppel[1]}`
+                        const active = filters.find(f => f[0] == doppel[0] && f[1] == doppel[1]) != undefined
+                        if (active) {
+                            return <Chip key={doppelIndex} label={labelText} onDelete={() => {
+                                setFilters(filters.filter(f => f[0] != doppel[0] || f[1] != doppel[1]))
+                            }}/>
+                        } else {
+                            return <Chip key={doppelIndex} label={labelText} onClick={() => {
+                                setFilters([...filters, doppel])
+                            }}/>
+                        }
+                    })
                 }
             </div>
             <div>
