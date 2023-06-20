@@ -1,8 +1,8 @@
 'use client'
 import {Input} from "@mui/joy";
 import {useState} from "react";
-import _ from "lodash";
-import {Button, Checkbox, List, ListItem, Divider, Chip} from "@mui/material";
+import _, {reduce} from "lodash";
+import {Button, Checkbox, Chip, Divider, List, ListItem} from "@mui/material";
 
 export default function Home() {
     const allPossibleLineupVariations = [[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 5], [4, 6]], [[1, 2], [3, 6], [4, 5]], [[1, 2], [4, 5], [3, 6]], [[1, 3], [2, 4], [5, 6]], [[1, 3], [2, 5], [4, 6]], [[1, 3], [2, 6], [4, 5]], [[1, 4], [2, 3], [5, 6]], [[1, 4], [2, 5], [3, 6]], [[1, 4], [2, 6], [3, 5]], [[1, 4], [3, 5], [2, 6]], [[1, 5], [2, 4], [3, 6]], [[1, 5], [3, 4], [2, 6]], [[1, 6], [2, 5], [3, 4]], [[1, 6], [3, 4], [2, 5]], [[2, 3], [1, 4], [5, 6]], [[2, 3], [1, 5], [4, 6]], [[2, 3], [1, 6], [4, 5]], [[2, 4], [1, 5], [3, 6]], [[2, 4], [1, 6], [3, 5]], [[2, 5], [1, 6], [3, 4]], [[3, 4], [1, 6], [2, 5]]]
@@ -18,13 +18,20 @@ export default function Home() {
     const isNotEqual = (pair1: number[]) => {
         return (pair2 : number[] ) => pair1[0] != pair2[0] || pair1[1] != pair2[1];
     }
+    const toString = (pair: number[])=> {
+        return `${pair[0]} - ${pair[1]}`
+    }
 
     const allSelectedDoublesPairingFiltersCombinedPredicate = selectedDoublesPairingFilter
         .map(doublesPairing => (lineup: number[][]) => lineup.find(isEqual(doublesPairing)) != undefined)
         .reduce((acc, curr) => (lineup: number[][]) => acc(lineup) && curr(lineup), (lineup: number[][]) => true)
 
     let filteredLineupVariations = allPossibleLineupVariations.filter(allSelectedDoublesPairingFiltersCombinedPredicate);
-    const remainingDoublesPairingFilters = _.uniqBy(filteredLineupVariations.flat(), pair => `${pair[0]}+${pair[1]}`)
+
+    const allPossibleFilters = _.uniqBy(allPossibleLineupVariations.flat(), toString)
+    const remainingDoublesPairingFilters = _.uniqBy(filteredLineupVariations.flat(), toString).reduce((acc, curr)=> {
+       return {...acc, [toString(curr)]: curr}
+    }, {})
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -57,16 +64,20 @@ export default function Home() {
             </div>
             <div>
                 {
-                    ready && remainingDoublesPairingFilters.map((doublePairingFilter, index) => {
+                    ready && allPossibleFilters.map((doublePairingFilter, index) => {
                         const labelText = `${Object.values(lineup)[doublePairingFilter[0] - 1]} & ${Object.values(lineup)[doublePairingFilter[1] - 1]}`
                         const active = selectedDoublesPairingFilter.find(isEqual(doublePairingFilter)) != undefined
+                        const disabled = remainingDoublesPairingFilters[toString(doublePairingFilter)] == undefined
+                        // const variant= disabled ? 'outlined' : undefined
                         if (active) {
-                            return <Chip key={index} label={labelText} onDelete={() => {
+                            return <Chip key={index} color={'primary'} label={labelText} onDelete={() => {
                                 setSelectedDoublesPairingFilter(selectedDoublesPairingFilter.filter(isNotEqual(doublePairingFilter)))
                             }}/>
                         } else {
-                            return <Chip key={index} label={labelText} onClick={() => {
-                                setSelectedDoublesPairingFilter([...selectedDoublesPairingFilter, doublePairingFilter])
+                            return <Chip key={index} color={disabled ? 'default': 'success'}label={labelText} onClick={() => {
+                                if(!disabled){
+                                    setSelectedDoublesPairingFilter([...selectedDoublesPairingFilter, doublePairingFilter])
+                                }
                             }}/>
                         }
                     })
