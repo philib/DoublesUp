@@ -13,12 +13,12 @@ export default function Home() {
     const [selectedDoublesPairingFilter, setSelectedDoublesPairingFilter] = useState<number[][]>([])
 
     const isEqual = (pair1: number[]) => {
-        return (pair2 : number[] ) => pair1[0] == pair2[0] && pair1[1] == pair2[1];
+        return (pair2: number[]) => pair1[0] == pair2[0] && pair1[1] == pair2[1];
     }
     const isNotEqual = (pair1: number[]) => {
-        return (pair2 : number[] ) => pair1[0] != pair2[0] || pair1[1] != pair2[1];
+        return (pair2: number[]) => pair1[0] != pair2[0] || pair1[1] != pair2[1];
     }
-    const toString = (pair: number[])=> {
+    const toString = (pair: number[]) => {
         return `${pair[0]} - ${pair[1]}`
     }
 
@@ -29,8 +29,8 @@ export default function Home() {
     let filteredLineupVariations = allPossibleLineupVariations.filter(allSelectedDoublesPairingFiltersCombinedPredicate);
 
     const allPossibleFilters = _.uniqBy(allPossibleLineupVariations.flat(), toString)
-    const remainingDoublesPairingFilters = _.uniqBy(filteredLineupVariations.flat(), toString).reduce((acc, curr)=> {
-       return {...acc, [toString(curr)]: curr}
+    const remainingDoublesPairingFilters = _.uniqBy(filteredLineupVariations.flat(), toString).reduce((acc, curr) => {
+        return {...acc, [toString(curr)]: curr}
     }, {})
 
     return (
@@ -68,18 +68,19 @@ export default function Home() {
                         const labelText = `${Object.values(lineup)[doublePairingFilter[0] - 1]} & ${Object.values(lineup)[doublePairingFilter[1] - 1]}`
                         const active = selectedDoublesPairingFilter.find(isEqual(doublePairingFilter)) != undefined
                         const disabled = remainingDoublesPairingFilters[toString(doublePairingFilter)] == undefined
+                        const style = active ? ({variant: 'filled', color: 'primary'}) : disabled ? ({
+                            variant: 'filled',
+                            color: 'default'
+                        }) : ({variant: 'outlined', color: 'primary'})
                         // const variant= disabled ? 'outlined' : undefined
-                        if (active) {
-                            return <Chip key={index} color={'primary'} label={labelText} onDelete={() => {
-                                setSelectedDoublesPairingFilter(selectedDoublesPairingFilter.filter(isNotEqual(doublePairingFilter)))
-                            }}/>
-                        } else {
-                            return <Chip key={index} color={disabled ? 'default': 'success'}label={labelText} onClick={() => {
-                                if(!disabled){
-                                    setSelectedDoublesPairingFilter([...selectedDoublesPairingFilter, doublePairingFilter])
-                                }
-                            }}/>
-                        }
+                        return (<Chip key={index} variant={style.variant} color={style.color} label={labelText}
+                                      onClick={() => {
+                                          if (active) {
+                                              setSelectedDoublesPairingFilter(selectedDoublesPairingFilter.filter(isNotEqual(doublePairingFilter)))
+                                          } else if(!disabled) {
+                                                  setSelectedDoublesPairingFilter([...selectedDoublesPairingFilter, doublePairingFilter])
+                                          }
+                                      }}/>)
                     })
                 }
             </div>
