@@ -2,7 +2,11 @@
 import {Input} from "@mui/joy";
 import {useState} from "react";
 import _, {reduce} from "lodash";
-import {Button, Checkbox, Chip, Divider, List, ListItem} from "@mui/material";
+import {Button, Checkbox, Container, Chip, Divider, List, ListItem, Stack, Grid} from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 
 export default function Home() {
     const allPossibleLineupVariations = [[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 5], [4, 6]], [[1, 2], [3, 6], [4, 5]], [[1, 2], [4, 5], [3, 6]], [[1, 3], [2, 4], [5, 6]], [[1, 3], [2, 5], [4, 6]], [[1, 3], [2, 6], [4, 5]], [[1, 4], [2, 3], [5, 6]], [[1, 4], [2, 5], [3, 6]], [[1, 4], [2, 6], [3, 5]], [[1, 4], [3, 5], [2, 6]], [[1, 5], [2, 4], [3, 6]], [[1, 5], [3, 4], [2, 6]], [[1, 6], [2, 5], [3, 4]], [[1, 6], [3, 4], [2, 5]], [[2, 3], [1, 4], [5, 6]], [[2, 3], [1, 5], [4, 6]], [[2, 3], [1, 6], [4, 5]], [[2, 4], [1, 5], [3, 6]], [[2, 4], [1, 6], [3, 5]], [[2, 5], [1, 6], [3, 4]], [[3, 4], [1, 6], [2, 5]]]
@@ -22,6 +26,11 @@ export default function Home() {
         return `${pair[0]} - ${pair[1]}`
     }
 
+    const renderDoublesPairingText = (p1: number, p2: number) => {
+        const playersWithinLineup = Object.values(lineup)
+        return `(${p1} + ${p2}) ${playersWithinLineup[p1-1]} + ${playersWithinLineup[p2-1]}`
+    }
+
     const allSelectedDoublesPairingFiltersCombinedPredicate = selectedDoublesPairingFilter
         .map(doublesPairing => (lineup: number[][]) => lineup.find(isEqual(doublesPairing)) != undefined)
         .reduce((acc, curr) => (lineup: number[][]) => acc(lineup) && curr(lineup), (lineup: number[][]) => true)
@@ -33,70 +42,123 @@ export default function Home() {
         return {...acc, [toString(curr)]: curr}
     }, {})
 
+    const CustomDivider: React.FC = (props)=> (<Divider style={{'margin-top': '20px', 'margin-bottom': '20px'}}>{props.children}</Divider>)
+
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
+            <CustomDivider>Spielereingabe</CustomDivider>
             <form
                 onSubmit={(event) => {
                     setPlayers([...players, inputText])
                     event.preventDefault();
                 }}
+                style={{'margin-bottom': '10px'}}
             >
                 <Input
-                    placeholder="Try to submit with no text!"
+                    placeholder="Neue Spieler hinzufügen"
                     required
                     onChange={(t) => setInputText(t.target.value)}
                     sx={{mb: 1, fontSize: 'var(--joy-fontSize-sm)'}}
                 />
-                <Button type="submit">Submit</Button>
+                <Button type="submit" style={{width: '100%'}}><AddIcon/></Button>
             </form>
-            <div>
-                {players.map((entry, index) => <p key={entry}><Checkbox onChange={(e) => {
-                    if (e.target.checked) {
-                        setLineup({...lineup, [index + 1]: entry})
-                    } else {
-                        setLineup(_.omit(lineup, [index + 1]))
-                    }
-                }}/> {entry} <Button variant="contained"
-                                     onClick={() => {
-                                         setPlayers(_.without(players, entry))
-                                         setLineup(_.omit(lineup, [index + 1]))
-                                     }}> Remove </Button></p>)}
-            </div>
-            <div>
-                {
-                    ready && allPossibleFilters.map((doublePairingFilter, index) => {
-                        const labelText = `${Object.values(lineup)[doublePairingFilter[0] - 1]} & ${Object.values(lineup)[doublePairingFilter[1] - 1]}`
-                        const active = selectedDoublesPairingFilter.find(isEqual(doublePairingFilter)) != undefined
-                        const disabled = remainingDoublesPairingFilters[toString(doublePairingFilter)] == undefined
-                        const style = active ? ({variant: 'filled', color: 'primary'}) : disabled ? ({
-                            variant: 'filled',
-                            color: 'default'
-                        }) : ({variant: 'outlined', color: 'primary'})
-                        // const variant= disabled ? 'outlined' : undefined
-                        return (<Chip key={index} variant={style.variant} color={style.color} label={labelText}
-                                      onClick={() => {
-                                          if (active) {
-                                              setSelectedDoublesPairingFilter(selectedDoublesPairingFilter.filter(isNotEqual(doublePairingFilter)))
-                                          } else if(!disabled) {
-                                                  setSelectedDoublesPairingFilter([...selectedDoublesPairingFilter, doublePairingFilter])
-                                          }
-                                      }}/>)
-                    })
-                }
-            </div>
-            <div>
+            <CustomDivider>Spielerliste</CustomDivider>
+            <Grid container rowSpacing={3} direction={"column"}>
+                {players.map((entry, index) =>
+                    <>
+                        <CustomDivider></CustomDivider>
+                        <Grid container item key={entry} direction={"row"} justifyContent={"flex-start"} alignItems={"center"} spacing={1}>
+                            <Grid item style={{paddingRight: '10px'}}>
+                                <Checkbox onChange={(e) => {
+                                if (e.target.checked) {
+                                    setLineup({...lineup, [index + 1]: entry})
+                                } else {
+                                    setLineup(_.omit(lineup, [index + 1]))
+                                }
+                            }}/>
+                            </Grid>
+                            <Grid item sx={{ flexGrow: 1}}>{entry}</Grid>
+                            <Grid item >
+                                <Button
+                            variant="contained"
+                            onClick={() => {
+                                setPlayers(_.without(players, entry))
+                                setLineup(_.omit(lineup, [index + 1]))
+                            }}> <DeleteIcon/> </Button>
+                            </Grid>
+                            <Grid item>
+                                <Grid item container direction={"column"} spacing={2}>
+                                    <Grid item >
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => {
+                                            }}> <KeyboardDoubleArrowUpIcon/> </Button>
+                                    </Grid>
+                                    <Grid item >
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => {
+                                            }}> <KeyboardDoubleArrowDownIcon/> </Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </>
+                )}
+            </Grid>
+            {
+                ready && <>
+                <CustomDivider>Doppelfavoriten</CustomDivider>
+                <Grid container spacing={2} direction={"column"} alignItems={"stretch"} justifyContent={"space-evenly"}>
+            {
+                allPossibleFilters.map((doublePairingFilter, index) => {
+                    const labelText = `${Object.values(lineup)[doublePairingFilter[0] - 1]} & ${Object.values(lineup)[doublePairingFilter[1] - 1]}`
+                    const active = selectedDoublesPairingFilter.find(isEqual(doublePairingFilter)) != undefined
+                    const disabled = remainingDoublesPairingFilters[toString(doublePairingFilter)] == undefined
+                    const style = active ? ({variant: 'filled', color: 'primary'}) : disabled ? ({
+                        variant: 'filled',
+                        color: 'default'
+                    }) : ({variant: 'outlined', color: 'primary'})
+                    // const variant= disabled ? 'outlined' : undefined
+                    return (
+                        <Grid item xs>
+                            <Chip style={{width: '100%'}} key={index} variant={style.variant}
+                                  color={style.color} label={renderDoublesPairingText(doublePairingFilter[0], doublePairingFilter[1])}
+                                  onClick={() => {
+                                      if (active) {
+                                          setSelectedDoublesPairingFilter(selectedDoublesPairingFilter.filter(isNotEqual(doublePairingFilter)))
+                                      } else if (!disabled) {
+                                          setSelectedDoublesPairingFilter([...selectedDoublesPairingFilter, doublePairingFilter])
+                                      }
+                                  }}/>
+                        </Grid>)
+                })
+            }
+        </Grid>
+                </>
+            }
+
                 {
                     ready && <>
-                        Aufstellung:
-                        <List>
-                            {filteredLineupVariations.map((lineupVariation, index) => <List key={index}> Variante {index}
+                        <CustomDivider>Doppelvarianten</CustomDivider>
+                        <Grid container direction={"column"} rowSpacing={3} alignItems={'center'}>
+                            {filteredLineupVariations.map((lineupVariation, index) =>
+                                <Grid item container key={index} direction={"column"} rowSpacing={1}>
+                                    <Grid item>
+                                        <CustomDivider>
+                                            Variante {index}
+                                        </CustomDivider>
+                                    </Grid>
                                 {lineupVariation.map(doublesPairing =>
-                                    <ListItem>{Object.values(lineup)[doublesPairing[0] - 1]} + {Object.values(lineup)[doublesPairing[1] - 1]}</ListItem>)}</List>)}
-                            <Divider/>
-                        </List>
+                                    <Grid item>
+                                        {renderDoublesPairingText(doublesPairing[0], doublesPairing[1])}
+                                    </Grid>
+                                )}
+                                </Grid>
+                            )}
+                        </Grid>
                     </>
                 }
-            </div>
         </main>
     )
 }
