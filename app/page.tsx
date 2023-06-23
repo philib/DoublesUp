@@ -1,20 +1,43 @@
 'use client'
 import {Input} from "@mui/joy";
 import {useState} from "react";
-import _, {reduce} from "lodash";
-import {Button, Checkbox, Container, Chip, Divider, List, ListItem, Stack, Grid} from "@mui/material";
+import _ from "lodash";
+import {Button, Checkbox, Chip, Divider, Grid, IconButton} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 export default function Home() {
     const allPossibleLineupVariations = [[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 5], [4, 6]], [[1, 2], [3, 6], [4, 5]], [[1, 2], [4, 5], [3, 6]], [[1, 3], [2, 4], [5, 6]], [[1, 3], [2, 5], [4, 6]], [[1, 3], [2, 6], [4, 5]], [[1, 4], [2, 3], [5, 6]], [[1, 4], [2, 5], [3, 6]], [[1, 4], [2, 6], [3, 5]], [[1, 4], [3, 5], [2, 6]], [[1, 5], [2, 4], [3, 6]], [[1, 5], [3, 4], [2, 6]], [[1, 6], [2, 5], [3, 4]], [[1, 6], [3, 4], [2, 5]], [[2, 3], [1, 4], [5, 6]], [[2, 3], [1, 5], [4, 6]], [[2, 3], [1, 6], [4, 5]], [[2, 4], [1, 5], [3, 6]], [[2, 4], [1, 6], [3, 5]], [[2, 5], [1, 6], [3, 4]], [[3, 4], [1, 6], [2, 5]]]
     const [inputText, setInputText] = useState("")
     const [players, setPlayers] = useState<string[]>(["A", "B", "C", "D", "E", "F"])
-    const [lineup, setLineup] = useState<Record<number, string>>({})
+    const [lineup, setLineupIntern] = useState<Record<number, string>>({})
+    const setLineup = (l: Record<number, string>) => {
+        setLineupIntern(l)
+        setLineupFavorites([])
+    }
+    const [lineupFavorites, setLineupFavorites] = useState<number[][][]>([])
     const ready = Object.values(lineup).length == 6
     const [selectedDoublesPairingFilter, setSelectedDoublesPairingFilter] = useState<number[][]>([])
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
+
+    const isFavorite = (lineup: number[][]) => {
+        const list = lineupFavorites.map(JSON.stringify)
+        const element = JSON.stringify(lineup);
+        return _.includes(list, element)
+    }
+    const toggleFavorite = (lineup: number[][]) => {
+        const list = lineupFavorites.map(JSON.stringify)
+        const element = JSON.stringify(lineup)
+        if(!_.includes(list, element)){
+            setLineupFavorites([...lineupFavorites, lineup])
+        }else {
+            setLineupFavorites(lineupFavorites.filter(f => JSON.stringify(f) !== element))
+        }
+    }
 
     const movePlayerUp = (player: number) => {
         const playerIndex = player - 1
@@ -56,7 +79,12 @@ export default function Home() {
         .map(doublesPairing => (lineup: number[][]) => lineup.find(isEqual(doublesPairing)) != undefined)
         .reduce((acc, curr) => (lineup: number[][]) => acc(lineup) && curr(lineup), (lineup: number[][]) => true)
 
-    let filteredLineupVariations = allPossibleLineupVariations.filter(allSelectedDoublesPairingFiltersCombinedPredicate);
+    const withFavoriteFilter = (filter: (_: number[][]) => boolean) => {
+        const isWithinFavorites = (lineup: number[][]) => _.includes(lineupFavorites.map(JSON.stringify), JSON.stringify(lineup))
+        return (lineup: number[][]) => showFavoritesOnly ? isWithinFavorites(lineup) && filter(lineup) : filter(lineup)
+    }
+
+    let filteredLineupVariations = allPossibleLineupVariations.filter(withFavoriteFilter(allSelectedDoublesPairingFiltersCombinedPredicate));
 
     const allPossibleFilters = _.uniqBy(allPossibleLineupVariations.flat(), toString)
     const remainingDoublesPairingFilters = _.uniqBy(filteredLineupVariations.flat(), toString).reduce((acc, curr) => {
@@ -133,8 +161,16 @@ export default function Home() {
             </Grid>
             {
                 ready && <>
-                    <CustomDivider>Doppelfavoriten</CustomDivider>
+                    <CustomDivider>Filter</CustomDivider>
                     <Grid container spacing={2} direction={"column"} alignItems={"stretch"} justifyContent={"space-evenly"}>
+                        <Grid item xs>
+                            <Chip style={{width: '100%'}} key={999} variant={lineupFavorites.length > 0 ? (showFavoritesOnly ? 'filled': 'outlined') : 'filled'}
+                                  color={lineupFavorites.length > 0 ? 'primary' : 'default'}
+                                  label={"Nach Favoriten filtern"}
+                                  onClick={() => {
+                                          setShowFavoritesOnly(!showFavoritesOnly)
+                                  }}/>
+                        </Grid>
                         {
                             allPossibleFilters.map((doublePairingFilter, index) => {
                                 const active = selectedDoublesPairingFilter.find(isEqual(doublePairingFilter)) != undefined
@@ -174,11 +210,33 @@ export default function Home() {
                                         Variante {index}
                                     </CustomDivider>
                                 </Grid>
-                                {lineupVariation.map(doublesPairing =>
-                                    <Grid item>
-                                        {renderDoublesPairingText(doublesPairing[0], doublesPairing[1])}
+                                <Grid item>
+                                    <Grid item container direction={"row"} spacing={2} alignItems={"center"}>
+                                        <Grid item>
+                                            { isFavorite(lineupVariation) ?
+                                                (<IconButton aria-label="star" onClick={() => {
+                                                    toggleFavorite(lineupVariation)
+                                                }}>
+                                                    <StarIcon color={"primary"} />
+                                                </IconButton>):
+                                                (<IconButton aria-label="unstar" onClick={() => {
+                                                    toggleFavorite(lineupVariation)
+                                                }}>
+                                                    <StarBorderIcon color={"primary"} />
+                                                </IconButton>)
+                                            }
+                                        </Grid>
+                                        <Grid item>
+                                            <Grid item container direction={"column"}>
+                                                {lineupVariation.map(doublesPairing =>
+                                                    <Grid item>
+                                                        {renderDoublesPairingText(doublesPairing[0], doublesPairing[1])}
+                                                    </Grid>
+                                                )}
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                )}
+                                </Grid>
                             </Grid>
                         )}
                     </Grid>
