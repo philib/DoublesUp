@@ -165,8 +165,8 @@ export default function Home() {
                     <CustomDivider>Filter</CustomDivider>
                     <Grid container spacing={2} direction={"column"} alignItems={"stretch"} justifyContent={"space-evenly"}>
                         <Grid item xs>
-                            <Chip style={{width: '100%'}} key={999} variant={lineupFavorites.length > 0 ? (showFavoritesOnly ? 'filled': 'outlined') : 'filled'}
-                                  color={lineupFavorites.length > 0 ? 'primary' : 'default'}
+                            <Chip style={{width: '100%'}} key={999} variant={showFavoritesOnly ? 'filled': 'outlined'}
+                                  color={'primary'}
                                   label={"Nach Favoriten filtern"}
                                   onClick={() => {
                                           setShowFavoritesOnly(!showFavoritesOnly)
