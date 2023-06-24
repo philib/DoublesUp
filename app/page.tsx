@@ -13,7 +13,15 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 export default function Home() {
     const allPossibleLineupVariations = [[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 5], [4, 6]], [[1, 2], [3, 6], [4, 5]], [[1, 2], [4, 5], [3, 6]], [[1, 3], [2, 4], [5, 6]], [[1, 3], [2, 5], [4, 6]], [[1, 3], [2, 6], [4, 5]], [[1, 4], [2, 3], [5, 6]], [[1, 4], [2, 5], [3, 6]], [[1, 4], [2, 6], [3, 5]], [[1, 4], [3, 5], [2, 6]], [[1, 5], [2, 4], [3, 6]], [[1, 5], [3, 4], [2, 6]], [[1, 6], [2, 5], [3, 4]], [[1, 6], [3, 4], [2, 5]], [[2, 3], [1, 4], [5, 6]], [[2, 3], [1, 5], [4, 6]], [[2, 3], [1, 6], [4, 5]], [[2, 4], [1, 5], [3, 6]], [[2, 4], [1, 6], [3, 5]], [[2, 5], [1, 6], [3, 4]], [[3, 4], [1, 6], [2, 5]]]
     const [inputText, setInputText] = useState("")
-    const [players, setPlayers] = useState<string[]>(["Philip Schäfer", "Michi Ruhr", "Tobias Kominek", "Fred Vogel", "Jörg Vonundzu", "Michi Frank"])
+    const [players, setPlayers] = useState<string[]>([
+        "Michi R.",
+        "Tobi",
+        "Michi F.",
+        "Fred",
+        "Franky",
+        "Andi",
+        "Philip"
+    ])
     const [lineup, setLineupIntern] = useState<Record<number, string>>({})
     const setLineup = (l: Record<number, string>) => {
         setLineupIntern(l)
