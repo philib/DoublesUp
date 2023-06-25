@@ -216,7 +216,7 @@ export default function Home() {
                             <Grid item container key={index} direction={"column"} rowSpacing={1}>
                                 <Grid item>
                                     <CustomDivider>
-                                        Variante {index}
+                                        Variante {index+1}
                                     </CustomDivider>
                                 </Grid>
                                 <Grid item>
