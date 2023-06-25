@@ -58,6 +58,7 @@ export default function Home() {
         newPlayers[nextPlayerIndex] = players[playerIndex]
         newPlayers[playerIndex] = players[nextPlayerIndex]
         setPlayers(newPlayers)
+        setLineup({})
     }
     const movePlayerDown = (player: number) => {
         const playerIndex = player - 1
@@ -69,6 +70,7 @@ export default function Home() {
         newPlayers[prevPlayerIndex] = players[playerIndex]
         newPlayers[playerIndex] = players[prevPlayerIndex]
         setPlayers(newPlayers)
+        setLineup({})
     }
     const isEqual = (pair1: number[]) => {
         return (pair2: number[]) => pair1[0] == pair2[0] && pair1[1] == pair2[1];
