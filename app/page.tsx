@@ -73,7 +73,7 @@ export default function Home() {
     }
 
     const renderDoublesPairingText = (p1: number, p2: number) => {
-        return `(${p1} + ${p2} = ${p1+p2}) ${players[p1 - 1]} + ${players[p2 - 1]}`
+        return `(${p1} + ${p2} = ${p1+p2}) ${Object.values(lineup)[p1 - 1]} + ${Object.values(lineup)[p2 - 1]}`
     }
 
     const allSelectedDoublesPairingFiltersCombinedPredicate = selectedDoublesPairingFilter
