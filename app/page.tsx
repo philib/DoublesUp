@@ -10,40 +10,54 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
+interface LinedUpPlayer {
+    lineupPosition: number,
+    name: string
+}
+
+interface DoublesPairing {
+    player1: LinedUpPlayer
+    player2: LinedUpPlayer
+}
+
+interface Player {
+    name: string
+}
+
 export default function Home() {
     const allPossibleLineupVariations = [[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 5], [4, 6]], [[1, 2], [3, 6], [4, 5]], [[1, 2], [4, 5], [3, 6]], [[1, 3], [2, 4], [5, 6]], [[1, 3], [2, 5], [4, 6]], [[1, 3], [2, 6], [4, 5]], [[1, 4], [2, 3], [5, 6]], [[1, 4], [2, 5], [3, 6]], [[1, 4], [2, 6], [3, 5]], [[1, 4], [3, 5], [2, 6]], [[1, 5], [2, 4], [3, 6]], [[1, 5], [3, 4], [2, 6]], [[1, 6], [2, 5], [3, 4]], [[1, 6], [3, 4], [2, 5]], [[2, 3], [1, 4], [5, 6]], [[2, 3], [1, 5], [4, 6]], [[2, 3], [1, 6], [4, 5]], [[2, 4], [1, 5], [3, 6]], [[2, 4], [1, 6], [3, 5]], [[2, 5], [1, 6], [3, 4]], [[3, 4], [1, 6], [2, 5]]]
     const [inputText, setInputText] = useState("")
-    const [players, setPlayers] = useState<string[]>([
-        "Michi R.",
-        "Tobi",
-        "Michi F.",
-        "Fred",
-        "Franky",
-        "Andi",
-        "Philip"
+    const [players, setPlayers] = useState<Player[]>([
+        {name: "Michi R."},
+        {name: "Tobi"},
+        {name: "Michi F."},
+        {name: "Fred"},
+        {name: "Franky"},
+        {name: "Andi"},
+        {name: "Philip"}
     ])
     const [lineup, setLineupIntern] = useState<Record<number, string>>({})
     const setLineup = (l: Record<number, string>) => {
         setLineupIntern(l)
-        setLineupFavorites([])
+        // setLineupFavorites([])
     }
-    const [lineupFavorites, setLineupFavorites] = useState<number[][][]>([])
+    const [lineupFavorites, setLineupFavorites] = useState<DoublesPairing[][]>([])
     const ready = Object.values(lineup).length == 6
-    const [selectedDoublesPairingFilter, setSelectedDoublesPairingFilter] = useState<number[][]>([])
+    const [selectedDoublesPairingFilter, setSelectedDoublesPairingFilter] = useState<DoublesPairing[]>([])
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
 
-    const stringify = (lineup: number[][]) => JSON.stringify(lineup)
-    const isFavorite = (lineup: number[][]) => {
+    const stringify = (lineup: DoublesPairing[]) => JSON.stringify(lineup)
+    const isFavorite = (lineup: DoublesPairing[]) => {
         const list = lineupFavorites.map(stringify)
         const element = stringify(lineup);
         return _.includes(list, element)
     }
-    const toggleFavorite = (lineup: number[][]) => {
+    const toggleFavorite = (lineup: DoublesPairing[]) => {
         const list = lineupFavorites.map(stringify)
         const element = stringify(lineup)
-        if(!_.includes(list, element)){
+        if (!_.includes(list, element)) {
             setLineupFavorites([...lineupFavorites, lineup])
-        }else {
+        } else {
             setLineupFavorites(lineupFavorites.filter(f => stringify(f) !== element))
         }
     }
@@ -72,37 +86,52 @@ export default function Home() {
         setPlayers(newPlayers)
         setLineup({})
     }
-    const isEqual = (pair1: number[]) => {
-        return (pair2: number[]) => pair1[0] == pair2[0] && pair1[1] == pair2[1];
+    const isEqual = (pair1: DoublesPairing) => {
+        return (pair2: DoublesPairing) => pair1.player1.name == pair2.player1.name && pair1.player2.name == pair2.player2.name;
     }
-    const isNotEqual = (pair1: number[]) => {
-        return (pair2: number[]) => pair1[0] != pair2[0] || pair1[1] != pair2[1];
+    const isNotEqual = (pair1: DoublesPairing) => {
+        return (pair2: DoublesPairing) => pair1.player1.name != pair2.player1.name || pair1.player2.name != pair2.player2.name;
     }
-    const toString = (pair: number[]) => {
-        return `${pair[0]} - ${pair[1]}`
-    }
-
-    const renderDoublesPairingText = (p1: number, p2: number) => {
-        return `(${p1} + ${p2} = ${p1+p2}) ${Object.values(lineup)[p1 - 1]} + ${Object.values(lineup)[p2 - 1]}`
+    const toString = (pair: DoublesPairing) => {
+        return `${pair.player1.name} - ${pair.player2.name}`
     }
 
-    const allSelectedDoublesPairingFiltersCombinedPredicate = selectedDoublesPairingFilter
-        .map(doublesPairing => (lineup: number[][]) => lineup.find(isEqual(doublesPairing)) != undefined)
-        .reduce((acc, curr) => (lineup: number[][]) => acc(lineup) && curr(lineup), (lineup: number[][]) => true)
-
-    const withFavoriteFilter = (filter: (_: number[][]) => boolean) => {
-        const isWithinFavorites = (lineup: number[][]) => _.includes(lineupFavorites.map(stringify), stringify(lineup))
-        return (lineup: number[][]) => showFavoritesOnly ? isWithinFavorites(lineup) && filter(lineup) : filter(lineup)
+    const renderDoublesPairingText = ({player1, player2}: DoublesPairing) => {
+        return `(${player1.lineupPosition} + ${player2.lineupPosition} = ${player1.lineupPosition + player2.lineupPosition}) ${player1.name} + ${player2.name}`
     }
 
-    let filteredLineupVariations = allPossibleLineupVariations.filter(withFavoriteFilter(allSelectedDoublesPairingFiltersCombinedPredicate));
+    const allSelectedDoublesPairingFiltersCombinedPredicate: (lineup: DoublesPairing[]) => boolean = selectedDoublesPairingFilter
+        .map(doublesPairing => (lineup: DoublesPairing[]) => lineup.find(isEqual(doublesPairing)) != undefined)
+        .reduce((acc, curr) => (lineup: DoublesPairing[]) => acc(lineup) && curr(lineup), (lineup: DoublesPairing[]) => true)
 
-    const allPossibleFilters = _.uniqBy(allPossibleLineupVariations.flat(), toString)
-    const remainingDoublesPairingFilters: Record<string, number[]> = _.uniqBy(filteredLineupVariations.flat(), toString).reduce((acc, curr) => {
-        return {...acc, [toString(curr)]: curr}
+    const withFavoriteFilter = (filter: (_: DoublesPairing[]) => boolean) => {
+        const isWithinFavorites = (lineup: DoublesPairing[]) => _.includes(lineupFavorites.map(it => JSON.stringify(it)), JSON.stringify(lineup))
+        return (lineup: DoublesPairing[]) => showFavoritesOnly ? isWithinFavorites(lineup) && filter(lineup) : filter(lineup)
+    }
+
+    let allPossibleLineupVariantions: DoublesPairing[][] = allPossibleLineupVariations.map((variation) => {
+        return variation.map((doublesPairing) => {
+            const a: DoublesPairing = {
+                player1: {
+                    lineupPosition: doublesPairing[0],
+                    name: Object.values(lineup)[doublesPairing[0]-1]
+                },
+                player2: {
+                    lineupPosition: doublesPairing[1],
+                    name: Object.values(lineup)[doublesPairing[1]-1]
+                }
+            }
+            return a
+        })
+    });
+    let filteredLineupVariations = allPossibleLineupVariantions.filter(withFavoriteFilter(allSelectedDoublesPairingFiltersCombinedPredicate));
+
+    const allPossibleFilters: DoublesPairing[] = _.uniqBy(allPossibleLineupVariantions.flat(), (it) => JSON.stringify(it))
+    const remainingDoublesPairingFilters: Record<string, DoublesPairing> = _.uniqBy(filteredLineupVariations.flat(), (it) => JSON.stringify(it)).reduce((acc, curr) => {
+        return {...acc, [JSON.stringify(curr)]: curr}
     }, {})
 
-    const CustomDivider : React.FC<{children?: ReactNode}> = (props) => (
+    const CustomDivider: React.FC<{ children?: ReactNode }> = (props) => (
         <Divider style={{marginTop: '20px', marginBottom: '20px'}}>{props.children}</Divider>)
 
     return (
@@ -110,7 +139,7 @@ export default function Home() {
             <CustomDivider>Spielereingabe</CustomDivider>
             <form
                 onSubmit={(event) => {
-                    setPlayers([...players, inputText])
+                    setPlayers([...players, {name:inputText}])
                     event.preventDefault();
                 }}
                 style={{marginBottom: '10px'}}
@@ -128,18 +157,18 @@ export default function Home() {
                 {players.map((entry, index) =>
                     <>
                         <CustomDivider></CustomDivider>
-                        <Grid container item key={entry} direction={"row"} justifyContent={"flex-start"}
+                        <Grid container item key={entry.name} direction={"row"} justifyContent={"flex-start"}
                               alignItems={"center"} spacing={1}>
                             <Grid item style={{paddingRight: '10px'}}>
-                                <Checkbox checked={lineup[index+1] !== undefined} onChange={(e) => {
+                                <Checkbox checked={lineup[index + 1] !== undefined} onChange={(e) => {
                                     if (e.target.checked) {
-                                        setLineup({...lineup, [index + 1]: entry})
+                                        setLineup({...lineup, [index + 1]: entry.name})
                                     } else {
                                         setLineup(_.omit(lineup, [index + 1]))
                                     }
                                 }}/>
                             </Grid>
-                            <Grid item sx={{flexGrow: 1}}>{entry}</Grid>
+                            <Grid item sx={{flexGrow: 1}}>{entry.name}</Grid>
                             <Grid item>
                                 <Button
                                     variant="contained"
@@ -175,18 +204,21 @@ export default function Home() {
                     <CustomDivider>Filter</CustomDivider>
                     <Grid container spacing={2} direction={"column"} alignItems={"stretch"} justifyContent={"space-evenly"}>
                         <Grid item xs>
-                            <Chip style={{width: '100%'}} key={999} variant={showFavoritesOnly ? 'filled': 'outlined'}
+                            <Chip style={{width: '100%'}} key={999} variant={showFavoritesOnly ? 'filled' : 'outlined'}
                                   color={'primary'}
                                   label={"Nach Favoriten filtern"}
                                   onClick={() => {
-                                          setShowFavoritesOnly(!showFavoritesOnly)
+                                      setShowFavoritesOnly(!showFavoritesOnly)
                                   }}/>
                         </Grid>
                         {
                             allPossibleFilters.map((doublePairingFilter, index) => {
                                 const active = selectedDoublesPairingFilter.find(isEqual(doublePairingFilter)) != undefined
-                                const disabled = remainingDoublesPairingFilters[toString(doublePairingFilter)] === undefined
-                                const style: {variant: 'filled' | 'outlined', color: 'default' | 'primary'} = active ? ({variant: 'filled', color: 'primary'}) : disabled ? ({
+                                const disabled = remainingDoublesPairingFilters[JSON.stringify(doublePairingFilter)] === undefined
+                                const style: {
+                                    variant: 'filled' | 'outlined',
+                                    color: 'default' | 'primary'
+                                } = active ? ({variant: 'filled', color: 'primary'}) : disabled ? ({
                                     variant: 'filled',
                                     color: 'default'
                                 }) : ({variant: 'outlined', color: 'primary'})
@@ -195,7 +227,7 @@ export default function Home() {
                                     <Grid item xs key={`grid-${index}`}>
                                         <Chip style={{width: '100%'}} key={`chip-${index}`} variant={style.variant}
                                               color={style.color}
-                                              label={renderDoublesPairingText(doublePairingFilter[0], doublePairingFilter[1])}
+                                              label={renderDoublesPairingText(doublePairingFilter)}
                                               onClick={() => {
                                                   if (active) {
                                                       setSelectedDoublesPairingFilter(selectedDoublesPairingFilter.filter(isNotEqual(doublePairingFilter)))
@@ -218,30 +250,30 @@ export default function Home() {
                             <Grid item container key={index} direction={"column"} rowSpacing={1}>
                                 <Grid item>
                                     <CustomDivider>
-                                        Variante {index+1}
+                                        Variante {index + 1}
                                     </CustomDivider>
                                 </Grid>
                                 <Grid item>
                                     <Grid item container direction={"row"} spacing={2} alignItems={"center"}>
                                         <Grid item>
-                                            { isFavorite(lineupVariation) ?
+                                            {isFavorite(lineupVariation) ?
                                                 (<IconButton aria-label="star" onClick={() => {
                                                     toggleFavorite(lineupVariation)
                                                 }}>
-                                                    <StarIcon color={"primary"} />
-                                                </IconButton>):
+                                                    <StarIcon color={"primary"}/>
+                                                </IconButton>) :
                                                 (<IconButton aria-label="unstar" onClick={() => {
                                                     toggleFavorite(lineupVariation)
                                                 }}>
-                                                    <StarBorderIcon color={"primary"} />
+                                                    <StarBorderIcon color={"primary"}/>
                                                 </IconButton>)
                                             }
                                         </Grid>
                                         <Grid item>
                                             <Grid item container direction={"column"}>
-                                                {lineupVariation.map((doublesPairing,index) =>
+                                                {lineupVariation.map((doublesPairing, index) =>
                                                     <Grid item key={index}>
-                                                        {renderDoublesPairingText(doublesPairing[0], doublesPairing[1])}
+                                                        {renderDoublesPairingText(doublesPairing)}
                                                     </Grid>
                                                 )}
                                             </Grid>
