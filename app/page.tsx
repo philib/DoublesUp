@@ -1,27 +1,15 @@
 'use client'
-import {Input} from "@mui/joy";
-import React, {ReactNode, useState} from "react";
+import React, {useState} from "react";
 import _ from "lodash";
-import {
-    BottomNavigation,
-    BottomNavigationAction,
-    Button,
-    Checkbox,
-    Chip,
-    Divider,
-    Grid,
-    IconButton
-} from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
-import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import {BottomNavigation, BottomNavigationAction, Chip, Grid, IconButton} from "@mui/material";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import FavoriteIcon from '@mui/icons-material/FavoriteSharp';
 import RestoreIcon from '@mui/icons-material/RestoreSharp';
+import {CustomDivider} from "@/app/customDivider";
+import {Lineup, Players} from "@/app/players";
 
-interface LinedUpPlayer {
+export interface LinedUpPlayer {
     lineupPosition: number,
     name: string
 }
@@ -31,31 +19,15 @@ interface DoublesPairing {
     player2: LinedUpPlayer
 }
 
-interface Player {
+export interface Player {
     name: string
 }
 
 export default function Home() {
     const allPossibleLineupVariations = [[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 5], [4, 6]], [[1, 2], [3, 6], [4, 5]], [[1, 2], [4, 5], [3, 6]], [[1, 3], [2, 4], [5, 6]], [[1, 3], [2, 5], [4, 6]], [[1, 3], [2, 6], [4, 5]], [[1, 4], [2, 3], [5, 6]], [[1, 4], [2, 5], [3, 6]], [[1, 4], [2, 6], [3, 5]], [[1, 4], [3, 5], [2, 6]], [[1, 5], [2, 4], [3, 6]], [[1, 5], [3, 4], [2, 6]], [[1, 6], [2, 5], [3, 4]], [[1, 6], [3, 4], [2, 5]], [[2, 3], [1, 4], [5, 6]], [[2, 3], [1, 5], [4, 6]], [[2, 3], [1, 6], [4, 5]], [[2, 4], [1, 5], [3, 6]], [[2, 4], [1, 6], [3, 5]], [[2, 5], [1, 6], [3, 4]], [[3, 4], [1, 6], [2, 5]]]
     const [bottomNavigationValue, setBottomNavigationValue] = useState(0)
-    const [showFavorites, setShowFavorites] = useState(false)
-    const [inputText, setInputText] = useState("")
-    const [players, setPlayers] = useState<Player[]>([
-        {name: "Michi R."},
-        {name: "Tobi"},
-        {name: "Michi F."},
-        {name: "Fred"},
-        {name: "Franky"},
-        {name: "Andi"},
-        {name: "Philip"}
-    ])
-    const [lineup, setLineupIntern] = useState<Record<number, string>>({})
-    const setLineup = (l: Record<number, string>) => {
-        setLineupIntern(l)
-        // setLineupFavorites([])
-    }
+    const [lineup, setLineup] = useState<Lineup | undefined>(undefined)
     const [lineupFavorites, setLineupFavorites] = useState<DoublesPairing[][]>([])
-    const ready = Object.values(lineup).length == 6
     const [selectedDoublesPairingFilter, setSelectedDoublesPairingFilter] = useState<DoublesPairing[]>([])
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
 
@@ -75,38 +47,11 @@ export default function Home() {
         }
     }
 
-    const movePlayerUp = (player: number) => {
-        const playerIndex = player - 1
-        const nextPlayerIndex = player - 2
-        if (playerIndex === 0) {
-            return
-        }
-        const newPlayers = [...players]
-        newPlayers[nextPlayerIndex] = players[playerIndex]
-        newPlayers[playerIndex] = players[nextPlayerIndex]
-        setPlayers(newPlayers)
-        setLineup({})
-    }
-    const movePlayerDown = (player: number) => {
-        const playerIndex = player - 1
-        const prevPlayerIndex = player
-        if (playerIndex === players.length - 1) {
-            return
-        }
-        const newPlayers = [...players]
-        newPlayers[prevPlayerIndex] = players[playerIndex]
-        newPlayers[playerIndex] = players[prevPlayerIndex]
-        setPlayers(newPlayers)
-        setLineup({})
-    }
     const isEqual = (pair1: DoublesPairing) => {
         return (pair2: DoublesPairing) => pair1.player1.name == pair2.player1.name && pair1.player2.name == pair2.player2.name;
     }
     const isNotEqual = (pair1: DoublesPairing) => {
         return (pair2: DoublesPairing) => pair1.player1.name != pair2.player1.name || pair1.player2.name != pair2.player2.name;
-    }
-    const toString = (pair: DoublesPairing) => {
-        return `${pair.player1.name} - ${pair.player2.name}`
     }
 
     const renderDoublesPairingText = ({player1, player2}: DoublesPairing) => {
@@ -115,7 +60,7 @@ export default function Home() {
 
     const allSelectedDoublesPairingFiltersCombinedPredicate: (lineup: DoublesPairing[]) => boolean = selectedDoublesPairingFilter
         .map(doublesPairing => (lineup: DoublesPairing[]) => lineup.find(isEqual(doublesPairing)) != undefined)
-        .reduce((acc, curr) => (lineup: DoublesPairing[]) => acc(lineup) && curr(lineup), (lineup: DoublesPairing[]) => true)
+        .reduce((acc, curr) => (lineup: DoublesPairing[]) => acc(lineup) && curr(lineup), (_: DoublesPairing[]) => true)
 
     const withFavoriteFilter = (filter: (_: DoublesPairing[]) => boolean) => {
         const isWithinFavorites = (lineup: DoublesPairing[]) => _.includes(lineupFavorites.map(it => JSON.stringify(it)), JSON.stringify(lineup))
@@ -123,18 +68,21 @@ export default function Home() {
     }
 
     let allPossibleLineupVariantions: DoublesPairing[][] = allPossibleLineupVariations.map((variation) => {
-        return variation.map((doublesPairing) => {
-            const a: DoublesPairing = {
-                player1: {
-                    lineupPosition: doublesPairing[0],
-                    name: Object.values(lineup)[doublesPairing[0] - 1]
-                },
-                player2: {
-                    lineupPosition: doublesPairing[1],
-                    name: Object.values(lineup)[doublesPairing[1] - 1]
+        return variation.flatMap((doublesPairing) => {
+            if(lineup){
+                const a: DoublesPairing = {
+                    player1: {
+                        lineupPosition: doublesPairing[0],
+                        name: Object.values(lineup)[doublesPairing[0] - 1].name
+                    },
+                    player2: {
+                        lineupPosition: doublesPairing[1],
+                        name: Object.values(lineup)[doublesPairing[1] - 1].name
+                    }
                 }
+                return [a]
             }
-            return a
+            return []
         })
     });
     let filteredLineupVariations = allPossibleLineupVariantions.filter(withFavoriteFilter(allSelectedDoublesPairingFiltersCombinedPredicate));
@@ -144,79 +92,12 @@ export default function Home() {
         return {...acc, [JSON.stringify(curr)]: curr}
     }, {})
 
-    const CustomDivider: React.FC<{ children?: ReactNode }> = (props) => (
-        <Divider style={{marginTop: '20px', marginBottom: '20px'}}>{props.children}</Divider>)
 
     return (
         <main style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
             <div style={{flex: 1, overflow: 'auto'}}>
-                {bottomNavigationValue === 0 && <>
-                    <CustomDivider>Spielereingabe</CustomDivider>
-                    <form
-                        onSubmit={(event) => {
-                            setPlayers([...players, {name: inputText}])
-                            event.preventDefault();
-                        }}
-                        style={{marginBottom: '10px'}}
-                    >
-                        <Input
-                            placeholder="Neue Spieler hinzufügen"
-                            required
-                            onChange={(t) => setInputText(t.target.value)}
-                            sx={{mb: 1, fontSize: 'var(--joy-fontSize-sm)'}}
-                        />
-                        <Button type="submit" style={{width: '100%'}}><AddIcon/></Button>
-                    </form>
-                    <CustomDivider>Spielerliste</CustomDivider>
-                    <Grid container rowSpacing={3} direction={"column"}>
-                        {players.map((entry, index) =>
-                            <>
-                                <CustomDivider></CustomDivider>
-                                <Grid container item key={entry.name} direction={"row"} justifyContent={"flex-start"}
-                                      alignItems={"center"} spacing={1}>
-                                    <Grid item style={{paddingRight: '10px'}}>
-                                        <Checkbox checked={lineup[index + 1] !== undefined} onChange={(e) => {
-                                            if (e.target.checked) {
-                                                setLineup({...lineup, [index + 1]: entry.name})
-                                            } else {
-                                                setLineup(_.omit(lineup, [index + 1]))
-                                            }
-                                        }}/>
-                                    </Grid>
-                                    <Grid item sx={{flexGrow: 1}}>{entry.name}</Grid>
-                                    <Grid item>
-                                        <Button
-                                            variant="contained"
-                                            onClick={() => {
-                                                setPlayers(_.without(players, entry))
-                                                setLineup(_.omit(lineup, [index + 1]))
-                                            }}> <DeleteIcon/> </Button>
-                                    </Grid>
-                                    <Grid item>
-                                        <Grid item container direction={"column"} spacing={2}>
-                                            <Grid item>
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={() => {
-                                                        movePlayerUp(index + 1)
-                                                    }}> <KeyboardDoubleArrowUpIcon/> </Button>
-                                            </Grid>
-                                            <Grid item>
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={() => {
-                                                        movePlayerDown(index + 1)
-                                                    }}> <KeyboardDoubleArrowDownIcon/> </Button>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </>
-                        )}
-                    </Grid>
-                </>
-                }
-                {bottomNavigationValue === 1 && ready && <>
+                <Players show={bottomNavigationValue === 0} onLineupChange={setLineup}/>
+                {bottomNavigationValue === 1 && lineup && <>
                     <>
                         <CustomDivider>Filter</CustomDivider>
                         <Grid container spacing={2} direction={"column"} alignItems={"stretch"}
