@@ -6,6 +6,8 @@ import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import FavoriteIcon from '@mui/icons-material/FavoriteSharp';
 import RestoreIcon from '@mui/icons-material/RestoreSharp';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import {CustomDivider} from "@/app/customDivider";
 import {Lineup, Players} from "@/app/players";
 
@@ -251,8 +253,8 @@ export default function Home() {
                         setBottomNavigationValue(newValue)
                     }}
                 >
-                    <BottomNavigationAction label="Aufstellung" icon={<RestoreIcon/>}/>
-                    <BottomNavigationAction label="Varianten" icon={<RestoreIcon/>}/>
+                    <BottomNavigationAction label="Aufstellung" icon={<AccountCircleIcon/>}/>
+                    <BottomNavigationAction label="Doppelvarianten" icon={<SportsTennisIcon/>}/>
                     <BottomNavigationAction label="Favoriten" icon={<FavoriteIcon/>}/>
                 </BottomNavigation>
             </footer>
