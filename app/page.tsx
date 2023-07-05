@@ -23,14 +23,32 @@ export interface Player {
     name: string
 }
 
+function useStateWithLocalStorage<T>(key: string, def: T): [T, (_: T) => void] {
+    const item = localStorage.getItem(key)
+    let initial;
+    if (item !== null) {
+        initial = JSON.parse(item)
+    } else {
+        initial = def
+    }
+    const [get, set] = useState<T>(initial)
+    const setter = (t: T) => {
+        set(t)
+        localStorage.setItem(key, JSON.stringify(t))
+    };
+    return [get, setter]
+}
+
+
 export default function Home() {
     const allPossibleLineupVariations = [[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 5], [4, 6]], [[1, 2], [3, 6], [4, 5]], [[1, 2], [4, 5], [3, 6]], [[1, 3], [2, 4], [5, 6]], [[1, 3], [2, 5], [4, 6]], [[1, 3], [2, 6], [4, 5]], [[1, 4], [2, 3], [5, 6]], [[1, 4], [2, 5], [3, 6]], [[1, 4], [2, 6], [3, 5]], [[1, 4], [3, 5], [2, 6]], [[1, 5], [2, 4], [3, 6]], [[1, 5], [3, 4], [2, 6]], [[1, 6], [2, 5], [3, 4]], [[1, 6], [3, 4], [2, 5]], [[2, 3], [1, 4], [5, 6]], [[2, 3], [1, 5], [4, 6]], [[2, 3], [1, 6], [4, 5]], [[2, 4], [1, 5], [3, 6]], [[2, 4], [1, 6], [3, 5]], [[2, 5], [1, 6], [3, 4]], [[3, 4], [1, 6], [2, 5]]]
+    const [players, setPlayers] = useStateWithLocalStorage<Player[]>("players", [])
+    const [lineupFavorites, setLineupFavorites] = useStateWithLocalStorage<DoublesPairing[][]>("favorites", [])
+
     const [bottomNavigationValue, setBottomNavigationValue] = useState(0)
     const [lineup, setLineup] = useState<Lineup | undefined>(undefined)
-    const [lineupFavorites, setLineupFavorites] = useState<DoublesPairing[][]>([])
     const [selectedDoublesPairingFilter, setSelectedDoublesPairingFilter] = useState<DoublesPairing[]>([])
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
-
     const stringify = (lineup: DoublesPairing[]) => JSON.stringify(lineup)
     const isFavorite = (lineup: DoublesPairing[]) => {
         const list = lineupFavorites.map(stringify)
@@ -69,7 +87,7 @@ export default function Home() {
 
     let allPossibleLineupVariantions: DoublesPairing[][] = allPossibleLineupVariations.map((variation) => {
         return variation.flatMap((doublesPairing) => {
-            if(lineup){
+            if (lineup) {
                 const a: DoublesPairing = {
                     player1: {
                         lineupPosition: doublesPairing[0],
@@ -96,7 +114,8 @@ export default function Home() {
     return (
         <main style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
             <div style={{flex: 1, overflow: 'auto'}}>
-                <Players show={bottomNavigationValue === 0} onLineupChange={setLineup}/>
+                <Players players={players} onPlayersChange={setPlayers} show={bottomNavigationValue === 0}
+                         onLineupChange={setLineup}/>
                 {bottomNavigationValue === 1 && lineup && <>
                     <>
                         <CustomDivider>Filter</CustomDivider>

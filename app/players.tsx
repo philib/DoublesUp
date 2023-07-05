@@ -21,15 +21,10 @@ export interface Lineup {
 
 export const Players: React.FC<{
     show: boolean
+    players: Player[]
+    onPlayersChange: (_: Player[]) => void
     onLineupChange: (_: Lineup | undefined) => void
 }> = (props) => {
-    const [players, setPlayers] = useState<Player[]>([{name: "Michi R."},
-        {name: "Tobi"},
-        {name: "Michi F."},
-        {name: "Fred"},
-        {name: "Franky"},
-        {name: "Andi"},
-        {name: "Philip"}])
     const [inputText, setInputText] = useState("")
     const [lineup, setLineup] = useState<Record<number, Player>>({})
     const lineupFlat = Object.values(lineup);
@@ -51,22 +46,22 @@ export const Players: React.FC<{
         if (playerIndex === 0) {
             return
         }
-        const newPlayers = [...players]
-        newPlayers[nextPlayerIndex] = players[playerIndex]
-        newPlayers[playerIndex] = players[nextPlayerIndex]
-        setPlayers(newPlayers)
+        const newPlayers = [...props.players]
+        newPlayers[nextPlayerIndex] = props.players[playerIndex]
+        newPlayers[playerIndex] = props.players[nextPlayerIndex]
+        props.onPlayersChange(newPlayers)
         setLineup({})
     }
     const movePlayerDown = (player: number) => {
         const playerIndex = player - 1
         const prevPlayerIndex = player
-        if (playerIndex === players.length - 1) {
+        if (playerIndex === props.players.length - 1) {
             return
         }
-        const newPlayers = [...players]
-        newPlayers[prevPlayerIndex] = players[playerIndex]
-        newPlayers[playerIndex] = players[prevPlayerIndex]
-        setPlayers(newPlayers)
+        const newPlayers = [...props.players]
+        newPlayers[prevPlayerIndex] = props.players[playerIndex]
+        newPlayers[playerIndex] = props.players[prevPlayerIndex]
+        props.onPlayersChange(newPlayers)
         setLineup({})
     }
     if (!props.show) {
@@ -78,7 +73,7 @@ export const Players: React.FC<{
             <CustomDivider>Spielereingabe</CustomDivider>
             <form
                 onSubmit={(event) => {
-                    setPlayers([...players, {name: inputText}])
+                    props.onPlayersChange([...props.players, {name: inputText}])
                     event.preventDefault();
                 }}
                 style={{marginBottom: '10px'}}
@@ -93,7 +88,7 @@ export const Players: React.FC<{
             </form>
             <CustomDivider>Spielerliste</CustomDivider>
             <Grid container rowSpacing={3} direction={"column"}>
-                {players.map((entry, index) =>
+                {props.players.map((entry, index) =>
                     <>
                         <CustomDivider></CustomDivider>
                         <Grid container item key={entry.name} direction={"row"} justifyContent={"flex-start"}
@@ -112,7 +107,7 @@ export const Players: React.FC<{
                                 <Button
                                     variant="contained"
                                     onClick={() => {
-                                        setPlayers(_.without(players, entry))
+                                        props.onPlayersChange(_.without(props.players, entry))
                                         setLineup(_.omit(lineup, [index + 1]))
                                     }}> <DeleteIcon/> </Button>
                             </Grid>
