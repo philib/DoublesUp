@@ -1,6 +1,5 @@
 import {Player} from "@/app/page";
-import {Input} from "@mui/joy";
-import {Button, Checkbox, Grid} from "@mui/material";
+import {Button, Checkbox, Grid, Input} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import _ from "lodash";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -79,6 +78,7 @@ export const Players: React.FC<{
                 style={{marginBottom: '10px'}}
             >
                 <Input
+                    style={{width: '100%'}}
                     placeholder="Neue Spieler hinzufügen"
                     required
                     onChange={(t) => setInputText(t.target.value)}
