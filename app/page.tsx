@@ -1,11 +1,10 @@
 'use client'
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import _ from "lodash";
-import {BottomNavigation, BottomNavigationAction, Chip, createTheme, Grid, IconButton} from "@mui/material";
+import {BottomNavigation, BottomNavigationAction, Chip, Grid, IconButton} from "@mui/material";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import FavoriteIcon from '@mui/icons-material/FavoriteSharp';
-import RestoreIcon from '@mui/icons-material/RestoreSharp';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import {CustomDivider} from "@/app/customDivider";
@@ -27,19 +26,23 @@ export interface Player {
 }
 
 function useStateWithLocalStorage<T>(key: string, def: T): [T, (_: T) => void] {
-    const item = localStorage.getItem(key)
-    let initial;
-    if (item !== null) {
-        initial = JSON.parse(item)
-    } else {
-        initial = def
+    const [state, setState] = useState(() => {
+        try {
+            const value = window.localStorage.getItem(key)
+            return value ? JSON.parse(value) : def
+        } catch (error) {
+            return def
+        }
+    })
+    const setValue = (value:T) => {
+        try {
+            window.localStorage.setItem(key, JSON.stringify(value))
+            setState(value)
+        } catch (error) {
+            setState(value)
+        }
     }
-    const [get, set] = useState<T>(initial)
-    const setter = (t: T) => {
-        set(t)
-        localStorage.setItem(key, JSON.stringify(t))
-    };
-    return [get, setter]
+    return [state, setValue]
 }
 
 

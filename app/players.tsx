@@ -23,7 +23,7 @@ export const Players: React.FC<{
     players: Player[]
     onPlayersChange: (_: Player[]) => void
     onLineupChange: (_: Lineup | undefined) => void
-}> = (props) => {
+}> = ({show, players, onPlayersChange, onLineupChange}) => {
     const [inputText, setInputText] = useState("")
     const [lineup, setLineup] = useState<Record<number, Player>>({})
     const lineupFlat = Object.values(lineup);
@@ -33,11 +33,11 @@ export const Players: React.FC<{
                 ...acc,
                 [currentIndex + 1]: curr
             }), {} as Lineup)
-            props.onLineupChange(newLineUp)
+            onLineupChange(newLineUp)
         } else {
-            props.onLineupChange(undefined)
+            onLineupChange(undefined)
         }
-    }, [lineup])
+    }, [lineup, lineupFlat, onLineupChange])
 
     const movePlayerUp = (player: number) => {
         const playerIndex = player - 1
@@ -45,25 +45,25 @@ export const Players: React.FC<{
         if (playerIndex === 0) {
             return
         }
-        const newPlayers = [...props.players]
-        newPlayers[nextPlayerIndex] = props.players[playerIndex]
-        newPlayers[playerIndex] = props.players[nextPlayerIndex]
-        props.onPlayersChange(newPlayers)
+        const newPlayers = [...players]
+        newPlayers[nextPlayerIndex] = players[playerIndex]
+        newPlayers[playerIndex] = players[nextPlayerIndex]
+        onPlayersChange(newPlayers)
         setLineup({})
     }
     const movePlayerDown = (player: number) => {
         const playerIndex = player - 1
         const prevPlayerIndex = player
-        if (playerIndex === props.players.length - 1) {
+        if (playerIndex === players.length - 1) {
             return
         }
-        const newPlayers = [...props.players]
-        newPlayers[prevPlayerIndex] = props.players[playerIndex]
-        newPlayers[playerIndex] = props.players[prevPlayerIndex]
-        props.onPlayersChange(newPlayers)
+        const newPlayers = [...players]
+        newPlayers[prevPlayerIndex] = players[playerIndex]
+        newPlayers[playerIndex] = players[prevPlayerIndex]
+        onPlayersChange(newPlayers)
         setLineup({})
     }
-    if (!props.show) {
+    if (!show) {
         return <></>
     }
 
@@ -72,7 +72,7 @@ export const Players: React.FC<{
             <CustomDivider>Spielereingabe</CustomDivider>
             <form
                 onSubmit={(event) => {
-                    props.onPlayersChange([...props.players, {name: inputText}])
+                    onPlayersChange([...players, {name: inputText}])
                     event.preventDefault();
                 }}
                 style={{marginBottom: '10px'}}
@@ -88,7 +88,7 @@ export const Players: React.FC<{
             </form>
             <CustomDivider>Spielerliste</CustomDivider>
             <Grid container rowSpacing={3} direction={"column"}>
-                {props.players.map((entry, index) =>
+                {players.map((entry, index) =>
                     <>
                         <CustomDivider></CustomDivider>
                         <Grid container item key={entry.name} direction={"row"} justifyContent={"flex-start"}
@@ -107,7 +107,7 @@ export const Players: React.FC<{
                                 <Button
                                     variant="contained"
                                     onClick={() => {
-                                        props.onPlayersChange(_.without(props.players, entry))
+                                        onPlayersChange(_.without(players, entry))
                                         setLineup(_.omit(lineup, [index + 1]))
                                     }}> <DeleteIcon/> </Button>
                             </Grid>
