@@ -2,11 +2,12 @@ import {CustomDivider} from "@/app/customDivider";
 import {Card, CardContent, CardHeader, Grid, IconButton, Paper} from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-import {DoublesPairing} from "@/app/page";
+import {DoublesPairing, Player} from "@/app/page";
 import _ from "lodash";
 import React from "react";
 
 export const Favorites: React.FC<{
+    allPlayers: Player[],
     lineupFavorites: DoublesPairing[][],
     toggleFavorite: (_: DoublesPairing[]) => void,
     isFavorite: (_: DoublesPairing[]) => boolean,
@@ -27,12 +28,9 @@ export const Favorites: React.FC<{
         }
     }, {} as Record<string, DoublesPairing[][]>)
 
-    const allPlayers = _.uniqBy(Object.keys(groups).flatMap(stringifiedPlayers => JSON.parse(stringifiedPlayers) as string[]), (p)=>p)
-
-
     const getWithoutTitle = (pairings: DoublesPairing[][]): string => {
         const groupPlayers = _.uniqBy(pairings.flatMap(pairing => pairing.flatMap(pair => [pair.player1.name, pair.player2.name])), (p) => p)
-        const missingPlayers = _.without(allPlayers,...groupPlayers);
+        const missingPlayers = _.without(props.allPlayers.map(player=> player.name),...groupPlayers);
         if(missingPlayers.length === 0){
             return `Alle Spieler`
         }

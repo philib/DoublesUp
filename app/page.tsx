@@ -205,7 +205,8 @@ export default function Home() {
                 </>
                 }
                 {
-                    bottomNavigationValue === 2 && <Favorites lineupFavorites={lineupFavorites} isFavorite={isFavorite}
+                    bottomNavigationValue === 2 && <Favorites allPlayers={players}
+                                                              lineupFavorites={lineupFavorites} isFavorite={isFavorite}
                                                               toggleFavorite={toggleFavorite}
                                                               renderDoublesPairingText={renderDoublesPairingText}/>
                 }
