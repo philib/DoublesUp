@@ -220,7 +220,7 @@ export default function Home() {
                     }}
                 >
                     <BottomNavigationAction label="Aufstellung" icon={<AccountCircleIcon/>}/>
-                    <BottomNavigationAction label="Doppelvarianten" icon={<SportsTennisIcon/>}/>
+                    {lineup && <BottomNavigationAction label="Doppelvarianten" icon={<SportsTennisIcon/>}/>}
                     <BottomNavigationAction label="Favoriten" icon={<FavoriteIcon/>}/>
                 </BottomNavigation>
             </footer>
