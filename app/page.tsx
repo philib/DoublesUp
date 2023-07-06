@@ -10,13 +10,14 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import {CustomDivider} from "@/app/customDivider";
 import {Lineup, Players} from "@/app/players";
+import {Favorites} from "@/app/favorites";
 
 export interface LinedUpPlayer {
     lineupPosition: number,
     name: string
 }
 
-interface DoublesPairing {
+export interface DoublesPairing {
     player1: LinedUpPlayer
     player2: LinedUpPlayer
 }
@@ -204,45 +205,9 @@ export default function Home() {
                 </>
                 }
                 {
-                    bottomNavigationValue === 2 && <>
-                        <CustomDivider>Favoriten</CustomDivider>
-                        {lineupFavorites.map((lineupVariation, index) =>
-                            <Grid item container key={index} direction={"column"} rowSpacing={1}>
-                                <Grid item>
-                                    <CustomDivider>
-                                        Variante {index + 1}
-                                    </CustomDivider>
-                                </Grid>
-                                <Grid item>
-                                    <Grid item container direction={"row"} spacing={2} alignItems={"center"}>
-                                        <Grid item>
-                                            {isFavorite(lineupVariation) ?
-                                                (<IconButton aria-label="star" onClick={() => {
-                                                    toggleFavorite(lineupVariation)
-                                                }}>
-                                                    <StarIcon color={"primary"}/>
-                                                </IconButton>) :
-                                                (<IconButton aria-label="unstar" onClick={() => {
-                                                    toggleFavorite(lineupVariation)
-                                                }}>
-                                                    <StarBorderIcon color={"primary"}/>
-                                                </IconButton>)
-                                            }
-                                        </Grid>
-                                        <Grid item>
-                                            <Grid item container direction={"column"}>
-                                                {lineupVariation.map((doublesPairing, index) =>
-                                                    <Grid item key={index}>
-                                                        {renderDoublesPairingText(doublesPairing)}
-                                                    </Grid>
-                                                )}
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        )}
-                    </>
+                    bottomNavigationValue === 2 && <Favorites lineupFavorites={lineupFavorites} isFavorite={isFavorite}
+                                                              toggleFavorite={toggleFavorite}
+                                                              renderDoublesPairingText={renderDoublesPairingText}/>
                 }
             </div>
             <footer>
