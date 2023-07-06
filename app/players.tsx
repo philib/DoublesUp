@@ -73,6 +73,7 @@ export const Players: React.FC<{
             <form
                 onSubmit={(event) => {
                     onPlayersChange([...players, {name: inputText}])
+                    setInputText('')
                     event.preventDefault();
                 }}
                 style={{marginBottom: '10px'}}
@@ -80,6 +81,7 @@ export const Players: React.FC<{
                 <Input
                     style={{width: '100%'}}
                     placeholder="Neue Spieler hinzufügen"
+                    value={inputText}
                     required
                     onChange={(t) => setInputText(t.target.value)}
                     sx={{mb: 1, fontSize: 'var(--joy-fontSize-sm)'}}

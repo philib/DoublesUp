@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import _ from "lodash";
 import {BottomNavigation, BottomNavigationAction, Chip, Grid, IconButton} from "@mui/material";
 import StarIcon from '@mui/icons-material/Star';
