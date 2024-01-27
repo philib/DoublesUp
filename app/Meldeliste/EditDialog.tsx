@@ -17,6 +17,7 @@ interface EditDialogProps {
         name: string;
         onChange: (player: MeldelistePlayer) => void;
         onAbort: () => void;
+        onDelete: () => void;
       }
     | undefined;
 }
@@ -71,6 +72,7 @@ export const EditDialog: React.FunctionComponent<EditDialogProps> = (props) => {
         >
           Ändern
         </Button>
+        <Button onClick={() => props.info?.onDelete()}>Löschen</Button>
       </DialogActions>
     </Dialog>
   );

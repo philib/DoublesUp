@@ -87,6 +87,18 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
                       setEditDialogOpen({ open: false });
                     },
                     onAbort: () => setEditDialogOpen({ open: false }),
+                    onDelete: () => {
+                      setPlayers(
+                        players.filter(
+                          (p) =>
+                            !(
+                              p.rank === editDialogOpen.player.rank &&
+                              p.name === editDialogOpen.player.name
+                            )
+                        )
+                      );
+                      setEditDialogOpen({ open: false });
+                    },
                   }
                 : undefined
             }
