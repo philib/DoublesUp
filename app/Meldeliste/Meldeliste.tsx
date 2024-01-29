@@ -15,14 +15,19 @@ import {
 } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import { EditDialog } from './EditDialog';
+import { PlayerId } from '../RegistrationList';
 
 export interface MeldelistePlayer {
+  id: PlayerId;
   rank: number;
   name: string;
 }
 
 interface MeldelisteProps {
-  initialPlayers: MeldelistePlayer[];
+  players: MeldelistePlayer[];
+  addPlayer: (player: { name: string; rank: number }) => void;
+  editPlayer: (player: MeldelistePlayer) => 'ERROR' | 'SUCCESS';
+  deletePlayer: (id: PlayerId) => void;
   onPlayerListModified: (players: MeldelistePlayer[]) => void;
 }
 
@@ -30,19 +35,20 @@ type EditDialogState =
   | { open: false }
   | {
       open: true;
-      player: { rank: number; name: string };
+      player: { id: PlayerId; rank: number; name: string };
     };
 
 export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
-  initialPlayers,
+  players,
+  addPlayer,
+  editPlayer,
+  deletePlayer,
   onPlayerListModified,
 }) => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editDialogOpen, setEditDialogOpen] = React.useState<EditDialogState>({
     open: false,
   });
-  const [players, setPlayers] =
-    React.useState<MeldelistePlayer[]>(initialPlayers);
   const newPlayerNameRef = useRef<HTMLInputElement>(null);
   const newPlayerRankRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -63,40 +69,15 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
                     name: editDialogOpen.player.name,
                     rank: editDialogOpen.player.rank,
                     onChange: (newPlayer: MeldelistePlayer) => {
-                      const newPlayers = players.map((p) => {
-                        if (
-                          p.rank === editDialogOpen.player.rank &&
-                          p.name === editDialogOpen.player.name
-                        ) {
-                          return newPlayer;
-                        } else {
-                          return p;
-                        }
-                      });
-                      const newRankIsNotUnique =
-                        new Set(newPlayers.map((p) => p.rank)).size !=
-                        players.length;
-                      const newNameIsNotUnique =
-                        new Set(newPlayers.map((p) => p.name)).size !=
-                        players.length;
-                      if (newRankIsNotUnique || newNameIsNotUnique) {
+                      if (editPlayer(newPlayer) === 'ERROR') {
                         return;
                       }
-                      setPlayers(newPlayers);
 
                       setEditDialogOpen({ open: false });
                     },
                     onAbort: () => setEditDialogOpen({ open: false }),
                     onDelete: () => {
-                      setPlayers(
-                        players.filter(
-                          (p) =>
-                            !(
-                              p.rank === editDialogOpen.player.rank &&
-                              p.name === editDialogOpen.player.name
-                            )
-                        )
-                      );
+                      deletePlayer(editDialogOpen.player.id);
                       setEditDialogOpen({ open: false });
                     },
                   }
@@ -173,15 +154,10 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
                   const rank = Number(newPlayerRankRef.current.value);
                   if (rank == 0) return;
 
-                  if (players.find((p) => p.rank === rank) != null) return;
-
-                  setPlayers([
-                    ...players,
-                    {
-                      rank: rank,
-                      name: newPlayerNameRef.current.value,
-                    },
-                  ]);
+                  addPlayer({
+                    rank,
+                    name: newPlayerNameRef.current.value,
+                  });
                   newPlayerNameRef.current.value = '';
                   newPlayerRankRef.current.value = '';
                 }}
