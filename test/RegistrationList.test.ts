@@ -89,4 +89,18 @@ describe('remove player', () => {
       });
     });
   });
+
+  describe('edit player', () => {
+    test('edit name', () => {
+      const player1 = createPlayer('Player 1');
+      const registrationList = createValidRegistrationList({ 1: player1 });
+      const result = registrationList.editPlayer({
+        id: player1.id,
+        name: 'Player 2',
+      });
+      expect(result.getList()).toEqual({
+        1: { id: player1.id, name: 'Player 2' },
+      });
+    });
+  });
 });

@@ -23,4 +23,10 @@ export class RegistrationListService {
     this.repository.save(result);
     return result;
   }
+  editPlayer(player: Player) {
+    const registrationList = this.repository.get();
+    const result = registrationList.editPlayer(player);
+    this.repository.save(result);
+    return result;
+  }
 }

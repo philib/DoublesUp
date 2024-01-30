@@ -54,7 +54,8 @@ export const Liste = () => {
         deletePlayer={(p) => {
           service.deletePlayer(p);
         }}
-        editPlayer={() => {
+        editPlayer={(p) => {
+          service.editPlayer(p);
           return 'SUCCESS';
         }}
         onPlayerListModified={function (players: MeldelistePlayer[]): void {

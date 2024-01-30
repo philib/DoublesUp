@@ -15,7 +15,7 @@ interface EditDialogProps {
     | {
         rank: number;
         name: string;
-        onChange: (player: MeldelistePlayer) => void;
+        onChange: (player: { rank: number; name: string }) => void;
         onAbort: () => void;
         onDelete: () => void;
       }

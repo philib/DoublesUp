@@ -65,6 +65,17 @@ export class RegistrationList {
     );
     return new RegistrationList(Object.fromEntries(filtered));
   }
+
+  editPlayer(player: Player) {
+    const edited = Object.entries(this.registrationList).map(([key, value]) => {
+      if (value.id.value === player.id.value) {
+        return [key, player];
+      } else {
+        return [key, value];
+      }
+    });
+    return new RegistrationList(Object.fromEntries(edited));
+  }
 }
 
 type RegistrationListCreateError = 'PlayerNotUnique';

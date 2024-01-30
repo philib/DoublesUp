@@ -23,7 +23,8 @@ export const createUseService = (repo: RegistrationListRepository) => () => {
       setPlayers(toMeldeliste(service));
     },
     editPlayer: (player: MeldelistePlayer) => {
-      service;
+      service.editPlayer(player);
+      setPlayers(toMeldeliste(service));
       return 'SUCCESS';
     },
     deletePlayer: (id: PlayerId) => {

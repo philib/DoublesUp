@@ -44,4 +44,23 @@ describe('RegistrationListService', () => {
     //then
     expect(result.getList()).toEqual({});
   });
+  it('edits player', () => {
+    //given
+    const initialList = {
+      1: { id: PlayerId.create('1'), name: 'Test' },
+    };
+    const repository = new RegistrationListRepositoryFake();
+    repository.save(RegistrationList.create(initialList) as RegistrationList);
+    const sut = new RegistrationListService(repository);
+    //when
+    const result = sut.editPlayer({
+      id: PlayerId.create('1'),
+      name: 'Test2',
+      rank: 2,
+    });
+    //then
+    expect(result.getList()).toEqual({
+      2: { id: PlayerId.create('1'), name: 'Test2' },
+    });
+  })
 });

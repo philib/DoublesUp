@@ -68,8 +68,13 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
                 ? {
                     name: editDialogOpen.player.name,
                     rank: editDialogOpen.player.rank,
-                    onChange: (newPlayer: MeldelistePlayer) => {
-                      if (editPlayer(newPlayer) === 'ERROR') {
+                    onChange: (newPlayer: { name: string; rank: number }) => {
+                      if (
+                        editPlayer({
+                          id: editDialogOpen.player.id,
+                          ...newPlayer,
+                        }) === 'ERROR'
+                      ) {
                         return;
                       }
 
