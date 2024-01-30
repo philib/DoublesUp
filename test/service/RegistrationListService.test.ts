@@ -53,14 +53,13 @@ describe('RegistrationListService', () => {
     repository.save(RegistrationList.create(initialList) as RegistrationList);
     const sut = new RegistrationListService(repository);
     //when
-    const result = sut.editPlayer({
-      id: PlayerId.create('1'),
+    const result = sut.editPlayer(PlayerId.create('1'), {
       name: 'Test2',
       rank: 2,
     });
     //then
-    expect(result.getList()).toEqual({
+    expect((result as RegistrationList).getList()).toEqual({
       2: { id: PlayerId.create('1'), name: 'Test2' },
     });
-  })
+  });
 });

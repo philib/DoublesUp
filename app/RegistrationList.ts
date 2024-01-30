@@ -66,10 +66,19 @@ export class RegistrationList {
     return new RegistrationList(Object.fromEntries(filtered));
   }
 
-  editPlayer(player: Player) {
+  editPlayer(
+    id: PlayerId,
+    details: { name: string; rank: number }
+  ): RegistrationList | 'Rank already taken' {
+    if (
+      this.registrationList[details.rank]?.id.value !== id.value &&
+      this.registrationList[details.rank]
+    ) {
+      return 'Rank already taken';
+    }
     const edited = Object.entries(this.registrationList).map(([key, value]) => {
-      if (value.id.value === player.id.value) {
-        return [key, player];
+      if (value.id.value === id.value) {
+        return [String(details.rank), { id, name: details.name }];
       } else {
         return [key, value];
       }

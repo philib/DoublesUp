@@ -94,13 +94,37 @@ describe('remove player', () => {
     test('edit name', () => {
       const player1 = createPlayer('Player 1');
       const registrationList = createValidRegistrationList({ 1: player1 });
-      const result = registrationList.editPlayer({
-        id: player1.id,
+      const result = registrationList.editPlayer(player1.id, {
         name: 'Player 2',
+        rank: 1,
       });
-      expect(result.getList()).toEqual({
+      expect((result as RegistrationList).getList()).toEqual({
         1: { id: player1.id, name: 'Player 2' },
       });
+    });
+    test('edit rank', () => {
+      const player1 = createPlayer('Player 1');
+      const registrationList = createValidRegistrationList({ 1: player1 });
+      const result = registrationList.editPlayer(player1.id, {
+        name: player1.name,
+        rank: 2,
+      });
+      expect((result as RegistrationList).getList()).toEqual({
+        2: { id: player1.id, name: player1.name },
+      });
+    });
+    test('cannot edit rank if rank already taken', () => {
+      const player1 = createPlayer('Player 1');
+      const player2 = createPlayer('Player 2');
+      const registrationList = createValidRegistrationList({
+        1: player1,
+        2: player2,
+      });
+      const result = registrationList.editPlayer(player1.id, {
+        name: player1.name,
+        rank: 2,
+      });
+      expect(result).toEqual('Rank already taken');
     });
   });
 });

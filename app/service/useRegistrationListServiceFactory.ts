@@ -23,9 +23,17 @@ export const createUseService = (repo: RegistrationListRepository) => () => {
       setPlayers(toMeldeliste(service));
     },
     editPlayer: (player: MeldelistePlayer) => {
-      service.editPlayer(player);
-      setPlayers(toMeldeliste(service));
-      return 'SUCCESS';
+      if (
+        service.editPlayer(player.id, {
+          name: player.name,
+          rank: player.rank,
+        }) !== 'Rank already taken'
+      ) {
+        setPlayers(toMeldeliste(service));
+        return 'SUCCESS';
+      } else {
+        return 'ERROR';
+      }
     },
     deletePlayer: (id: PlayerId) => {
       service.removePlayer(id);

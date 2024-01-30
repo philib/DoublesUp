@@ -23,10 +23,17 @@ export class RegistrationListService {
     this.repository.save(result);
     return result;
   }
-  editPlayer(player: Player) {
+  editPlayer(
+    id: PlayerId,
+    details: { name: string; rank: number }
+  ): RegistrationList | 'Rank already taken' {
     const registrationList = this.repository.get();
-    const result = registrationList.editPlayer(player);
-    this.repository.save(result);
-    return result;
+    const result = registrationList.editPlayer(id, details);
+    if (result !== 'Rank already taken') {
+      this.repository.save(result);
+      return result;
+    } else {
+      return 'Rank already taken';
+    }
   }
 }
