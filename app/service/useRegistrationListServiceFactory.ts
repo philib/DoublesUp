@@ -32,7 +32,7 @@ export const createUseService = (repo: RegistrationListRepository) => () => {
         setPlayers(toMeldeliste(service));
         return 'SUCCESS';
       } else {
-        return 'ERROR';
+        return 'Rank already taken';
       }
     },
     deletePlayer: (id: PlayerId) => {

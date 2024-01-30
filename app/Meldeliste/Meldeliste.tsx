@@ -26,7 +26,7 @@ export interface MeldelistePlayer {
 interface MeldelisteProps {
   players: MeldelistePlayer[];
   addPlayer: (player: { name: string; rank: number }) => void;
-  editPlayer: (player: MeldelistePlayer) => 'ERROR' | 'SUCCESS';
+  editPlayer: (player: MeldelistePlayer) => 'Rank already taken' | 'SUCCESS';
   deletePlayer: (id: PlayerId) => void;
   onPlayerListModified: (players: MeldelistePlayer[]) => void;
 }
@@ -73,12 +73,13 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
                         editPlayer({
                           id: editDialogOpen.player.id,
                           ...newPlayer,
-                        }) === 'ERROR'
+                        }) === 'Rank already taken'
                       ) {
-                        return;
+                        return 'Rank already taken';
                       }
 
                       setEditDialogOpen({ open: false });
+                      return null;
                     },
                     onAbort: () => setEditDialogOpen({ open: false }),
                     onDelete: () => {

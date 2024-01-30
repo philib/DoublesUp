@@ -15,7 +15,7 @@ interface EditDialogProps {
     | {
         rank: number;
         name: string;
-        onChange: (player: { rank: number; name: string }) => void;
+        onChange: (player: { rank: number; name: string }) => string | null;
         onAbort: () => void;
         onDelete: () => void;
       }
@@ -25,6 +25,7 @@ interface EditDialogProps {
 export const EditDialog: React.FunctionComponent<EditDialogProps> = (props) => {
   const [name, setName] = useState(props.info?.name);
   const [rank, setRank] = useState(props.info?.rank);
+  const [rankError, setRankError] = useState<null | string>(null);
   useEffect(() => {
     setName(props.info?.name);
   }, [props.info?.name]);
@@ -36,6 +37,8 @@ export const EditDialog: React.FunctionComponent<EditDialogProps> = (props) => {
       <DialogTitle>Spieler bearbeiten</DialogTitle>
       <DialogContent>
         <TextField
+          error={rankError !== null}
+          helperText={rankError}
           required
           margin="dense"
           id="name"
@@ -61,13 +64,24 @@ export const EditDialog: React.FunctionComponent<EditDialogProps> = (props) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.info?.onAbort()}>Abbrechen</Button>
+        <Button
+          onClick={() => {
+            setRankError(null);
+            props.info?.onAbort();
+          }}
+        >
+          Abbrechen
+        </Button>
         <Button
           onClick={() => {
             if (name?.trim() === '') return;
             if (rank == 0) return;
 
-            props.info && rank && name && props.info.onChange({ rank, name });
+            const result =
+              props.info && rank && name
+                ? props.info.onChange({ rank, name })
+                : null;
+            setRankError(result);
           }}
         >
           Ändern
