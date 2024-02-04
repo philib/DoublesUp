@@ -6,16 +6,14 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
   Fab,
   Grid,
-  List,
-  ListItem,
   TextField,
 } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import { EditDialog } from './EditDialog';
 import { PlayerId } from '../RegistrationList';
+import { SortableList } from '../SortableList/SortableList';
 
 export interface MeldelistePlayer {
   id: PlayerId;
@@ -27,6 +25,7 @@ interface MeldelisteProps {
   players: MeldelistePlayer[];
   addPlayer: (player: { name: string; rank: number }) => void;
   editPlayer: (player: MeldelistePlayer) => 'Rank already taken' | 'SUCCESS';
+  sortPlayer: (rankFrom: number, rankTo: number) => void;
   deletePlayer: (id: PlayerId) => void;
   onPlayerListModified: (players: MeldelistePlayer[]) => void;
 }
@@ -42,6 +41,7 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
   players,
   addPlayer,
   editPlayer,
+  sortPlayer,
   deletePlayer,
   onPlayerListModified,
 }) => {
@@ -59,55 +59,52 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
       <Grid item container xs={12} justifyContent={'center'}>
         <Grid item>Meldeliste</Grid>
       </Grid>
-      <Grid item container xs={12}>
-        <List sx={{ width: '100%' }}>
-          <EditDialog
-            open={editDialogOpen.open}
-            info={
-              editDialogOpen.open
-                ? {
-                    name: editDialogOpen.player.name,
-                    rank: editDialogOpen.player.rank,
-                    onChange: (newPlayer: { name: string; rank: number }) => {
-                      if (
-                        editPlayer({
-                          id: editDialogOpen.player.id,
-                          ...newPlayer,
-                        }) === 'Rank already taken'
-                      ) {
-                        return 'Rank already taken';
-                      }
+      <Grid item container xs={12} style={{ height: '300px' }}>
+        <EditDialog
+          open={editDialogOpen.open}
+          info={
+            editDialogOpen.open
+              ? {
+                  name: editDialogOpen.player.name,
+                  rank: editDialogOpen.player.rank,
+                  onChange: (newPlayer: { name: string; rank: number }) => {
+                    if (
+                      editPlayer({
+                        id: editDialogOpen.player.id,
+                        ...newPlayer,
+                      }) === 'Rank already taken'
+                    ) {
+                      return 'Rank already taken';
+                    }
 
-                      setEditDialogOpen({ open: false });
-                      return null;
-                    },
-                    onAbort: () => setEditDialogOpen({ open: false }),
-                    onDelete: () => {
-                      deletePlayer(editDialogOpen.player.id);
-                      setEditDialogOpen({ open: false });
-                    },
-                  }
-                : undefined
-            }
-          />
-          {players
-            .sort((a, b) => a.rank - b.rank)
-            .map((player) => (
-              <>
-                <ListItem
-                  onClick={() =>
-                    setEditDialogOpen({
-                      open: true,
-                      player,
-                    })
-                  }
-                >
-                  <PlayerCard rank={player.rank} name={player.name} />
-                </ListItem>
-                <Divider variant="middle" component="li" />
-              </>
-            ))}
-        </List>
+                    setEditDialogOpen({ open: false });
+                    return null;
+                  },
+                  onAbort: () => setEditDialogOpen({ open: false }),
+                  onDelete: () => {
+                    deletePlayer(editDialogOpen.player.id);
+                    setEditDialogOpen({ open: false });
+                  },
+                }
+              : undefined
+          }
+        />
+        <SortableList
+          cards={players.map((player) => ({
+            id: player.id.value,
+            component: (
+              <div
+                style={{ width: '100%' }}
+                onClick={() => setEditDialogOpen({ open: true, player })}
+              >
+                <PlayerCard rank={player.rank} name={player.name} />
+              </div>
+            ),
+          }))}
+          moveCards={(dragIndex, hoverIndex) => {
+            sortPlayer(dragIndex + 1, hoverIndex + 1);
+          }}
+        />
       </Grid>
       <Grid item container justifyContent="flex-end" alignItems="flex-end">
         <React.Fragment>

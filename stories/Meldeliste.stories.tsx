@@ -1,10 +1,8 @@
 import { Meta } from '@storybook/react';
 import { Meldeliste, MeldelistePlayer } from '../app/Meldeliste/Meldeliste';
 import { PlayerCard } from '../app/Meldeliste/PlayerCard';
-import { Player, PlayerId, RegistrationList } from '../app/RegistrationList';
-import { RegistrationListService } from '../app/service/RegistrationListService';
+import { PlayerId, RegistrationList } from '../app/RegistrationList';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
-import { useState } from 'react';
 import { createUseService } from '../app/service/useRegistrationListServiceFactory';
 
 const meta = {
@@ -34,8 +32,10 @@ class Repo implements RegistrationListRepository {
 
 const repo = new Repo(
   RegistrationList.create({
-    1: { name: 'Max Mustermann', id: PlayerId.create('1') },
-    2: { name: 'Petra Mustermann', id: PlayerId.create('2') },
+    1: { name: 'Player 1', id: PlayerId.create('1') },
+    2: { name: 'Player 2', id: PlayerId.create('2') },
+    5: { name: 'Player 3', id: PlayerId.create('3') },
+    8: { name: 'Player 4', id: PlayerId.create('4') },
   }) as RegistrationList
 );
 
@@ -56,6 +56,9 @@ export const Liste = () => {
         }}
         editPlayer={(p) => {
           return service.editPlayer(p);
+        }}
+        sortPlayer={(rankFrom, rankTo) => {
+          return service.sortPlayer(rankFrom, rankTo);
         }}
         onPlayerListModified={function (players: MeldelistePlayer[]): void {
           console.log(JSON.stringify(players));

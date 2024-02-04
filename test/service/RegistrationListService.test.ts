@@ -62,4 +62,23 @@ describe('RegistrationListService', () => {
       2: { id: PlayerId.create('1'), name: 'Test2' },
     });
   });
+  it('sort player rank', () => {
+    //given
+    const initialList = {
+      1: { id: PlayerId.create('1'), name: 'Test' },
+      2: { id: PlayerId.create('2'), name: 'Test2' },
+      3: { id: PlayerId.create('3'), name: 'Test3' },
+    };
+    const repository = new RegistrationListRepositoryFake();
+    repository.save(RegistrationList.create(initialList) as RegistrationList);
+    const sut = new RegistrationListService(repository);
+    //when
+    const result = sut.sortPlayer(1, 3);
+    //then
+    expect((result as RegistrationList).getList()).toEqual({
+      1: { id: PlayerId.create('2'), name: 'Test2' },
+      2: { id: PlayerId.create('3'), name: 'Test3' },
+      3: { id: PlayerId.create('1'), name: 'Test' },
+    });
+  });
 });

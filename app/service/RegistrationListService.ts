@@ -36,4 +36,10 @@ export class RegistrationListService {
       return 'Rank already taken';
     }
   }
+  sortPlayer(rankFrom: number, rankTo: number) {
+    const registrationList = this.repository.get();
+    const result = registrationList.sortPlayer(rankFrom, rankTo);
+    this.repository.save(result);
+    return result;
+  }
 }

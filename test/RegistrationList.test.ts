@@ -126,5 +126,21 @@ describe('remove player', () => {
       });
       expect(result).toEqual('Rank already taken');
     });
+    test('sort player rank', () => {
+      const player1 = createPlayer('Player 1');
+      const player2 = createPlayer('Player 2');
+      const player3 = createPlayer('Player 3');
+      const registrationList = createValidRegistrationList({
+        1: player1,
+        2: player2,
+        4: player3,
+      });
+      const result = registrationList.sortPlayer(1, 3);
+      expect((result as RegistrationList).getList()).toEqual({
+        1: { id: player2.id, name: player2.name },
+        2: { id: player3.id, name: player3.name },
+        4: { id: player1.id, name: player1.name },
+      });
+    });
   });
 });

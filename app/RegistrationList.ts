@@ -1,3 +1,4 @@
+import update from 'immutability-helper';
 export class PlayerId {
   value: string;
   public static create(id: string): PlayerId {
@@ -84,6 +85,20 @@ export class RegistrationList {
       }
     });
     return new RegistrationList(Object.fromEntries(edited));
+  }
+
+  sortPlayer(rankFrom: number, rankTo: number): RegistrationList {
+    const current = Object.entries(this.registrationList);
+    const indexToRank = Object.fromEntries(
+      current.map(([rank], index) => [index, rank])
+    );
+    const next = update(current, {
+      $splice: [
+        [rankFrom - 1, 1],
+        [rankTo - 1, 0, current[rankFrom - 1]],
+      ],
+    }).map(([_, value], index) => [indexToRank[index], value]);
+    return new RegistrationList(Object.fromEntries(next));
   }
 }
 

@@ -1,6 +1,12 @@
-import { Divider } from '@mui/material';
+import { ReactJSXIntrinsicAttributes } from '@emotion/react/types/jsx-namespace';
+import { Divider, List, ListItem } from '@mui/material';
 import type { Identifier, XYCoord } from 'dnd-core';
-import React, { useCallback, useRef } from 'react';
+import React, {
+  HTMLAttributes,
+  ReactComponentElement,
+  useCallback,
+  useRef,
+} from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 const style = {
@@ -13,7 +19,7 @@ const ItemTypes = {
   CARD: 'card',
 };
 export interface SortableListProps {
-  cards: React.ReactElement<{ id: number }>[];
+  cards: { id: any; component: React.ReactElement }[];
   moveCards: (dragIndex: number, hoverIndex: number) => void;
 }
 
@@ -121,17 +127,12 @@ export const SortableList: React.FunctionComponent<SortableListProps> = ({
   moveCards,
 }) => {
   const renderCard = useCallback(
-    (card: React.ReactElement<{ id: number }>, index: number) => {
+    (card: React.ReactElement, id: number, index: number) => {
       return (
-        <Card
-          key={card.props.id}
-          moveCard={moveCards}
-          id={card.props.id}
-          index={index}
-        >
+        <Card key={id} moveCard={moveCards} id={id} index={index}>
           <>
-            {card}
-            <Divider />
+            <ListItem sx={{ width: '100%' }}>{card}</ListItem>
+            <Divider variant="middle" component="li" />
           </>
         </Card>
       );
@@ -141,7 +142,11 @@ export const SortableList: React.FunctionComponent<SortableListProps> = ({
   return (
     <>
       <DndProvider backend={HTML5Backend}>
-        {cards.map((card, index) => renderCard(card, index))}
+        <List sx={{ width: '100%' }}>
+          {cards.map((card, index) =>
+            renderCard(card.component, card.id, index)
+          )}
+        </List>
       </DndProvider>
     </>
   );

@@ -39,5 +39,9 @@ export const createUseService = (repo: RegistrationListRepository) => () => {
       service.removePlayer(id);
       setPlayers(toMeldeliste(service));
     },
+    sortPlayer: (rankFrom: number, rankTo: number) => {
+      service.sortPlayer(rankFrom, rankTo);
+      setPlayers(toMeldeliste(service));
+    },
   };
 };

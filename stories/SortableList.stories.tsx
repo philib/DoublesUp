@@ -74,9 +74,10 @@ export const Default = () => {
 
   return (
     <SortableList
-      cards={cards.map((card) => {
-        return <SomeCard id={card.id} text={card.text} />;
-      })}
+      cards={cards.map((card) => ({
+        component: <SomeCard id={card.id} text={card.text} />,
+        id: card.id,
+      }))}
       moveCards={moveCardWithUseCallback}
     />
   );
