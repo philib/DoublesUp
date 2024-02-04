@@ -1,14 +1,18 @@
-import { ReactJSXIntrinsicAttributes } from '@emotion/react/types/jsx-namespace';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DraggingStyle,
+  NotDraggingStyle,
+} from 'react-beautiful-dnd';
 import { Divider, List, ListItem } from '@mui/material';
-import type { Identifier, XYCoord } from 'dnd-core';
 import React, {
+  CSSProperties,
   HTMLAttributes,
   ReactComponentElement,
   useCallback,
   useRef,
 } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 const style = {
   cursor: 'move',
   //   padding: '0.5rem 1rem',
@@ -36,89 +40,38 @@ interface DragItem {
   type: string;
 }
 
-const Card: React.FunctionComponent<CardProps> = ({
-  id,
-  index,
-  moveCard,
-  children,
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [{ handlerId }, drop] = useDrop<
-    DragItem,
-    void,
-    { handlerId: Identifier | null }
-  >({
-    accept: ItemTypes.CARD,
-    collect(monitor) {
-      return {
-        handlerId: monitor.getHandlerId(),
-      };
-    },
-    hover(item: DragItem, monitor) {
-      if (!ref.current) {
-        return;
-      }
-      const dragIndex = item.index;
-      const hoverIndex = index;
+const Card: React.FunctionComponent<CardProps> = ({ id, index, children }) => {
+  const getItemStyle = (
+    isDragging: boolean,
+    draggableStyle: DraggingStyle | NotDraggingStyle | undefined
+  ): CSSProperties => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: 'none',
+    padding: 2,
+    margin: `0 0 2px 0`,
 
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
+    // change background colour if dragging
+    background: isDragging ? 'lightgreen' : 'grey',
 
-      // Determine rectangle on screen
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-
-      // Get vertical middle
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-
-      // Get pixels to the top
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-
-      // Time to actually perform the action
-      moveCard(dragIndex, hoverIndex);
-
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      item.index = hoverIndex;
-    },
+    // styles we need to apply on draggables
+    ...draggableStyle,
   });
-  const [{ isDragging }, drag] = useDrag({
-    type: ItemTypes.CARD,
-    item: () => {
-      return { id, index };
-    },
-    collect: (monitor: any) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  const opacity = isDragging ? 0 : 1;
-  drag(drop(ref));
   return (
-    <div ref={ref} style={{ ...style, opacity }} data-handler-id={handlerId}>
-      {children}
-    </div>
+    <Draggable key={id} draggableId={id.toString()} index={index}>
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={getItemStyle(
+            snapshot.isDragging,
+            provided.draggableProps.style
+          )}
+        >
+          {children}
+        </div>
+      )}
+    </Draggable>
   );
 };
 
@@ -126,6 +79,13 @@ export const SortableList: React.FunctionComponent<SortableListProps> = ({
   cards,
   moveCards,
 }) => {
+  const onDragEnd = (result: any) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+    moveCards(result.source.index, result.destination.index);
+  };
   const renderCard = useCallback(
     (card: React.ReactElement, id: number, index: number) => {
       return (
@@ -141,13 +101,23 @@ export const SortableList: React.FunctionComponent<SortableListProps> = ({
   );
   return (
     <>
-      <DndProvider backend={HTML5Backend}>
-        <List sx={{ width: '100%' }}>
-          {cards.map((card, index) =>
-            renderCard(card.component, card.id, index)
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              style={{}}
+            >
+              <List sx={{ width: '100%' }}>
+                {cards.map((card, index) =>
+                  renderCard(card.component, card.id, index)
+                )}
+              </List>
+            </div>
           )}
-        </List>
-      </DndProvider>
+        </Droppable>
+      </DragDropContext>
     </>
   );
 };
