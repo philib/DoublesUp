@@ -6,22 +6,9 @@ import {
   NotDraggingStyle,
 } from 'react-beautiful-dnd';
 import { Divider, List, ListItem } from '@mui/material';
-import React, {
-  CSSProperties,
-  HTMLAttributes,
-  ReactComponentElement,
-  useCallback,
-  useRef,
-} from 'react';
-const style = {
-  cursor: 'move',
-  //   padding: '0.5rem 1rem',
-  //   marginBottom: '.5rem',
-  //   backgroundColor: 'white',
-};
-const ItemTypes = {
-  CARD: 'card',
-};
+import React, { CSSProperties } from 'react';
+import DragHandleIcon from '@mui/icons-material/DragHandle';
+
 export interface SortableListProps {
   cards: { id: any; component: React.ReactElement }[];
   moveCards: (dragIndex: number, hoverIndex: number) => void;
@@ -29,15 +16,9 @@ export interface SortableListProps {
 
 interface CardProps {
   id: any;
-  children: React.ReactElement;
+  children: React.ReactElement[] | React.ReactElement;
   index: number;
   moveCard: (dragIndex: number, hoverIndex: number) => void;
-}
-
-interface DragItem {
-  index: number;
-  id: number;
-  type: string;
 }
 
 const Card: React.FunctionComponent<CardProps> = ({ id, index, children }) => {
@@ -51,26 +32,41 @@ const Card: React.FunctionComponent<CardProps> = ({ id, index, children }) => {
     margin: `0 0 2px 0`,
 
     // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'grey',
+    background: isDragging ? 'lightgreen' : undefined,
 
     // styles we need to apply on draggables
     ...draggableStyle,
   });
   return (
     <Draggable key={id} draggableId={id.toString()} index={index}>
-      {(provided, snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          style={getItemStyle(
-            snapshot.isDragging,
-            provided.draggableProps.style
-          )}
-        >
-          {children}
-        </div>
-      )}
+      {(provided, snapshot) => {
+        return (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            style={{
+              ...getItemStyle(
+                snapshot.isDragging,
+                provided.draggableProps.style
+              ),
+              display: 'flex',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                paddingLeft: '10px',
+                paddingRight: '30px',
+              }}
+              {...provided.dragHandleProps}
+            >
+              <DragHandleIcon />
+            </div>
+            {children}
+          </div>
+        );
+      }}
     </Draggable>
   );
 };
@@ -79,45 +75,43 @@ export const SortableList: React.FunctionComponent<SortableListProps> = ({
   cards,
   moveCards,
 }) => {
-  const onDragEnd = (result: any) => {
-    // dropped outside the list
-    if (!result.destination) {
-      return;
-    }
-    moveCards(result.source.index, result.destination.index);
-  };
-  const renderCard = useCallback(
-    (card: React.ReactElement, id: number, index: number) => {
-      return (
-        <Card key={id} moveCard={moveCards} id={id} index={index}>
-          <>
-            <ListItem sx={{ width: '100%' }}>{card}</ListItem>
-            <Divider variant="middle" component="li" />
-          </>
-        </Card>
-      );
-    },
-    []
+  const [previousPosition, setPreviousPosition] = React.useState<number | null>(
+    null
   );
+  const onDragEnd = () => {
+    setPreviousPosition(null);
+  };
+  const onDragUpdate = (update: any) => {
+    const newPosition = update.destination.index;
+    moveCards(previousPosition ?? update.source.index, newPosition);
+    setPreviousPosition(newPosition);
+  };
+  const renderCard = (card: React.ReactElement, id: number, index: number) => {
+    return (
+      <Card key={id} moveCard={moveCards} id={id} index={index}>
+        <ListItem sx={{ width: '100%' }}>{card}</ListItem>
+        <Divider variant="middle" component="li" />
+      </Card>
+    );
+  };
   return (
-    <>
-      <DragDropContext onDragEnd={onDragEnd}>
+    <div style={{ width: '100%' }}>
+      <DragDropContext onDragUpdate={onDragUpdate} onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={{}}
-            >
-              <List sx={{ width: '100%' }}>
-                {cards.map((card, index) =>
-                  renderCard(card.component, card.id, index)
-                )}
-              </List>
-            </div>
-          )}
+          {(provided, snapshot) => {
+            return (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                <List sx={{ width: '100%' }}>
+                  {cards.map((card, index) =>
+                    renderCard(card.component, card.id, index)
+                  )}
+                </List>
+                {provided.placeholder}
+              </div>
+            );
+          }}
         </Droppable>
       </DragDropContext>
-    </>
+    </div>
   );
 };
