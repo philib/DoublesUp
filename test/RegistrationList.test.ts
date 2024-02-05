@@ -142,5 +142,17 @@ describe('remove player', () => {
         4: { id: player1.id, name: player1.name },
       });
     });
+    test('get player by id', () => {
+      const player1 = createPlayer('Player 1');
+      const player2 = createPlayer('Player 2');
+      const player3 = createPlayer('Player 3');
+      const registrationList = createValidRegistrationList({
+        1: player1,
+        2: player2,
+        3: player3,
+      });
+      const result = registrationList.getPlayerById(player2.id);
+      expect(result).toEqual(player2);
+    });
   });
 });

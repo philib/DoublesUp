@@ -42,4 +42,8 @@ export class RegistrationListService {
     this.repository.save(result);
     return result;
   }
+  getPlayerById(id: PlayerId) {
+    const registrationList = this.repository.get();
+    return registrationList.getPlayerById(id);
+  }
 }

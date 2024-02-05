@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { MeldelistePlayer } from '../Meldeliste/Meldeliste';
-import { PlayerId } from '../RegistrationList';
+import { Player, PlayerId } from '../RegistrationList';
 import { RegistrationListService } from './RegistrationListService';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
 
@@ -42,6 +42,9 @@ export const createUseService = (repo: RegistrationListRepository) => () => {
     sortPlayer: (rankFrom: number, rankTo: number) => {
       service.sortPlayer(rankFrom, rankTo);
       setPlayers(toMeldeliste(service));
+    },
+    getPlayerById: (id: PlayerId): Player | undefined => {
+      return service.getPlayerById(id);
     },
   };
 };

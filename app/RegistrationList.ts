@@ -100,6 +100,12 @@ export class RegistrationList {
     }).map(([_, value], index) => [indexToRank[index], value]);
     return new RegistrationList(Object.fromEntries(next));
   }
+
+  getPlayerById(id: PlayerId): Player | undefined {
+    return Object.values(this.registrationList).find(
+      (p) => p.id.value === id.value
+    );
+  }
 }
 
 type RegistrationListCreateError = 'PlayerNotUnique';
