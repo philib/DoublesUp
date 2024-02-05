@@ -4,6 +4,7 @@ import { PlayerCard } from '../app/Meldeliste/PlayerCard';
 import { PlayerId, RegistrationList } from '../app/RegistrationList';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
 import { createUseService } from '../app/service/useRegistrationListServiceFactory';
+import { createFakeUseService } from './useFakeService';
 
 const meta = {
   title: 'Meldeliste',
@@ -30,16 +31,7 @@ class Repo implements RegistrationListRepository {
   }
 }
 
-const repo = new Repo(
-  RegistrationList.create({
-    1: { name: 'Player 1', id: PlayerId.create('1') },
-    2: { name: 'Player 2', id: PlayerId.create('2') },
-    5: { name: 'Player 3', id: PlayerId.create('3') },
-    8: { name: 'Player 4', id: PlayerId.create('4') },
-  }) as RegistrationList
-);
-
-const useService = createUseService(repo);
+const useService = createFakeUseService(10);
 
 export const Liste = () => {
   const service = useService();
