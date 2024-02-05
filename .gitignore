@@ -36,3 +36,5 @@ next-env.d.ts
 
 # jetbrains
 .idea/
+
+.yarn/install-state.gz
