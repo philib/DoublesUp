@@ -5,6 +5,7 @@ import { PlayerId, RegistrationList } from '../app/RegistrationList';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
 import { createUseService } from '../app/service/useRegistrationListServiceFactory';
 import { createFakeUseService } from './useFakeService';
+import React from 'react';
 
 const meta = {
   title: 'Meldeliste',
@@ -35,6 +36,9 @@ const useService = createFakeUseService(10);
 
 export const Liste = () => {
   const service = useService();
+  const [playerSelection, setPlayerSelection] = React.useState<{
+    [id: string]: boolean;
+  }>({});
 
   return (
     <div style={{ height: '500px', width: '400px', backgroundColor: 'yellow' }}>
@@ -54,6 +58,15 @@ export const Liste = () => {
         }}
         onPlayerListModified={function (players: MeldelistePlayer[]): void {
           console.log(JSON.stringify(players));
+        }}
+        selectPlayer={(id: PlayerId) => {
+          setPlayerSelection({ ...playerSelection, [id.value]: true });
+        }}
+        deselectPlayer={(id: PlayerId) => {
+          setPlayerSelection({ ...playerSelection, [id.value]: false });
+        }}
+        isPlayerSelected={(id: PlayerId) => {
+          return playerSelection[id.value] ?? false;
         }}
       />
     </div>

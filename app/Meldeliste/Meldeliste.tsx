@@ -10,10 +10,11 @@ import {
   Grid,
   TextField,
 } from '@mui/material';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { EditDialog } from './EditDialog';
 import { PlayerId } from '../RegistrationList';
 import { SortableList } from '../SortableList/SortableList';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 export interface MeldelistePlayer {
   id: PlayerId;
@@ -28,6 +29,9 @@ interface MeldelisteProps {
   sortPlayer: (rankFrom: number, rankTo: number) => void;
   deletePlayer: (id: PlayerId) => void;
   onPlayerListModified: (players: MeldelistePlayer[]) => void;
+  selectPlayer: (id: PlayerId) => void;
+  deselectPlayer: (id: PlayerId) => void;
+  isPlayerSelected: (id: PlayerId) => boolean;
 }
 
 type EditDialogState =
@@ -37,6 +41,30 @@ type EditDialogState =
       player: { id: PlayerId; rank: number; name: string };
     };
 
+const SortableListElement: React.FunctionComponent<{
+  player: { name: string; rank: number };
+  isPlayerSelected: boolean;
+  onPlayerCardClicked: () => void;
+  onSelectClicked: (active: boolean) => void;
+}> = ({ player, isPlayerSelected, onPlayerCardClicked, onSelectClicked }) => {
+  return (
+    <div style={{ display: 'flex', width: '100%' }}>
+      <div style={{ width: '100%', flexGrow: 2 }} onClick={onPlayerCardClicked}>
+        <PlayerCard rank={player.rank} name={player.name} />
+      </div>
+      <AddCircleOutlineIcon
+        onClick={() => {
+          onSelectClicked(!isPlayerSelected);
+        }}
+        style={{
+          flexGrow: 1,
+          color: isPlayerSelected ? 'green' : 'black',
+        }}
+      />
+    </div>
+  );
+};
+
 export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
   players,
   addPlayer,
@@ -44,6 +72,9 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
   sortPlayer,
   deletePlayer,
   onPlayerListModified,
+  selectPlayer,
+  deselectPlayer,
+  isPlayerSelected,
 }) => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editDialogOpen, setEditDialogOpen] = React.useState<EditDialogState>({
@@ -93,12 +124,20 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
           cards={players.map((player) => ({
             id: player.id.value,
             component: (
-              <div
-                style={{ width: '100%' }}
-                onClick={() => setEditDialogOpen({ open: true, player })}
-              >
-                <PlayerCard rank={player.rank} name={player.name} />
-              </div>
+              <SortableListElement
+                player={player}
+                isPlayerSelected={isPlayerSelected(player.id)}
+                onSelectClicked={(active) => {
+                  if (active) {
+                    selectPlayer(player.id);
+                  } else {
+                    deselectPlayer(player.id);
+                  }
+                }}
+                onPlayerCardClicked={() =>
+                  setEditDialogOpen({ open: true, player })
+                }
+              />
             ),
           }))}
           moveCards={(dragIndex, hoverIndex) => {
