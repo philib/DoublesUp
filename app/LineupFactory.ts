@@ -1,3 +1,4 @@
+import _ from 'lodash';
 type DoublesPairing = [
   { position: number; name: string },
   { position: number; name: string }
@@ -17,32 +18,36 @@ export const createLineups = (players: {
   }
 
   const result = generatePermutations(Object.entries(players));
-  return result.map((permutation) => {
-    const activePlayers = permutation.map(([position, name]) => name);
-    const allPossibleLineupVariantions: DoublesPairing[][] =
-      allPossibleLineupVariations.map((variation) => {
-        return variation.flatMap((doublesPairing) => {
-          const a: DoublesPairing = [
-            {
-              position: doublesPairing[0],
-              name: activePlayers[doublesPairing[0] - 1],
-            },
-            {
-              position: doublesPairing[1],
-              name: activePlayers[doublesPairing[1] - 1],
-            },
-          ];
-          return [a];
+  return _.uniqWith(
+    result.map((permutation) => {
+      const activePlayers = permutation.map(([position, name]) => name);
+      const allPossibleLineupVariantions: DoublesPairing[][] =
+        allPossibleLineupVariations.map((variation) => {
+          return variation.flatMap((doublesPairing) => {
+            const a: DoublesPairing = [
+              {
+                position: doublesPairing[0],
+                name: activePlayers[doublesPairing[0] - 1],
+              },
+              {
+                position: doublesPairing[1],
+                name: activePlayers[doublesPairing[1] - 1],
+              },
+            ];
+            return [a];
+          });
         });
-      });
-    return {
-      activePlayers,
-      inactivePlayers: Object.values(players).filter(
+      const inactivePlayers = Object.values(players).filter(
         (p) => !activePlayers.includes(p)
-      ),
-      variations: allPossibleLineupVariantions,
-    };
-  });
+      );
+      return {
+        activePlayers,
+        inactivePlayers,
+        variations: allPossibleLineupVariantions,
+      };
+    }),
+    (a, b) => _.isEqual(a.activePlayers, b.activePlayers)
+  );
 };
 
 const allPossibleLineupVariations = [
