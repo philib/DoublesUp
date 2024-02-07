@@ -1,3 +1,4 @@
+import { Lineup, createLineups } from '../app/LineupFactory';
 import { LineupsComponent } from '../app/Lineups/Lineups';
 import { createFakeUseService } from './useFakeService';
 
@@ -12,99 +13,41 @@ const meta = {
 
 export default meta;
 
-const useFakeService = createFakeUseService(20);
-
 export const Default = () => {
-  const service = useFakeService();
-  const players = service.players.slice(0, 6).map((p) => p.id);
+  const lineups = createLineups({
+    1: 'Player 1',
+    2: 'Player 2',
+    3: 'Player 3',
+    4: 'Player 4',
+    5: 'Player 5',
+    6: 'Player 6',
+    7: 'Player 7',
+    8: 'Player 8',
+    9: 'Player 9',
+  }) as Lineup[];
 
   return (
     <>
+      Total Variations:{' '}
+      {lineups.reduce((acc, lineup) => {
+        return acc + lineup.variations.length;
+      }, 0)}
       <LineupsComponent
-        lineups={[
-          {
-            activePlayers: [
-              { name: '1' },
-              { name: '2' },
-              { name: '3' },
-              { name: '4' },
-              { name: '5' },
-              { name: '6' },
-            ],
-            inactivePlayers: [{ name: '7' }],
-            variations: [
-              [
-                [
-                  { position: 1, name: '1' },
-                  { position: 2, name: '2' },
-                ],
-                [
-                  { position: 3, name: '3' },
-                  { position: 4, name: '4' },
-                ],
-                [
-                  { position: 5, name: '5' },
-                  { position: 6, name: '6' },
-                ],
-              ],
-              [
-                [
-                  { position: 1, name: '1' },
-                  { position: 3, name: '3' },
-                ],
-                [
-                  { position: 2, name: '2' },
-                  { position: 4, name: '4' },
-                ],
-                [
-                  { position: 5, name: '5' },
-                  { position: 6, name: '6' },
-                ],
-              ],
-            ],
-          },
-          {
-            activePlayers: [
-              { name: '1' },
-              { name: '2' },
-              { name: '3' },
-              { name: '4' },
-              { name: '5' },
-              { name: '7' },
-            ],
-            inactivePlayers: [{ name: '6' }],
-            variations: [
-              [
-                [
-                  { position: 1, name: '1' },
-                  { position: 2, name: '2' },
-                ],
-                [
-                  { position: 3, name: '3' },
-                  { position: 4, name: '4' },
-                ],
-                [
-                  { position: 5, name: '5' },
-                  { position: 6, name: '7' },
-                ],
-              ],
-              [
-                [
-                  { position: 1, name: '1' },
-                  { position: 3, name: '3' },
-                ],
-                [
-                  { position: 2, name: '2' },
-                  { position: 4, name: '4' },
-                ],
-                [
-                  { position: 5, name: '5' },
-                  { position: 6, name: '7' },
-                ],
-              ],
-            ],
-          },
-        ]}
+        lineups={lineups.map((lineup) => {
+          const activePlayers = lineup.activePlayers.map((player) => ({
+            name: player,
+          }));
+          const inactivePlayers = lineup.inactivePlayers.map((player) => ({
+            name: player,
+          }));
+          return {
+            activePlayers,
+            inactivePlayers,
+            variations: lineup.variations.map((variation) => {
+              return variation;
+            }),
+          };
+        })}
       />
     </>
   );

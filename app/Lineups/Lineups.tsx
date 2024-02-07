@@ -78,7 +78,7 @@ const ExpandableLineup: React.FC<{
   lineupVariation,
   lineup: { activePlayers, inactivePlayers, variations },
 }) => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   return (
     <>
       <Card style={{ margin: '10px' }}>
