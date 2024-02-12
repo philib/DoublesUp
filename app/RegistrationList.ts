@@ -106,6 +106,12 @@ export class RegistrationList {
       (p) => p.id.value === id.value
     );
   }
+  getRankById(id: PlayerId): number | undefined {
+    const rank = Object.entries(this.registrationList).find(
+      ([_, p]) => p.id.value === id.value
+    )?.[0];
+    return rank ? Number(rank) : undefined;
+  }
 }
 
 type RegistrationListCreateError = 'PlayerNotUnique';

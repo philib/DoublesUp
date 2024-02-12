@@ -12,47 +12,49 @@ function createPlayer(name: string): Player {
     name,
   };
 }
-describe('create a registration list', () => {
-  test('non unique id return error', () => {
-    const id = PlayerId.create('1');
-    const list = RegistrationList.create({
-      1: { id, name: 'Test' },
-      2: { id, name: 'Test2' },
+describe('registration list tests', () => {
+  describe('create a registration list', () => {
+    test('non unique id return error', () => {
+      const id = PlayerId.create('1');
+      const list = RegistrationList.create({
+        1: { id, name: 'Test' },
+        2: { id, name: 'Test2' },
+      });
+      expect(list).toBe('PlayerNotUnique');
     });
-    expect(list).toBe('PlayerNotUnique');
+
+    test('unique id return list', () => {
+      const id1 = PlayerId.create('1');
+      const id2 = PlayerId.create('2');
+      const list = RegistrationList.create({
+        1: { id: id1, name: 'Test' },
+        2: { id: id2, name: 'Test2' },
+      });
+      expect(list).toBeInstanceOf(RegistrationList);
+      expect((list as RegistrationList).getList()).toEqual({
+        1: { id: id1, name: 'Test' },
+        2: { id: id2, name: 'Test2' },
+      });
+    });
   });
 
-  test('unique id return list', () => {
-    const id1 = PlayerId.create('1');
-    const id2 = PlayerId.create('2');
-    const list = RegistrationList.create({
-      1: { id: id1, name: 'Test' },
-      2: { id: id2, name: 'Test2' },
+  describe('remove player', () => {
+    test('remove not existing player returns registration list', () => {
+      const registrationList = createValidRegistrationList({
+        1: createPlayer('Test'),
+      });
+      const result = registrationList.removePlayer(PlayerId.create('someId'));
+      expect(result.getList()).toEqual(registrationList.getList());
     });
-    expect(list).toBeInstanceOf(RegistrationList);
-    expect((list as RegistrationList).getList()).toEqual({
-      1: { id: id1, name: 'Test' },
-      2: { id: id2, name: 'Test2' },
-    });
-  });
-});
 
-describe('remove player', () => {
-  test('remove not existing player returns registration list', () => {
-    const registrationList = createValidRegistrationList({
-      1: createPlayer('Test'),
+    test('removes existing player', () => {
+      const existingPlayer = createPlayer('Test');
+      const registrationList = createValidRegistrationList({
+        1: existingPlayer,
+      });
+      const result = registrationList.removePlayer(PlayerId.create('someId'));
+      expect(result.getList()).toEqual(registrationList.getList());
     });
-    const result = registrationList.removePlayer(PlayerId.create('someId'));
-    expect(result.getList()).toEqual(registrationList.getList());
-  });
-
-  test('removes existing player', () => {
-    const existingPlayer = createPlayer('Test');
-    const registrationList = createValidRegistrationList({
-      1: existingPlayer,
-    });
-    const result = registrationList.removePlayer(PlayerId.create('someId'));
-    expect(result.getList()).toEqual(registrationList.getList());
   });
 
   describe('add player', () => {
@@ -153,6 +155,32 @@ describe('remove player', () => {
       });
       const result = registrationList.getPlayerById(player2.id);
       expect(result).toEqual(player2);
+    });
+  });
+  describe('get rank by id', () => {
+    test('for unknown id', () => {
+      const player1 = createPlayer('Player 1');
+      const player2 = createPlayer('Player 2');
+      const player3 = createPlayer('Player 3');
+      const registrationList = createValidRegistrationList({
+        1: player1,
+        2: player2,
+        3: player3,
+      });
+      const result = registrationList.getRankById(PlayerId.create('4'));
+      expect(result).toBeUndefined();
+    });
+    test('for existing id', () => {
+      const player1 = createPlayer('Player 1');
+      const player2 = createPlayer('Player 2');
+      const player3 = createPlayer('Player 3');
+      const registrationList = createValidRegistrationList({
+        1: player1,
+        2: player2,
+        3: player3,
+      });
+      const result = registrationList.getRankById(player2.id);
+      expect(result).toEqual(2);
     });
   });
 });
