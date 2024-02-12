@@ -5,17 +5,19 @@ import {
 } from '@mui/material';
 import React from 'react';
 
+export interface Navigation {
+  title: string;
+  icon: React.ElementType<SvgIconProps>;
+  component: React.ReactElement;
+}
 export interface NavigatorProps {
-  navigations: {
-    title: string;
-    icon: React.ElementType<SvgIconProps>;
-    component: React.ReactElement;
-  }[];
+  navigations: Navigation[];
 }
 export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   navigations,
 }) => {
   const [bottomNavigationValue, setBottomNavigationValue] = React.useState(0);
+  console.log('navigations prop changed', navigations.length);
   const bottomNavigationActions = navigations.map((navigation) => (
     <BottomNavigationAction
       label={navigation.title}
@@ -45,7 +47,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
           msOverflowStyle: 'none',
         }}
       >
-        {navigations[bottomNavigationValue].component}
+        {navigations[bottomNavigationValue]?.component}
       </div>
       <footer style={{ border: 'solid' }}>
         <BottomNavigation
