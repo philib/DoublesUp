@@ -97,4 +97,38 @@ describe('RegistrationListService', () => {
     //then
     expect(result).toEqual({ id: PlayerId.create('2'), name: 'Test2' });
   });
+
+  it('selection works as expected', () => {
+    //given
+    const player1 = { id: PlayerId.create('1'), name: 'Test' };
+    const repository = new RegistrationListRepositoryFake({
+      1: player1,
+    });
+    const sut = new RegistrationListService(repository);
+    expect(sut.getPlayerSelection()).toEqual([]);
+    //when
+    sut.selectPlayer(player1.id);
+    //then
+    expect(sut.getPlayerSelection()).toEqual([player1]);
+    expect(sut.isPlayerSelected(player1.id)).toBe(true);
+    //when
+    sut.deselectPlayer(PlayerId.create('1'));
+    //then
+    expect(sut.getPlayerSelection()).toEqual([]);
+    expect(sut.isPlayerSelected(PlayerId.create('1'))).toBe(false);
+  });
+
+  it('when player is deleted, selection is removed', () => {
+    //given
+    const player1 = { id: PlayerId.create('1'), name: 'Test' };
+    const repository = new RegistrationListRepositoryFake({
+      1: player1,
+    });
+    const sut = new RegistrationListService(repository);
+    sut.selectPlayer(player1.id);
+    //when
+    sut.removePlayer(player1.id);
+    //then
+    expect(sut.getPlayerSelection()).toEqual([]);
+  });
 });

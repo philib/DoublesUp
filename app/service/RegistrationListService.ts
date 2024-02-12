@@ -1,10 +1,13 @@
+import { sortBy } from 'lodash';
 import { Player, PlayerId, RegistrationList } from '../RegistrationList';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
 
 export class RegistrationListService {
-  repository: RegistrationListRepository;
+  private repository: RegistrationListRepository;
+  private selectedPlayer: PlayerId[];
   constructor(repository: RegistrationListRepository) {
     this.repository = repository;
+    this.selectedPlayer = [];
   }
   getList(): RegistrationList {
     return this.repository.get();
@@ -18,6 +21,7 @@ export class RegistrationListService {
     return result;
   }
   removePlayer(id: PlayerId) {
+    this.deselectPlayer(id);
     const registrationList = this.repository.get();
     const result = registrationList.removePlayer(id);
     this.repository.save(result);
@@ -45,5 +49,23 @@ export class RegistrationListService {
   getPlayerById(id: PlayerId) {
     const registrationList = this.repository.get();
     return registrationList.getPlayerById(id);
+  }
+  selectPlayer(id: PlayerId) {
+    this.selectedPlayer = [...this.selectedPlayer, id];
+  }
+  deselectPlayer(id: PlayerId) {
+    this.selectedPlayer = this.selectedPlayer.filter(
+      (it) => it.value !== id.value
+    );
+  }
+  isPlayerSelected(id: PlayerId) {
+    return this.selectedPlayer.some((it) => it.value === id.value);
+  }
+  getPlayerSelection(): Player[] {
+    const registrationList = this.repository.get();
+    const selectedPlayer = this.selectedPlayer.map(
+      (id) => registrationList.getPlayerById(id)!!
+    );
+    return sortBy(selectedPlayer, (p) => registrationList.getRankById(p.id));
   }
 }
