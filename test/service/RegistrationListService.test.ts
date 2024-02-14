@@ -2,6 +2,7 @@ import exp from 'constants';
 import { PlayerId, RegistrationList } from '../../app/RegistrationList';
 import { RegistrationListService } from '../../app/service/RegistrationListService';
 import { RegistrationListRepositoryFake } from './RegistrationListRepositoryFake';
+import { Lineup, createLineups } from '../../app/LineupFactory';
 
 describe('RegistrationListService', () => {
   it('get list', () => {
@@ -130,5 +131,39 @@ describe('RegistrationListService', () => {
     sut.removePlayer(player1.id);
     //then
     expect(sut.getPlayerSelection()).toEqual([]);
+  });
+
+  it('lineups are created when enough players are selected', () => {
+    //given
+    const player = (id: number) => ({
+      id: PlayerId.create(id.toString()),
+      name: `Player ${id}`,
+    });
+    const players = {
+      1: player(1),
+      2: player(2),
+      3: player(3),
+      4: player(4),
+      5: player(5),
+      6: player(6),
+      7: player(7),
+      8: player(8),
+    };
+    const repository = new RegistrationListRepositoryFake(players);
+    const sut = new RegistrationListService(repository);
+
+    [player(1), player(2), player(3), player(4), player(5)].forEach((p) => {
+      sut.selectPlayer(p.id);
+      expect(sut.getLineups()).toEqual([]);
+    });
+
+    sut.selectPlayer(player(6).id);
+    expect(sut.getLineups().length).toBe(1);
+
+    sut.deselectPlayer(player(6).id);
+    expect(sut.getLineups()).toEqual([]);
+
+    sut.selectPlayer(player(6).id);
+    expect(sut.getLineups().length).toBe(1);
   });
 });

@@ -1,6 +1,7 @@
 import { sortBy } from 'lodash';
 import { Player, PlayerId, RegistrationList } from '../RegistrationList';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
+import { Lineup, createLineups } from '../LineupFactory';
 
 export class RegistrationListService {
   private repository: RegistrationListRepository;
@@ -67,5 +68,17 @@ export class RegistrationListService {
       (id) => registrationList.getPlayerById(id)!!
     );
     return sortBy(selectedPlayer, (p) => registrationList.getRankById(p.id));
+  }
+  getLineups(): Lineup[] {
+    const registrationList = this.repository.get();
+    const selectedPlayer = this.selectedPlayer.reduce(
+      (acc, id) => ({
+        ...acc,
+        [registrationList.getRankById(id)!!]: id,
+      }),
+      {}
+    );
+    const lineups = createLineups(selectedPlayer);
+    return lineups === 'Not enough players' ? [] : lineups;
   }
 }

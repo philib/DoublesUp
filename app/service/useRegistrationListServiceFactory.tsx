@@ -47,18 +47,7 @@ export const ServiceProvider: React.FunctionComponent<{
   console.log(JSON.stringify(playerSelection));
   const [lineups, setLineups] = useState<Lineup[]>([]);
   useEffect(() => {
-    const t = createLineups(
-      service
-        .getPlayerSelection()
-        .map((p, index) => ({ [index + 1]: p!.id }))
-        .reduce((a, b) => ({ ...a, ...b }), {})
-    );
-
-    if (t !== 'Not enough players') {
-      setLineups(t);
-    } else {
-      setLineups([]);
-    }
+    setLineups(service.getLineups());
   }, [playerSelection, players]);
 
   const value = {
