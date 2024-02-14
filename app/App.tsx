@@ -42,10 +42,29 @@ const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
   const service = useService();
   return (
     <LineupsComponent
-      lineups={service.lineups.map((l) => ({
-        activePlayers: l.activePlayers.map((a) => ({ name: a })),
-        inactivePlayers: l.inactivePlayers.map((a) => ({ name: a })),
-        variations: l.variations,
+      lineups={service.lineups.map((lineup) => ({
+        activePlayers: lineup.activePlayers.map((player) => ({
+          ...player,
+          name: service.getPlayerById(player)!!.name,
+        })),
+        inactivePlayers: lineup.inactivePlayers.map((player) => ({
+          ...player,
+          name: service.getPlayerById(player)!!.name,
+        })),
+        variations: lineup.variations.map((doublePairings) => {
+          return doublePairings.map(([firstPlayer, secondPlayer]) => {
+            return [
+              {
+                ...firstPlayer,
+                name: service.getPlayerById(firstPlayer.id)!!.name,
+              },
+              {
+                ...secondPlayer,
+                name: service.getPlayerById(secondPlayer.id)!!.name,
+              },
+            ];
+          });
+        }),
       }))}
     />
   );
