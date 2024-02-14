@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { getPermutations } from './getPermutations';
 type DoublesPairing = [
   { position: number; name: string },
   { position: number; name: string }
@@ -17,7 +18,7 @@ export const createLineups = (players: {
     return 'Not enough players';
   }
 
-  const result = generatePermutations(Object.entries(players));
+  const result = getPermutations(Object.entries(players), 6);
   return _.uniqWith(
     result.map((permutation) => {
       const activePlayers = permutation.map(([position, name]) => name);
@@ -162,38 +163,3 @@ const allPossibleLineupVariations = [
     [2, 5],
   ],
 ];
-
-function combinations<T>(arr: T[], r: number): T[][] {
-  const result: T[][] = [];
-
-  function helper(temp: T[], start: number, depth: number) {
-    if (depth === r) {
-      result.push([...temp]);
-      return;
-    }
-
-    for (let i = start; i < arr.length; i++) {
-      temp.push(arr[i]);
-      helper(temp, i + 1, depth + 1);
-      temp.pop();
-    }
-  }
-
-  helper([], 0, 0);
-  return result;
-}
-
-function generatePermutations<T>(arr: T[]): T[][] {
-  if (arr.length === 6) {
-    return [arr];
-  }
-  const permutations: T[][] = [];
-
-  for (let i = 0; i < arr.length; i++) {
-    const remaining = arr.slice(0, i).concat(arr.slice(i + 1));
-    const combos = combinations(remaining, 6);
-    permutations.push(...combos);
-  }
-
-  return permutations;
-}

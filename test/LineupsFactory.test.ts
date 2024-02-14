@@ -371,7 +371,7 @@ describe('LineupsFactory', () => {
 
     const result = createLineups(input) as Lineup[];
 
-    expect(result.map((r) => r.activePlayers).sort()).toEqual(
+    expect(result.map((r) => r.activePlayers)).toEqual(
       [
         without(7),
         without(6),
@@ -384,9 +384,15 @@ describe('LineupsFactory', () => {
         .map((i) => Object.values(i))
         .sort()
     );
-    expect(result.map((r) => r.inactivePlayers).sort()).toEqual(
-      [just(7), just(6), just(5), just(4), just(3), just(2), just(1)].sort()
-    );
+    expect(result.map((r) => r.inactivePlayers)).toEqual([
+      just(7),
+      just(6),
+      just(5),
+      just(4),
+      just(3),
+      just(2),
+      just(1),
+    ]);
 
     const resultLineupWithout1 = lineupWithout(1);
     const resultLineupWithout2 = lineupWithout(2);
@@ -397,13 +403,13 @@ describe('LineupsFactory', () => {
     const resultLineupWithout7 = lineupWithout(7);
 
     expect(result.map((r) => r.variations)).toEqual([
-      resultLineupWithout1,
-      resultLineupWithout2,
-      resultLineupWithout3,
-      resultLineupWithout4,
-      resultLineupWithout5,
-      resultLineupWithout6,
       resultLineupWithout7,
+      resultLineupWithout6,
+      resultLineupWithout5,
+      resultLineupWithout4,
+      resultLineupWithout3,
+      resultLineupWithout2,
+      resultLineupWithout1,
     ]);
   });
 
@@ -421,73 +427,69 @@ describe('LineupsFactory', () => {
 
     const result = createLineups(input) as Lineup[];
 
-    expect(result.map((r) => r.activePlayers).sort()).toEqual(
+    expect(result.map((r) => r.activePlayers)).toEqual(
       [
-        [3, 4, 5, 6, 7, 8],
-        [2, 4, 5, 6, 7, 8],
-        [2, 3, 5, 6, 7, 8],
-        [2, 3, 4, 6, 7, 8],
-        [2, 3, 4, 5, 7, 8],
-        [2, 3, 4, 5, 6, 8],
-        [2, 3, 4, 5, 6, 7],
-        [1, 4, 5, 6, 7, 8],
-        [1, 3, 5, 6, 7, 8],
-        [1, 3, 4, 6, 7, 8],
-        [1, 3, 4, 5, 7, 8],
-        [1, 3, 4, 5, 6, 8],
-        [1, 3, 4, 5, 6, 7],
-        [1, 2, 5, 6, 7, 8],
-        [1, 2, 4, 6, 7, 8],
-        [1, 2, 4, 5, 7, 8],
-        [1, 2, 4, 5, 6, 8],
-        [1, 2, 4, 5, 6, 7],
-        [1, 2, 3, 6, 7, 8],
-        [1, 2, 3, 5, 7, 8],
-        [1, 2, 3, 5, 6, 8],
-        [1, 2, 3, 5, 6, 7],
-        [1, 2, 3, 4, 7, 8],
-        [1, 2, 3, 4, 6, 8],
-        [1, 2, 3, 4, 6, 7],
-        [1, 2, 3, 4, 5, 8],
+        [1, 2, 3, 4, 5, 6], //
         [1, 2, 3, 4, 5, 7],
-        [1, 2, 3, 4, 5, 6],
-      ]
-        .map((a) => a.map((b) => b.toString()))
-        .sort()
+        [1, 2, 3, 4, 5, 8],
+        [1, 2, 3, 4, 6, 7],
+        [1, 2, 3, 4, 6, 8],
+        [1, 2, 3, 4, 7, 8],
+        [1, 2, 3, 5, 6, 7],
+        [1, 2, 3, 5, 6, 8],
+        [1, 2, 3, 5, 7, 8],
+        [1, 2, 3, 6, 7, 8],
+        [1, 2, 4, 5, 6, 7],
+        [1, 2, 4, 5, 6, 8],
+        [1, 2, 4, 5, 7, 8],
+        [1, 2, 4, 6, 7, 8],
+        [1, 2, 5, 6, 7, 8],
+        [1, 3, 4, 5, 6, 7],
+        [1, 3, 4, 5, 6, 8],
+        [1, 3, 4, 5, 7, 8],
+        [1, 3, 4, 6, 7, 8],
+        [1, 3, 5, 6, 7, 8],
+        [1, 4, 5, 6, 7, 8],
+        [2, 3, 4, 5, 6, 7],
+        [2, 3, 4, 5, 6, 8],
+        [2, 3, 4, 5, 7, 8],
+        [2, 3, 4, 6, 7, 8],
+        [2, 3, 5, 6, 7, 8],
+        [2, 4, 5, 6, 7, 8],
+        [3, 4, 5, 6, 7, 8],
+      ].map((a) => a.map((b) => b.toString()))
     );
-    expect(result.map((r) => r.inactivePlayers).sort()).toEqual(
+    expect(result.map((r) => r.inactivePlayers)).toEqual(
       [
-        [1, 2],
-        [1, 3],
-        [1, 4],
-        [1, 5],
-        [1, 6],
-        [1, 7],
-        [1, 8],
-        [2, 3],
-        [2, 4],
-        [2, 5],
-        [2, 6],
-        [2, 7],
-        [2, 8],
-        [3, 4],
-        [3, 5],
-        [3, 6],
-        [3, 7],
-        [3, 8],
-        [4, 5],
-        [4, 6],
-        [4, 7],
-        [4, 8],
-        [5, 6],
-        [5, 7],
-        [5, 8],
-        [6, 7],
-        [6, 8],
         [7, 8],
-      ]
-        .map((a) => a.map((b) => b.toString()))
-        .sort()
+        [6, 8],
+        [6, 7],
+        [5, 8],
+        [5, 7],
+        [5, 6],
+        [4, 8],
+        [4, 7],
+        [4, 6],
+        [4, 5],
+        [3, 8],
+        [3, 7],
+        [3, 6],
+        [3, 5],
+        [3, 4],
+        [2, 8],
+        [2, 7],
+        [2, 6],
+        [2, 5],
+        [2, 4],
+        [2, 3],
+        [1, 8],
+        [1, 7],
+        [1, 6],
+        [1, 5],
+        [1, 4],
+        [1, 3],
+        [1, 2],
+      ].map((a) => a.map((b) => b.toString()))
     );
   });
 });
