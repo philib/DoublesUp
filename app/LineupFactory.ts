@@ -1,18 +1,19 @@
 import _ from 'lodash';
 import { getPermutations } from './getPermutations';
+import { PlayerId } from './RegistrationList';
 type DoublesPairing = [
-  { position: number; name: string },
-  { position: number; name: string }
+  { position: number; id: PlayerId },
+  { position: number; id: PlayerId }
 ];
 
 export interface Lineup {
-  activePlayers: string[];
-  inactivePlayers: string[];
+  activePlayers: PlayerId[];
+  inactivePlayers: PlayerId[];
   variations: DoublesPairing[][];
 }
 
 export const createLineups = (players: {
-  [rank: number]: string;
+  [rank: number]: PlayerId;
 }): 'Not enough players' | Lineup[] => {
   if (Object.values(players).length < 6) {
     return 'Not enough players';
@@ -21,18 +22,18 @@ export const createLineups = (players: {
   const result = getPermutations(Object.entries(players), 6);
   return _.uniqWith(
     result.map((permutation) => {
-      const activePlayers = permutation.map(([position, name]) => name);
+      const activePlayers = permutation.map(([_, id]) => id);
       const allPossibleLineupVariantions: DoublesPairing[][] =
         allPossibleLineupVariations.map((variation) => {
           return variation.flatMap((doublesPairing) => {
             const a: DoublesPairing = [
               {
                 position: doublesPairing[0],
-                name: activePlayers[doublesPairing[0] - 1],
+                id: activePlayers[doublesPairing[0] - 1],
               },
               {
                 position: doublesPairing[1],
-                name: activePlayers[doublesPairing[1] - 1],
+                id: activePlayers[doublesPairing[1] - 1],
               },
             ];
             return [a];

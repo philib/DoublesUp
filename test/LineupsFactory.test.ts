@@ -1,345 +1,348 @@
 import { Lineup, createLineups } from '../app/LineupFactory';
+import { PlayerId } from '../app/RegistrationList';
+
+const playerId = (id: number) => PlayerId.create(`Player ${id}`);
 
 describe('LineupsFactory', () => {
   it('cannot create lineups for less then 6 players', () => {
     const input = {
-      1: 'Player 1',
-      2: 'Player 2',
-      3: 'Player 3',
-      4: 'Player 4',
-      5: 'Player 5',
+      1: playerId(1),
+      2: playerId(2),
+      3: playerId(3),
+      4: playerId(4),
+      5: playerId(5),
     };
     const result = createLineups(input);
     expect(result).toEqual('Not enough players');
   });
   it('creates lineups for 6 players', () => {
     const input = {
-      1: 'Player 1',
-      2: 'Player 2',
-      3: 'Player 3',
-      4: 'Player 4',
-      5: 'Player 5',
-      6: 'Player 6',
+      1: playerId(1),
+      2: playerId(2),
+      3: playerId(3),
+      4: playerId(4),
+      5: playerId(5),
+      6: playerId(6),
     };
     const result = createLineups(input);
     expect(result).toEqual([
       {
         activePlayers: [
-          'Player 1',
-          'Player 2',
-          'Player 3',
-          'Player 4',
-          'Player 5',
-          'Player 6',
+          playerId(1),
+          playerId(2),
+          playerId(3),
+          playerId(4),
+          playerId(5),
+          playerId(6),
         ],
         inactivePlayers: [],
         variations: [
           [
             [
-              { position: 1, name: 'Player 1' },
-              { position: 2, name: 'Player 2' },
+              { position: 1, id: playerId(1) },
+              { position: 2, id: playerId(2) },
             ],
             [
-              { position: 3, name: 'Player 3' },
-              { position: 4, name: 'Player 4' },
+              { position: 3, id: playerId(3) },
+              { position: 4, id: playerId(4) },
             ],
             [
-              { position: 5, name: 'Player 5' },
-              { position: 6, name: 'Player 6' },
-            ],
-          ],
-          [
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 2, name: 'Player 2' },
-            ],
-            [
-              { position: 3, name: 'Player 3' },
-              { position: 5, name: 'Player 5' },
-            ],
-            [
-              { position: 4, name: 'Player 4' },
-              { position: 6, name: 'Player 6' },
+              { position: 5, id: playerId(5) },
+              { position: 6, id: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, name: 'Player 1' },
-              { position: 2, name: 'Player 2' },
+              { position: 1, id: playerId(1) },
+              { position: 2, id: playerId(2) },
             ],
             [
-              { position: 3, name: 'Player 3' },
-              { position: 6, name: 'Player 6' },
+              { position: 3, id: playerId(3) },
+              { position: 5, id: playerId(5) },
             ],
             [
-              { position: 4, name: 'Player 4' },
-              { position: 5, name: 'Player 5' },
-            ],
-          ],
-          [
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 2, name: 'Player 2' },
-            ],
-            [
-              { position: 4, name: 'Player 4' },
-              { position: 5, name: 'Player 5' },
-            ],
-            [
-              { position: 3, name: 'Player 3' },
-              { position: 6, name: 'Player 6' },
+              { position: 4, id: playerId(4) },
+              { position: 6, id: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, name: 'Player 1' },
-              { position: 3, name: 'Player 3' },
+              { position: 1, id: playerId(1) },
+              { position: 2, id: playerId(2) },
             ],
             [
-              { position: 2, name: 'Player 2' },
-              { position: 4, name: 'Player 4' },
+              { position: 3, id: playerId(3) },
+              { position: 6, id: playerId(6) },
             ],
             [
-              { position: 5, name: 'Player 5' },
-              { position: 6, name: 'Player 6' },
-            ],
-          ],
-          [
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 3, name: 'Player 3' },
-            ],
-            [
-              { position: 2, name: 'Player 2' },
-              { position: 5, name: 'Player 5' },
-            ],
-            [
-              { position: 4, name: 'Player 4' },
-              { position: 6, name: 'Player 6' },
+              { position: 4, id: playerId(4) },
+              { position: 5, id: playerId(5) },
             ],
           ],
           [
             [
-              { position: 1, name: 'Player 1' },
-              { position: 3, name: 'Player 3' },
+              { position: 1, id: playerId(1) },
+              { position: 2, id: playerId(2) },
             ],
             [
-              { position: 2, name: 'Player 2' },
-              { position: 6, name: 'Player 6' },
+              { position: 4, id: playerId(4) },
+              { position: 5, id: playerId(5) },
             ],
             [
-              { position: 4, name: 'Player 4' },
-              { position: 5, name: 'Player 5' },
-            ],
-          ],
-          [
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 4, name: 'Player 4' },
-            ],
-            [
-              { position: 2, name: 'Player 2' },
-              { position: 3, name: 'Player 3' },
-            ],
-            [
-              { position: 5, name: 'Player 5' },
-              { position: 6, name: 'Player 6' },
+              { position: 3, id: playerId(3) },
+              { position: 6, id: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, name: 'Player 1' },
-              { position: 4, name: 'Player 4' },
+              { position: 1, id: playerId(1) },
+              { position: 3, id: playerId(3) },
             ],
             [
-              { position: 2, name: 'Player 2' },
-              { position: 5, name: 'Player 5' },
+              { position: 2, id: playerId(2) },
+              { position: 4, id: playerId(4) },
             ],
             [
-              { position: 3, name: 'Player 3' },
-              { position: 6, name: 'Player 6' },
-            ],
-          ],
-          [
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 4, name: 'Player 4' },
-            ],
-            [
-              { position: 2, name: 'Player 2' },
-              { position: 6, name: 'Player 6' },
-            ],
-            [
-              { position: 3, name: 'Player 3' },
-              { position: 5, name: 'Player 5' },
+              { position: 5, id: playerId(5) },
+              { position: 6, id: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, name: 'Player 1' },
-              { position: 4, name: 'Player 4' },
+              { position: 1, id: playerId(1) },
+              { position: 3, id: playerId(3) },
             ],
             [
-              { position: 3, name: 'Player 3' },
-              { position: 5, name: 'Player 5' },
+              { position: 2, id: playerId(2) },
+              { position: 5, id: playerId(5) },
             ],
             [
-              { position: 2, name: 'Player 2' },
-              { position: 6, name: 'Player 6' },
-            ],
-          ],
-          [
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 5, name: 'Player 5' },
-            ],
-            [
-              { position: 2, name: 'Player 2' },
-              { position: 4, name: 'Player 4' },
-            ],
-            [
-              { position: 3, name: 'Player 3' },
-              { position: 6, name: 'Player 6' },
+              { position: 4, id: playerId(4) },
+              { position: 6, id: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, name: 'Player 1' },
-              { position: 5, name: 'Player 5' },
+              { position: 1, id: playerId(1) },
+              { position: 3, id: playerId(3) },
             ],
             [
-              { position: 3, name: 'Player 3' },
-              { position: 4, name: 'Player 4' },
+              { position: 2, id: playerId(2) },
+              { position: 6, id: playerId(6) },
             ],
             [
-              { position: 2, name: 'Player 2' },
-              { position: 6, name: 'Player 6' },
-            ],
-          ],
-          [
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 6, name: 'Player 6' },
-            ],
-            [
-              { position: 2, name: 'Player 2' },
-              { position: 5, name: 'Player 5' },
-            ],
-            [
-              { position: 3, name: 'Player 3' },
-              { position: 4, name: 'Player 4' },
+              { position: 4, id: playerId(4) },
+              { position: 5, id: playerId(5) },
             ],
           ],
           [
             [
-              { position: 1, name: 'Player 1' },
-              { position: 6, name: 'Player 6' },
+              { position: 1, id: playerId(1) },
+              { position: 4, id: playerId(4) },
             ],
             [
-              { position: 3, name: 'Player 3' },
-              { position: 4, name: 'Player 4' },
+              { position: 2, id: playerId(2) },
+              { position: 3, id: playerId(3) },
             ],
             [
-              { position: 2, name: 'Player 2' },
-              { position: 5, name: 'Player 5' },
-            ],
-          ],
-          [
-            [
-              { position: 2, name: 'Player 2' },
-              { position: 3, name: 'Player 3' },
-            ],
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 4, name: 'Player 4' },
-            ],
-            [
-              { position: 5, name: 'Player 5' },
-              { position: 6, name: 'Player 6' },
+              { position: 5, id: playerId(5) },
+              { position: 6, id: playerId(6) },
             ],
           ],
           [
             [
-              { position: 2, name: 'Player 2' },
-              { position: 3, name: 'Player 3' },
+              { position: 1, id: playerId(1) },
+              { position: 4, id: playerId(4) },
             ],
             [
-              { position: 1, name: 'Player 1' },
-              { position: 5, name: 'Player 5' },
+              { position: 2, id: playerId(2) },
+              { position: 5, id: playerId(5) },
             ],
             [
-              { position: 4, name: 'Player 4' },
-              { position: 6, name: 'Player 6' },
-            ],
-          ],
-          [
-            [
-              { position: 2, name: 'Player 2' },
-              { position: 3, name: 'Player 3' },
-            ],
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 6, name: 'Player 6' },
-            ],
-            [
-              { position: 4, name: 'Player 4' },
-              { position: 5, name: 'Player 5' },
+              { position: 3, id: playerId(3) },
+              { position: 6, id: playerId(6) },
             ],
           ],
           [
             [
-              { position: 2, name: 'Player 2' },
-              { position: 4, name: 'Player 4' },
+              { position: 1, id: playerId(1) },
+              { position: 4, id: playerId(4) },
             ],
             [
-              { position: 1, name: 'Player 1' },
-              { position: 5, name: 'Player 5' },
+              { position: 2, id: playerId(2) },
+              { position: 6, id: playerId(6) },
             ],
             [
-              { position: 3, name: 'Player 3' },
-              { position: 6, name: 'Player 6' },
-            ],
-          ],
-          [
-            [
-              { position: 2, name: 'Player 2' },
-              { position: 4, name: 'Player 4' },
-            ],
-            [
-              { position: 1, name: 'Player 1' },
-              { position: 6, name: 'Player 6' },
-            ],
-            [
-              { position: 3, name: 'Player 3' },
-              { position: 5, name: 'Player 5' },
+              { position: 3, id: playerId(3) },
+              { position: 5, id: playerId(5) },
             ],
           ],
           [
             [
-              { position: 2, name: 'Player 2' },
-              { position: 5, name: 'Player 5' },
+              { position: 1, id: playerId(1) },
+              { position: 4, id: playerId(4) },
             ],
             [
-              { position: 1, name: 'Player 1' },
-              { position: 6, name: 'Player 6' },
+              { position: 3, id: playerId(3) },
+              { position: 5, id: playerId(5) },
             ],
             [
-              { position: 3, name: 'Player 3' },
-              { position: 4, name: 'Player 4' },
+              { position: 2, id: playerId(2) },
+              { position: 6, id: playerId(6) },
             ],
           ],
           [
             [
-              { position: 3, name: 'Player 3' },
-              { position: 4, name: 'Player 4' },
+              { position: 1, id: playerId(1) },
+              { position: 5, id: playerId(5) },
             ],
             [
-              { position: 1, name: 'Player 1' },
-              { position: 6, name: 'Player 6' },
+              { position: 2, id: playerId(2) },
+              { position: 4, id: playerId(4) },
             ],
             [
-              { position: 2, name: 'Player 2' },
-              { position: 5, name: 'Player 5' },
+              { position: 3, id: playerId(3) },
+              { position: 6, id: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 1, id: playerId(1) },
+              { position: 5, id: playerId(5) },
+            ],
+            [
+              { position: 3, id: playerId(3) },
+              { position: 4, id: playerId(4) },
+            ],
+            [
+              { position: 2, id: playerId(2) },
+              { position: 6, id: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 1, id: playerId(1) },
+              { position: 6, id: playerId(6) },
+            ],
+            [
+              { position: 2, id: playerId(2) },
+              { position: 5, id: playerId(5) },
+            ],
+            [
+              { position: 3, id: playerId(3) },
+              { position: 4, id: playerId(4) },
+            ],
+          ],
+          [
+            [
+              { position: 1, id: playerId(1) },
+              { position: 6, id: playerId(6) },
+            ],
+            [
+              { position: 3, id: playerId(3) },
+              { position: 4, id: playerId(4) },
+            ],
+            [
+              { position: 2, id: playerId(2) },
+              { position: 5, id: playerId(5) },
+            ],
+          ],
+          [
+            [
+              { position: 2, id: playerId(2) },
+              { position: 3, id: playerId(3) },
+            ],
+            [
+              { position: 1, id: playerId(1) },
+              { position: 4, id: playerId(4) },
+            ],
+            [
+              { position: 5, id: playerId(5) },
+              { position: 6, id: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 2, id: playerId(2) },
+              { position: 3, id: playerId(3) },
+            ],
+            [
+              { position: 1, id: playerId(1) },
+              { position: 5, id: playerId(5) },
+            ],
+            [
+              { position: 4, id: playerId(4) },
+              { position: 6, id: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 2, id: playerId(2) },
+              { position: 3, id: playerId(3) },
+            ],
+            [
+              { position: 1, id: playerId(1) },
+              { position: 6, id: playerId(6) },
+            ],
+            [
+              { position: 4, id: playerId(4) },
+              { position: 5, id: playerId(5) },
+            ],
+          ],
+          [
+            [
+              { position: 2, id: playerId(2) },
+              { position: 4, id: playerId(4) },
+            ],
+            [
+              { position: 1, id: playerId(1) },
+              { position: 5, id: playerId(5) },
+            ],
+            [
+              { position: 3, id: playerId(3) },
+              { position: 6, id: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 2, id: playerId(2) },
+              { position: 4, id: playerId(4) },
+            ],
+            [
+              { position: 1, id: playerId(1) },
+              { position: 6, id: playerId(6) },
+            ],
+            [
+              { position: 3, id: playerId(3) },
+              { position: 5, id: playerId(5) },
+            ],
+          ],
+          [
+            [
+              { position: 2, id: playerId(2) },
+              { position: 5, id: playerId(5) },
+            ],
+            [
+              { position: 1, id: playerId(1) },
+              { position: 6, id: playerId(6) },
+            ],
+            [
+              { position: 3, id: playerId(3) },
+              { position: 4, id: playerId(4) },
+            ],
+          ],
+          [
+            [
+              { position: 3, id: playerId(3) },
+              { position: 4, id: playerId(4) },
+            ],
+            [
+              { position: 1, id: playerId(1) },
+              { position: 6, id: playerId(6) },
+            ],
+            [
+              { position: 2, id: playerId(2) },
+              { position: 5, id: playerId(5) },
             ],
           ],
         ],
@@ -347,24 +350,24 @@ describe('LineupsFactory', () => {
     ]);
   });
   it('creates lineups for 7 players', () => {
-    const input: { [pos: number]: string } = {
-      1: 'Player 1',
-      2: 'Player 2',
-      3: 'Player 3',
-      4: 'Player 4',
-      5: 'Player 5',
-      6: 'Player 6',
-      7: 'Player 7',
+    const input: { [pos: number]: PlayerId } = {
+      1: playerId(1),
+      2: playerId(2),
+      3: playerId(3),
+      4: playerId(4),
+      5: playerId(5),
+      6: playerId(6),
+      7: playerId(7),
     };
 
     const without = (pos: number) => {
-      const copy = { ...input } as { [pos: number]: string };
+      const copy = { ...input } as { [pos: number]: PlayerId };
       delete copy[pos];
       return copy;
     };
 
     const just = (pos: number) => {
-      return [input[pos] as string];
+      return [input[pos] as PlayerId];
     };
     const lineupWithout = (pos: number) =>
       (createLineups(without(pos)) as Lineup[])[0].variations;
@@ -414,15 +417,15 @@ describe('LineupsFactory', () => {
   });
 
   it('creates lineups for 8 players', () => {
-    const input: { [pos: number]: string } = {
-      1: '1',
-      2: '2',
-      3: '3',
-      4: '4',
-      5: '5',
-      6: '6',
-      7: '7',
-      8: '8',
+    const input: { [pos: number]: PlayerId } = {
+      1: playerId(1),
+      2: playerId(2),
+      3: playerId(3),
+      4: playerId(4),
+      5: playerId(5),
+      6: playerId(6),
+      7: playerId(7),
+      8: playerId(8),
     };
 
     const result = createLineups(input) as Lineup[];
@@ -457,7 +460,7 @@ describe('LineupsFactory', () => {
         [2, 3, 5, 6, 7, 8],
         [2, 4, 5, 6, 7, 8],
         [3, 4, 5, 6, 7, 8],
-      ].map((a) => a.map((b) => b.toString()))
+      ].map((a) => a.map((b) => playerId(b)))
     );
     expect(result.map((r) => r.inactivePlayers)).toEqual(
       [
@@ -489,7 +492,7 @@ describe('LineupsFactory', () => {
         [1, 4],
         [1, 3],
         [1, 2],
-      ].map((a) => a.map((b) => b.toString()))
+      ].map((a) => a.map((b) => playerId(b)))
     );
   });
 });
