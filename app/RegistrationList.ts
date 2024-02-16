@@ -7,6 +7,9 @@ export class PlayerId {
   private constructor(value: string) {
     this.value = value;
   }
+  public equals(other: PlayerId): boolean {
+    return this.value === other.value;
+  }
 }
 
 export interface Player {

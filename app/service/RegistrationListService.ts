@@ -69,7 +69,7 @@ export class RegistrationListService {
     );
     return sortBy(selectedPlayer, (p) => registrationList.getRankById(p.id));
   }
-  getLineups(): Lineup[] {
+  getLineups(filters: PlayerId[] = []): Lineup[] {
     const registrationList = this.repository.get();
     const selectedPlayer = this.selectedPlayer.reduce(
       (acc, id) => ({
@@ -79,6 +79,11 @@ export class RegistrationListService {
       {}
     );
     const lineups = createLineups(selectedPlayer);
-    return lineups === 'Not enough players' ? [] : lineups;
+    const result = lineups === 'Not enough players' ? [] : lineups;
+    return filters.reduce((acc, filter) => {
+      return acc.filter((lineup) => {
+        return lineup.activePlayers.find((player) => player.equals(filter));
+      });
+    }, result);
   }
 }

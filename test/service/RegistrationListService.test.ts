@@ -1,8 +1,7 @@
-import exp from 'constants';
 import { PlayerId, RegistrationList } from '../../app/RegistrationList';
 import { RegistrationListService } from '../../app/service/RegistrationListService';
 import { RegistrationListRepositoryFake } from './RegistrationListRepositoryFake';
-import { Lineup, createLineups } from '../../app/LineupFactory';
+import { every, some } from 'lodash';
 
 describe('RegistrationListService', () => {
   it('get list', () => {
@@ -165,5 +164,187 @@ describe('RegistrationListService', () => {
 
     sut.selectPlayer(player(6).id);
     expect(sut.getLineups().length).toBe(1);
+  });
+  it('lineups can be filtered by single players', () => {
+    //given
+    const player = (id: number) => ({
+      id: PlayerId.create(id.toString()),
+      name: `Player ${id}`,
+    });
+    const players = {
+      1: player(1),
+      2: player(2),
+      3: player(3),
+      4: player(4),
+      5: player(5),
+      6: player(6),
+      7: player(7),
+      8: player(8),
+    };
+    const repository = new RegistrationListRepositoryFake(players);
+    const sut = new RegistrationListService(repository);
+
+    [
+      player(1),
+      player(2),
+      player(3),
+      player(4),
+      player(5),
+      player(6),
+      player(7),
+    ].forEach((p) => {
+      sut.selectPlayer(p.id);
+    });
+    const filteredByOnePlayer = sut.getLineups([player(1).id]);
+
+    expect(
+      filteredByOnePlayer.map((l) => l.inactivePlayers)
+    ).not.toContainEqual([player(1).id]);
+    expect(filteredByOnePlayer.map((l) => l.activePlayers)).toEqual([
+      [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(4).id,
+        player(5).id,
+        player(6).id,
+      ],
+      [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(4).id,
+        player(5).id,
+        player(7).id,
+      ],
+      [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(4).id,
+        player(6).id,
+        player(7).id,
+      ],
+      [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+      ],
+      [
+        player(1).id,
+        player(2).id,
+        player(4).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+      ],
+      [
+        player(1).id,
+        player(3).id,
+        player(4).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+      ],
+    ]);
+
+    expect(
+      every(filteredByOnePlayer, (lineup) => {
+        return lineup.activePlayers.find((p) => p.equals(player(1).id));
+      })
+    ).toBe(true);
+
+    expect(
+      every(filteredByOnePlayer, (lineup) =>
+        every(lineup.variations, (variation) =>
+          some(
+            variation,
+            ([{ id: id1 }, { id: id2 }]) =>
+              player(1).id.equals(id1) || player(1).id.equals(id2)
+          )
+        )
+      )
+    );
+    const filteredByTwoPlayer = sut.getLineups([player(1).id, player(7).id]);
+
+    expect(
+      filteredByTwoPlayer.map((l) => l.inactivePlayers)
+    ).not.toContainEqual([player(1).id]);
+    expect(
+      filteredByTwoPlayer.map((l) => l.inactivePlayers)
+    ).not.toContainEqual([player(7).id]);
+    expect(filteredByTwoPlayer.map((l) => l.activePlayers)).toEqual([
+      [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(4).id,
+        player(5).id,
+        player(7).id,
+      ],
+      [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(4).id,
+        player(6).id,
+        player(7).id,
+      ],
+      [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+      ],
+      [
+        player(1).id,
+        player(2).id,
+        player(4).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+      ],
+      [
+        player(1).id,
+        player(3).id,
+        player(4).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+      ],
+    ]);
+
+    expect(
+      every(filteredByTwoPlayer, (lineup) => {
+        return (
+          lineup.activePlayers.find((p) => p.equals(player(1).id)) &&
+          lineup.activePlayers.find((p) => p.equals(player(7).id))
+        );
+      })
+    ).toBe(true);
+
+    expect(
+      every(filteredByOnePlayer, (lineup) =>
+        every(
+          lineup.variations,
+          (variation) =>
+            some(
+              variation,
+              ([{ id: id1 }, { id: id2 }]) =>
+                player(1).id.equals(id1) || player(1).id.equals(id2)
+            ) &&
+            some(
+              variation,
+              ([{ id: id1 }, { id: id2 }]) =>
+                player(7).id.equals(id1) || player(7).id.equals(id2)
+            )
+        )
+      )
+    );
   });
 });
