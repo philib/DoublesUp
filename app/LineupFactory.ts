@@ -1,6 +1,29 @@
-import _ from 'lodash';
+import _, { sortBy, uniqBy } from 'lodash';
 import { getPermutations } from './getPermutations';
 import { PlayerId } from './RegistrationList';
+
+export type PairingFilter = {
+  player1: {
+    position: number;
+    id: PlayerId;
+  };
+  player2: {
+    position: number;
+    id: PlayerId;
+  };
+};
+export type InactivePairingFilter = {
+  _type: 'Inactive';
+  filter: PairingFilter;
+};
+export type ActivePairingFilter = {
+  _type: 'Active';
+  filter: PairingFilter;
+};
+export type UnavailablePairingFilter = {
+  _type: 'Unavailable';
+  filter: PairingFilter;
+};
 type DoublesPairing = [
   { position: number; id: PlayerId },
   { position: number; id: PlayerId }
@@ -83,6 +106,52 @@ export const filterLineupsByPairings = (
   }));
 
   return withFilteredVariations;
+};
+
+export const getFilterStatus = (
+  result: Lineup[],
+  appliedFilters: { player1: PlayerId; player2: PlayerId }[]
+): (InactivePairingFilter | UnavailablePairingFilter)[] => {
+  const variationsMatchingFilters = appliedFilters.reduce(
+    (acc, filter) => {
+      return acc.filter((variation) => {
+        return variation.some((pairing) => {
+          const newLocal =
+            pairing[0].id.equals(filter.player1) &&
+            pairing[1].id.equals(filter.player2);
+          return newLocal;
+        });
+      });
+    },
+    result.flatMap((it) => it.variations)
+  );
+
+  const uniqueVariations = sortBy(
+    uniqBy(
+      variationsMatchingFilters.flatMap((it) => it),
+      (it) => `${it[0].position} - ${it[1].position}`
+    ),
+    [(it) => it[0].position, (it) => it[1].position]
+  );
+  const remainingVariations = appliedFilters.reduce((acc, filter) => {
+    return acc.filter(
+      (it) =>
+        !(it[0].id.equals(filter.player1) && it[1].id.equals(filter.player2))
+    );
+  }, uniqueVariations);
+  return remainingVariations.map((variation) => ({
+    _type: 'Inactive',
+    filter: {
+      player1: {
+        position: variation[0].position,
+        id: variation[0].id,
+      },
+      player2: {
+        position: variation[1].position,
+        id: variation[1].id,
+      },
+    },
+  }));
 };
 
 const allPossibleLineupVariations = [

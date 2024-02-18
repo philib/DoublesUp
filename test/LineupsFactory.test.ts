@@ -3,8 +3,10 @@ import {
   Lineup,
   createLineups,
   filterLineupsByPairings,
+  getFilterStatus,
 } from '../app/LineupFactory';
 import { PlayerId } from '../app/RegistrationList';
+import { getPermutations } from '../app/getPermutations';
 
 const playerId = (id: number) => PlayerId.create(`Player ${id}`);
 
@@ -552,6 +554,87 @@ describe('LineupsFactory', () => {
           ).toBe(true);
         });
       });
+    });
+
+    it('getFilterStatus for no active filters returns all possible pairing filters', () => {
+      //given
+      const player = (id: number) => ({
+        id: PlayerId.create(id.toString()),
+        name: `Player ${id}`,
+      });
+      const players = {
+        1: player(1).id,
+        2: player(2).id,
+        3: player(3).id,
+        4: player(4).id,
+        5: player(5).id,
+        6: player(6).id,
+        7: player(7).id,
+        8: player(8).id,
+      };
+      const lineups = createLineups(players) as Lineup[];
+
+      const playersToInactiveFilters = (ids: PlayerId[]) =>
+        getPermutations(
+          ids.map((it, index) => ({ position: index + 1, id: it })),
+          2
+        ).map((permutation) => ({
+          _type: 'Inactive',
+          filter: { player1: permutation[0], player2: permutation[1] },
+        }));
+
+      expect(getFilterStatus(lineups, [])).toEqual(
+        playersToInactiveFilters([
+          player(1).id,
+          player(2).id,
+          player(3).id,
+          player(4).id,
+          player(5).id,
+          player(6).id,
+        ])
+      );
+    });
+
+    it('getFilterStatus for active filter return all possible remaining filters', () => {
+      //given
+      const player = (id: number) => ({
+        id: PlayerId.create(id.toString()),
+        name: `Player ${id}`,
+      });
+      const players = {
+        1: player(1).id,
+        2: player(2).id,
+        3: player(3).id,
+        4: player(4).id,
+        5: player(5).id,
+        6: player(6).id,
+        7: player(7).id,
+        8: player(8).id,
+      };
+      const lineups = createLineups(players) as Lineup[];
+      expect(
+        getFilterStatus(lineups, [
+          {
+            player1: player(1).id,
+            player2: player(2).id,
+          },
+        ])
+      ).toEqual(
+        [
+          [3, 4],
+          [3, 5],
+          [3, 6],
+          [4, 5],
+          [4, 6],
+          [5, 6],
+        ].map((pairing) => ({
+          _type: 'Inactive',
+          filter: {
+            player1: { id: player(pairing[0]).id, position: pairing[0] },
+            player2: { id: player(pairing[1]).id, position: pairing[1] },
+          },
+        }))
+      );
     });
   });
 });

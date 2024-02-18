@@ -3,28 +3,6 @@ import { Player, PlayerId, RegistrationList } from '../RegistrationList';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
 import { Lineup, createLineups } from '../LineupFactory';
 
-export type PairingFilter = {
-  player1: {
-    position: number;
-    id: PlayerId;
-  };
-  player2: {
-    position: number;
-    id: PlayerId;
-  };
-};
-export type InactivePairingFilter = {
-  _type: 'Inactive';
-  filter: PairingFilter;
-};
-export type ActivePairingFilter = {
-  _type: 'Active';
-  filter: PairingFilter;
-};
-export type UnavailablePairingFilter = {
-  _type: 'Unavailable';
-  filter: PairingFilter;
-};
 
 export class RegistrationListService {
   private repository: RegistrationListRepository;
