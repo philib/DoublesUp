@@ -1,4 +1,9 @@
-import { Lineup, createLineups } from '../app/LineupFactory';
+import { create, every, some } from 'lodash';
+import {
+  Lineup,
+  createLineups,
+  filterLineupsByPairings,
+} from '../app/LineupFactory';
 import { PlayerId } from '../app/RegistrationList';
 
 const playerId = (id: number) => PlayerId.create(`Player ${id}`);
@@ -494,5 +499,59 @@ describe('LineupsFactory', () => {
         [1, 2],
       ].map((a) => a.map((b) => playerId(b)))
     );
+  });
+  describe('lineup filtering', () => {
+    it('lineups can be filtered by doubles players', () => {
+      //given
+      const player = (id: number) => ({
+        id: PlayerId.create(id.toString()),
+        name: `Player ${id}`,
+      });
+      const players = {
+        1: player(1).id,
+        2: player(2).id,
+        3: player(3).id,
+        4: player(4).id,
+        5: player(5).id,
+        6: player(6).id,
+        7: player(7).id,
+        8: player(8).id,
+      };
+
+      const lineups = createLineups(players) as Lineup[];
+
+      const filteredByPairing = filterLineupsByPairings(lineups, [
+        { player1: player(1).id, player2: player(6).id },
+      ]);
+
+      expect(
+        every(filteredByPairing, (lineup) =>
+          every(lineup.variations, (variation) =>
+            some(
+              variation,
+              ([{ id: id1 }, { id: id2 }]) =>
+                player(1).id.equals(id1) || player(6).id.equals(id2)
+            )
+          )
+        )
+      );
+      expect(
+        filteredByPairing.some((lineup) =>
+          lineup.inactivePlayers.some((p) => p.equals(player(1).id))
+        )
+      ).toBe(false);
+
+      filteredByPairing.forEach((lineup) => {
+        lineup.variations.forEach((variation) => {
+          expect(
+            variation.some(
+              (pairing) =>
+                pairing[0].id.equals(player(1).id) &&
+                pairing[1].id.equals(player(6).id)
+            )
+          ).toBe(true);
+        });
+      });
+    });
   });
 });
