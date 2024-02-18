@@ -3,14 +3,8 @@ import { getPermutations } from './getPermutations';
 import { PlayerId } from './RegistrationList';
 
 export type PairingFilter = {
-  player1: {
-    position: number;
-    id: PlayerId;
-  };
-  player2: {
-    position: number;
-    id: PlayerId;
-  };
+  player1: PlayerId;
+  player2: PlayerId;
 };
 export type InactivePairingFilter = {
   _type: 'Inactive';
@@ -129,7 +123,11 @@ export const getFilterStatus = (
   const uniqueVariations = sortBy(
     uniqBy(
       variationsMatchingFilters.flatMap((it) => it),
-      (it) => `${it[0].position} - ${it[1].position}`
+      (it) => {
+        // const newLocal = `${it[0].position} ${it[0].id.value} - ${it[1].position} ${it[1].id.value}`;
+        const newLocal = `${it[0].id.value} - ${it[1].id.value}`;
+        return newLocal;
+      }
     ),
     [(it) => it[0].position, (it) => it[1].position]
   );
@@ -139,19 +137,16 @@ export const getFilterStatus = (
         !(it[0].id.equals(filter.player1) && it[1].id.equals(filter.player2))
     );
   }, uniqueVariations);
-  return remainingVariations.map((variation) => ({
-    _type: 'Inactive',
+  const r = remainingVariations.map((variation) => ({
+    _type: 'Inactive' as const,
     filter: {
-      player1: {
-        position: variation[0].position,
-        id: variation[0].id,
-      },
-      player2: {
-        position: variation[1].position,
-        id: variation[1].id,
-      },
+      player1: variation[0].id,
+
+      player2: variation[1].id,
     },
   }));
+  console.log(JSON.stringify(r, null, 2));
+  return r;
 };
 
 const allPossibleLineupVariations = [
