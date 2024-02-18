@@ -30,10 +30,6 @@ export const Default = () => {
 
   return (
     <>
-      Total Variations:{' '}
-      {lineups.reduce((acc, lineup) => {
-        return acc + lineup.variations.length;
-      }, 0)}
       <LineupsComponent
         lineups={lineups.map((lineup) => {
           const activePlayers = lineup.activePlayers.map((player) => ({

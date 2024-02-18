@@ -56,9 +56,7 @@ export const Liste = () => {
         sortPlayer={(rankFrom, rankTo) => {
           return service.sortPlayer(rankFrom, rankTo);
         }}
-        onPlayerListModified={function (players: MeldelistePlayer[]): void {
-          console.log(JSON.stringify(players));
-        }}
+        onPlayerListModified={function (players: MeldelistePlayer[]): void {}}
         selectPlayer={(id: PlayerId) => {
           setPlayerSelection({ ...playerSelection, [id.value]: true });
         }}

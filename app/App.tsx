@@ -44,11 +44,11 @@ const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
     <LineupsComponent
       lineups={service.lineups.map((lineup) => ({
         activePlayers: lineup.activePlayers.map((player) => ({
-          ...player,
+          id: player,
           name: service.getPlayerById(player)!!.name,
         })),
         inactivePlayers: lineup.inactivePlayers.map((player) => ({
-          ...player,
+          id: player,
           name: service.getPlayerById(player)!!.name,
         })),
         variations: lineup.variations.map((doublePairings) => {
@@ -66,6 +66,9 @@ const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
           });
         }),
       }))}
+      getPlayerNameById={(id) => {
+        return service.getPlayerById(id)!!.name;
+      }}
     />
   );
 };

@@ -1,10 +1,22 @@
-import { Card, CardContent, CardHeader, Grid, IconButton } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Grid,
+  IconButton,
+} from '@mui/material';
 import { CustomDivider } from '../customDivider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-import { set } from 'lodash';
 import { PlayerId } from '../RegistrationList';
+import {
+  filterLineupsByPairings,
+  getFilterStatus,
+  Lineup as LineupFactoryLineup,
+} from '../LineupFactory';
+import { set } from 'lodash';
 
 export type Variation = [
   { position: number; id: PlayerId },
@@ -78,7 +90,7 @@ const VariationComponent: React.FC<{
 };
 const ExpandableLineup: React.FC<{
   lineupVariation: number;
-  lineup: Lineup;
+  lineup: LineupFactoryLineup;
   getPlayerNameById: (id: PlayerId) => string;
 }> = ({
   lineupVariation,
@@ -97,13 +109,11 @@ const ExpandableLineup: React.FC<{
               <>
                 <div>
                   With:{' '}
-                  {activePlayers.map((p) => getPlayerNameById(p.id)).join(' ,')}
+                  {activePlayers.map((p) => getPlayerNameById(p)).join(' ,')}
                 </div>
                 <div>
                   Without:{' '}
-                  {inactivePlayers
-                    .map((p) => getPlayerNameById(p.id))
-                    .join(' ,')}
+                  {inactivePlayers.map((p) => getPlayerNameById(p)).join(' ,')}
                 </div>
               </>
             }
@@ -124,13 +134,76 @@ const ExpandableLineup: React.FC<{
   );
 };
 
+const useFilters = (lineups: LineupFactoryLineup[]) => {
+  const [filters, setFilters] = useState<
+    { player1: PlayerId; player2: PlayerId }[]
+  >([]);
+  const [filteredLineups, setFilteredLineups] =
+    useState<LineupFactoryLineup[]>(lineups);
+  useEffect(() => {
+    const newFilteredLineups = filterLineupsByPairings(lineups, filters);
+    setFilteredLineups(newFilteredLineups);
+  }, [filters]);
+  return {
+    filters,
+    filteredLineups,
+    addFilter: (filter: { player1: PlayerId; player2: PlayerId }) => {
+      const newFilter = [...filters, filter];
+      setFilters(newFilter);
+    },
+    removeFilter: (filter: { player1: PlayerId; player2: PlayerId }) => {
+      const newFilter = filters.filter((f) => f !== filter);
+      setFilters(newFilter);
+    },
+  };
+};
+
 export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   lineups,
   getPlayerNameById,
 }) => {
+  const lineupFactoryLineups = lineups.map((lineup) => ({
+    activePlayers: lineup.activePlayers.map((p) => p.id),
+    inactivePlayers: lineup.inactivePlayers.map((p) => p.id),
+    variations: lineup.variations,
+  }));
+  const { filters, filteredLineups, addFilter, removeFilter } =
+    useFilters(lineupFactoryLineups);
   return (
     <>
-      {lineups.map((l, index) => (
+      {filteredLineups.flatMap((lineup) => lineup.variations).length}
+      {filters.map((filter) => {
+        return (
+          <FilterChip
+            text={`${getPlayerNameById(filter.player1)} + ${getPlayerNameById(
+              filter.player2
+            )}`}
+            active={true}
+            onClick={() => removeFilter(filter)}
+          />
+        );
+      })}
+      {getFilterStatus(lineupFactoryLineups, filters).map((filter) => {
+        let text = '';
+        if (filter._type === 'Inactive') {
+          text = `${getPlayerNameById(
+            filter.filter.player1
+          )} + ${getPlayerNameById(filter.filter.player2)}`;
+          return (
+            <FilterChip
+              text={text}
+              active={false}
+              onClick={() =>
+                addFilter({
+                  player1: filter.filter.player1,
+                  player2: filter.filter.player2,
+                })
+              }
+            />
+          );
+        }
+      })}
+      {filteredLineups.map((l, index) => (
         <ExpandableLineup
           lineupVariation={index + 1}
           lineup={l}
@@ -138,5 +211,27 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         />
       ))}
     </>
+  );
+};
+
+const FilterChip: React.FC<{
+  text: string;
+  active: boolean;
+  onClick: () => void;
+}> = ({ text, active, onClick }) => {
+  const style: {
+    variant: 'filled' | 'outlined';
+    color: 'default' | 'primary';
+  } = active
+    ? { variant: 'filled', color: 'primary' }
+    : { variant: 'outlined', color: 'primary' };
+  return (
+    <Chip
+      style={{ width: '100%' }}
+      variant={style.variant}
+      color={style.color}
+      label={text}
+      onClick={onClick}
+    />
   );
 };
