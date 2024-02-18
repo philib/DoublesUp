@@ -1,7 +1,30 @@
-import { sortBy } from 'lodash';
+import { sortBy, uniqBy } from 'lodash';
 import { Player, PlayerId, RegistrationList } from '../RegistrationList';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
 import { Lineup, createLineups } from '../LineupFactory';
+
+export type PairingFilter = {
+  player1: {
+    position: number;
+    id: PlayerId;
+  };
+  player2: {
+    position: number;
+    id: PlayerId;
+  };
+};
+export type InactivePairingFilter = {
+  _type: 'Inactive';
+  filter: PairingFilter;
+};
+export type ActivePairingFilter = {
+  _type: 'Active';
+  filter: PairingFilter;
+};
+export type UnavailablePairingFilter = {
+  _type: 'Unavailable';
+  filter: PairingFilter;
+};
 
 export class RegistrationListService {
   private repository: RegistrationListRepository;
@@ -76,7 +99,7 @@ export class RegistrationListService {
         ...acc,
         [registrationList.getRankById(id)!!]: id,
       }),
-      {}
+      {} as { [rank: number]: PlayerId }
     );
     const lineups = createLineups(selectedPlayer);
     const result = lineups === 'Not enough players' ? [] : lineups;
@@ -85,5 +108,62 @@ export class RegistrationListService {
         return lineup.activePlayers.find((player) => player.equals(filter));
       });
     }, result);
+  }
+  getAvailableFilters(
+    appliedFilters: ActivePairingFilter[]
+  ): (InactivePairingFilter | UnavailablePairingFilter)[] {
+    const registrationList = this.repository.get();
+    const selectedPlayer = this.selectedPlayer.reduce(
+      (acc, id) => ({
+        ...acc,
+        [registrationList.getRankById(id)!!]: id,
+      }),
+      {} as { [rank: number]: PlayerId }
+    );
+    const lineups = createLineups(selectedPlayer);
+    const result = lineups === 'Not enough players' ? [] : lineups;
+    const variationsMatchingFilters = appliedFilters.reduce(
+      (acc, filter) => {
+        return acc.filter((variation) => {
+          return variation.some((pairing) => {
+            const newLocal =
+              pairing[0].id.equals(filter.filter.player1.id) &&
+              pairing[1].id.equals(filter.filter.player2.id);
+            return newLocal;
+          });
+        });
+      },
+      result.flatMap((it) => it.variations)
+    );
+
+    const uniqueVariations = sortBy(
+      uniqBy(
+        variationsMatchingFilters.flatMap((it) => it),
+        (it) => `${it[0].position} - ${it[1].position}`
+      ),
+      [(it) => it[0].position, (it) => it[1].position]
+    );
+    const remainingVariations = appliedFilters.reduce((acc, filter) => {
+      return acc.filter(
+        (it) =>
+          !(
+            it[0].id.equals(filter.filter.player1.id) &&
+            it[1].id.equals(filter.filter.player2.id)
+          )
+      );
+    }, uniqueVariations);
+    return remainingVariations.map((variation) => ({
+      _type: 'Inactive',
+      filter: {
+        player1: {
+          position: variation[0].position,
+          id: selectedPlayer[variation[0].position],
+        },
+        player2: {
+          position: variation[1].position,
+          id: selectedPlayer[variation[1].position],
+        },
+      },
+    }));
   }
 }
