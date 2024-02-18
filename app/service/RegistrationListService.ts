@@ -109,6 +109,38 @@ export class RegistrationListService {
       });
     }, result);
   }
+  filterLineups(
+    lineups: Lineup[],
+    filter: { player1: PlayerId; player2: PlayerId }[] = []
+  ): Lineup[] {
+    const lineupsWithPlayersPlaying = filter.reduce((acc, filter) => {
+      return acc.filter((lineup) => {
+        const player1Playing = lineup.activePlayers.find((player) =>
+          player.equals(filter.player1)
+        );
+        const player2Playing = lineup.activePlayers.find((player) =>
+          player.equals(filter.player2)
+        );
+        return player1Playing && player2Playing;
+      });
+    }, lineups);
+
+    const withFilteredVariations = lineupsWithPlayersPlaying.map((lineup) => ({
+      ...lineup,
+      variations: filter.reduce((acc, filter) => {
+        return acc.filter((variation) => {
+          return variation.some((pairing) => {
+            const newLocal =
+              pairing[0].id.equals(filter.player1) &&
+              pairing[1].id.equals(filter.player2);
+            return newLocal;
+          });
+        });
+      }, lineup.variations),
+    }));
+
+    return withFilteredVariations;
+  }
   getAvailableFilters(
     appliedFilters: { player1: PlayerId; player2: PlayerId }[]
   ): (InactivePairingFilter | UnavailablePairingFilter)[] {
