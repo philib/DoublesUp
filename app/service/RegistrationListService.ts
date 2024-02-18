@@ -110,7 +110,7 @@ export class RegistrationListService {
     }, result);
   }
   getAvailableFilters(
-    appliedFilters: ActivePairingFilter[]
+    appliedFilters: { player1: PlayerId; player2: PlayerId }[]
   ): (InactivePairingFilter | UnavailablePairingFilter)[] {
     const registrationList = this.repository.get();
     const selectedPlayer = this.selectedPlayer.reduce(
@@ -127,8 +127,8 @@ export class RegistrationListService {
         return acc.filter((variation) => {
           return variation.some((pairing) => {
             const newLocal =
-              pairing[0].id.equals(filter.filter.player1.id) &&
-              pairing[1].id.equals(filter.filter.player2.id);
+              pairing[0].id.equals(filter.player1) &&
+              pairing[1].id.equals(filter.player2);
             return newLocal;
           });
         });
@@ -146,10 +146,7 @@ export class RegistrationListService {
     const remainingVariations = appliedFilters.reduce((acc, filter) => {
       return acc.filter(
         (it) =>
-          !(
-            it[0].id.equals(filter.filter.player1.id) &&
-            it[1].id.equals(filter.filter.player2.id)
-          )
+          !(it[0].id.equals(filter.player1) && it[1].id.equals(filter.player2))
       );
     }, uniqueVariations);
     return remainingVariations.map((variation) => ({

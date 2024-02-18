@@ -402,11 +402,8 @@ describe('RegistrationListService', () => {
       expect(
         sut.getAvailableFilters([
           {
-            _type: 'Active',
-            filter: {
-              player1: { id: player(1).id, position: 1 },
-              player2: { id: player(2).id, position: 2 },
-            },
+              player1: player(1).id,
+              player2: player(2).id,
           },
         ])
       ).toEqual(
