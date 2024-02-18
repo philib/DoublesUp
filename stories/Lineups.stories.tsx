@@ -1,5 +1,6 @@
 import { Lineup, createLineups } from '../app/LineupFactory';
 import { LineupsComponent } from '../app/Lineups/Lineups';
+import { PlayerId } from '../app/RegistrationList';
 import { createFakeUseService } from './useFakeService';
 
 const meta = {
@@ -14,17 +15,18 @@ const meta = {
 export default meta;
 
 export const Default = () => {
-  const lineups = createLineups({
-    1: 'Player 1',
-    2: 'Player 2',
-    3: 'Player 3',
-    4: 'Player 4',
-    5: 'Player 5',
-    6: 'Player 6',
-    7: 'Player 7',
-    8: 'Player 8',
-    9: 'Player 9',
-  }) as Lineup[];
+  const players = {
+    1: PlayerId.create('Player 1'),
+    2: PlayerId.create('Player 2'),
+    3: PlayerId.create('Player 3'),
+    4: PlayerId.create('Player 4'),
+    5: PlayerId.create('Player 5'),
+    6: PlayerId.create('Player 6'),
+    7: PlayerId.create('Player 7'),
+    8: PlayerId.create('Player 8'),
+    9: PlayerId.create('Player 9'),
+  };
+  const lineups = createLineups(players) as Lineup[];
 
   return (
     <>
@@ -35,10 +37,10 @@ export const Default = () => {
       <LineupsComponent
         lineups={lineups.map((lineup) => {
           const activePlayers = lineup.activePlayers.map((player) => ({
-            name: player,
+            id: player,
           }));
           const inactivePlayers = lineup.inactivePlayers.map((player) => ({
-            name: player,
+            id: player,
           }));
           return {
             activePlayers,
@@ -48,6 +50,12 @@ export const Default = () => {
             }),
           };
         })}
+        getPlayerNameById={(id) =>
+          Object.values(players).reduce(
+            (acc, players) => ({ ...acc, [players.value]: players.value }),
+            {} as { [id: string]: string }
+          )[id.value]
+        }
       />
     </>
   );
