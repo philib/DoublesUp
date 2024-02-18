@@ -576,7 +576,6 @@ describe('LineupsFactory', () => {
 
       const playersToInactiveFilters = (ids: PlayerId[]) =>
         getPermutations(ids, 2).map((permutation) => ({
-          _type: 'Inactive',
           filter: { player1: permutation[0], player2: permutation[1] },
         }));
 
@@ -627,7 +626,6 @@ describe('LineupsFactory', () => {
           [5, 7],
           [6, 7],
         ].map((pairing) => ({
-          _type: 'Inactive',
           filter: {
             player1: player(pairing[0]),
             player2: player(pairing[1]),
@@ -652,7 +650,6 @@ describe('LineupsFactory', () => {
           [4, 7],
           [5, 7],
         ].map((pairing) => ({
-          _type: 'Inactive',
           filter: {
             player1: player(pairing[0]),
             player2: player(pairing[1]),

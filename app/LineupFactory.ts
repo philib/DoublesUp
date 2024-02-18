@@ -7,15 +7,6 @@ export type PairingFilter = {
   player2: PlayerId;
 };
 export type InactivePairingFilter = {
-  _type: 'Inactive';
-  filter: PairingFilter;
-};
-export type ActivePairingFilter = {
-  _type: 'Active';
-  filter: PairingFilter;
-};
-export type UnavailablePairingFilter = {
-  _type: 'Unavailable';
   filter: PairingFilter;
 };
 type DoublesPairing = [
@@ -105,7 +96,7 @@ export const filterLineupsByPairings = (
 export const getFilterStatus = (
   result: Lineup[],
   appliedFilters: { player1: PlayerId; player2: PlayerId }[]
-): (InactivePairingFilter | UnavailablePairingFilter)[] => {
+): InactivePairingFilter[] => {
   const variationsMatchingFilters = appliedFilters.reduce(
     (acc, filter) => {
       return acc.filter((variation) => {
@@ -137,16 +128,13 @@ export const getFilterStatus = (
         !(it[0].id.equals(filter.player1) && it[1].id.equals(filter.player2))
     );
   }, uniqueVariations);
-  const r = remainingVariations.map((variation) => ({
-    _type: 'Inactive' as const,
+  return remainingVariations.map((variation) => ({
     filter: {
       player1: variation[0].id,
 
       player2: variation[1].id,
     },
   }));
-  console.log(JSON.stringify(r, null, 2));
-  return r;
 };
 
 const allPossibleLineupVariations = [

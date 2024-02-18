@@ -184,24 +184,21 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         );
       })}
       {getFilterStatus(lineupFactoryLineups, filters).map((filter) => {
-        let text = '';
-        if (filter._type === 'Inactive') {
-          text = `${getPlayerNameById(
-            filter.filter.player1
-          )} + ${getPlayerNameById(filter.filter.player2)}`;
-          return (
-            <FilterChip
-              text={text}
-              active={false}
-              onClick={() =>
-                addFilter({
-                  player1: filter.filter.player1,
-                  player2: filter.filter.player2,
-                })
-              }
-            />
-          );
-        }
+        const text = `${getPlayerNameById(
+          filter.filter.player1
+        )} + ${getPlayerNameById(filter.filter.player2)}`;
+        return (
+          <FilterChip
+            text={text}
+            active={false}
+            onClick={() =>
+              addFilter({
+                player1: filter.filter.player1,
+                player2: filter.filter.player2,
+              })
+            }
+          />
+        );
       })}
       {filteredLineups.map((l, index) => (
         <ExpandableLineup
