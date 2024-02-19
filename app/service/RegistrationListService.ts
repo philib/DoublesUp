@@ -1,8 +1,7 @@
 import { sortBy, uniqBy } from 'lodash';
 import { Player, PlayerId, RegistrationList } from '../RegistrationList';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
-import { Lineup, createLineups } from '../LineupFactory';
-
+import { InactivePairingFilter, Lineup, createLineups } from '../LineupFactory';
 
 export class RegistrationListService {
   private repository: RegistrationListRepository;
@@ -121,7 +120,7 @@ export class RegistrationListService {
   }
   getAvailableFilters(
     appliedFilters: { player1: PlayerId; player2: PlayerId }[]
-  ): (InactivePairingFilter | UnavailablePairingFilter)[] {
+  ): InactivePairingFilter[] {
     const registrationList = this.repository.get();
     const selectedPlayer = this.selectedPlayer.reduce(
       (acc, id) => ({
@@ -160,16 +159,9 @@ export class RegistrationListService {
       );
     }, uniqueVariations);
     return remainingVariations.map((variation) => ({
-      _type: 'Inactive',
       filter: {
-        player1: {
-          position: variation[0].position,
-          id: selectedPlayer[variation[0].position],
-        },
-        player2: {
-          position: variation[1].position,
-          id: selectedPlayer[variation[1].position],
-        },
+        player1: selectedPlayer[variation[0].position],
+        player2: selectedPlayer[variation[1].position],
       },
     }));
   }

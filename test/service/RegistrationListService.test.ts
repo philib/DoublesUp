@@ -381,11 +381,7 @@ describe('RegistrationListService', () => {
       });
 
       const playersToInactiveFilters = (ids: PlayerId[]) =>
-        getPermutations(
-          ids.map((it, index) => ({ position: index + 1, id: it })),
-          2
-        ).map((permutation) => ({
-          _type: 'Inactive',
+        getPermutations(ids, 2).map((permutation) => ({
           filter: { player1: permutation[0], player2: permutation[1] },
         }));
 
@@ -416,10 +412,9 @@ describe('RegistrationListService', () => {
           [4, 6],
           [5, 6],
         ].map((pairing) => ({
-          _type: 'Inactive',
           filter: {
-            player1: { id: player(pairing[0]).id, position: pairing[0] },
-            player2: { id: player(pairing[1]).id, position: pairing[1] },
+            player1: player(pairing[0]).id,
+            player2: player(pairing[1]).id,
           },
         }))
       );
