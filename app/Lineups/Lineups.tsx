@@ -170,44 +170,58 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   const { filters, filteredLineups, addFilter, removeFilter } =
     useFilters(lineupFactoryLineups);
   return (
-    <>
-      {filteredLineups.flatMap((lineup) => lineup.variations).length}
-      {filters.map((filter) => {
-        return (
-          <FilterChip
-            text={`${getPlayerNameById(filter.player1)} + ${getPlayerNameById(
-              filter.player2
-            )}`}
-            active={true}
-            onClick={() => removeFilter(filter)}
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <div
+        style={{
+          overflow: 'auto',
+          whiteSpace: 'nowrap',
+          scrollbarWidth: 'none',
+        }}
+      >
+        {filteredLineups.flatMap((lineup) => lineup.variations).length}
+        {filters.map((filter, index) => {
+          const text = `${getPlayerNameById(
+            filter.player1
+          )} + ${getPlayerNameById(filter.player2)}`;
+          return (
+            <FilterChip
+              key={`filter-active-${text}`}
+              text={text}
+              active={true}
+              onClick={() => removeFilter(filter)}
+            />
+          );
+        })}
+        {getFilterStatus(lineupFactoryLineups, filters).map((filter) => {
+          const text = `${getPlayerNameById(
+            filter.filter.player1
+          )} + ${getPlayerNameById(filter.filter.player2)}`;
+          return (
+            <FilterChip
+              key={`filter-inactive-${text}`}
+              text={text}
+              active={false}
+              onClick={() =>
+                addFilter({
+                  player1: filter.filter.player1,
+                  player2: filter.filter.player2,
+                })
+              }
+            />
+          );
+        })}
+      </div>
+      <div style={{ flex: 1, overflow: 'auto' }}>
+        {filteredLineups.map((l, index) => (
+          <ExpandableLineup
+            key={`lineup-${index}`}
+            lineupVariation={index + 1}
+            lineup={l}
+            getPlayerNameById={getPlayerNameById}
           />
-        );
-      })}
-      {getFilterStatus(lineupFactoryLineups, filters).map((filter) => {
-        const text = `${getPlayerNameById(
-          filter.filter.player1
-        )} + ${getPlayerNameById(filter.filter.player2)}`;
-        return (
-          <FilterChip
-            text={text}
-            active={false}
-            onClick={() =>
-              addFilter({
-                player1: filter.filter.player1,
-                player2: filter.filter.player2,
-              })
-            }
-          />
-        );
-      })}
-      {filteredLineups.map((l, index) => (
-        <ExpandableLineup
-          lineupVariation={index + 1}
-          lineup={l}
-          getPlayerNameById={getPlayerNameById}
-        />
-      ))}
-    </>
+        ))}
+      </div>
+    </div>
   );
 };
 
@@ -224,7 +238,12 @@ const FilterChip: React.FC<{
     : { variant: 'outlined', color: 'primary' };
   return (
     <Chip
-      style={{ width: '100%' }}
+      style={{
+        marginTop: '10px',
+        marginBottom: '10px',
+        marginLeft: '5px',
+        marginRight: '5px',
+      }}
       variant={style.variant}
       color={style.color}
       label={text}
