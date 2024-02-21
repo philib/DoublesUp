@@ -1,16 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
-  ReactNode,
   createContext,
   useContext,
   useEffect,
+  useReducer,
   useState,
 } from 'react';
 import { MeldelistePlayer } from '../Meldeliste/Meldeliste';
-import { Player, PlayerId, RegistrationList } from '../RegistrationList';
-import { RegistrationListService } from './RegistrationListService';
+import { Player, PlayerId } from '../RegistrationList';
+import { Variation, RegistrationListService } from './RegistrationListService';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
-import { Lineup, createLineups } from '../LineupFactory';
+import { Lineup } from '../LineupFactory';
 
 interface ServiceContextType {
   players: MeldelistePlayer[];
@@ -24,6 +24,9 @@ interface ServiceContextType {
   selectPlayer: (id: PlayerId) => void;
   deselectPlayer: (id: PlayerId) => void;
   isPlayerSelected: (id: PlayerId) => boolean;
+  isFavorized: (variation: Variation) => boolean;
+  favorize: (variation: Variation) => void;
+  unfavorize: (variation: Variation) => void;
 }
 
 export const ServiceContext = createContext<ServiceContextType | null>(null);
@@ -40,15 +43,15 @@ export const ServiceProvider: React.FunctionComponent<{
   repo: RegistrationListRepository;
 }> = ({ children, repo }) => {
   const [service] = useState(new RegistrationListService(repo));
+  const [change, forceUpdate] = useReducer((x) => x + 1, 0);
   const [players, setPlayers] = useState<MeldelistePlayer[]>(
     toMeldeliste(service)
   );
   const [playerSelection, setPlayerSelection] = useState<Player[]>([]);
-  console.log(JSON.stringify(playerSelection));
   const [lineups, setLineups] = useState<Lineup[]>([]);
   useEffect(() => {
     setLineups(service.getLineups());
-  }, [playerSelection, players]);
+  }, [playerSelection, players, change]);
 
   const value = {
     players,
@@ -94,6 +97,17 @@ export const ServiceProvider: React.FunctionComponent<{
     },
     isPlayerSelected(id: PlayerId) {
       return service.isPlayerSelected(id);
+    },
+    isFavorized(variation: Variation) {
+      return service.isVariationFavorized(variation);
+    },
+    favorize(variation: Variation) {
+      service.favorizeVariation(variation);
+      forceUpdate();
+    },
+    unfavorize(variation: Variation) {
+      service.unfavorizeVariation(variation);
+      forceUpdate();
     },
   };
   return (

@@ -17,7 +17,6 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   navigations,
 }) => {
   const [bottomNavigationValue, setBottomNavigationValue] = React.useState(0);
-  console.log('navigations prop changed', navigations.length);
   const bottomNavigationActions = navigations.map((navigation) => (
     <BottomNavigationAction
       label={navigation.title}

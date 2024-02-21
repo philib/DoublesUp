@@ -16,7 +16,7 @@ import {
   getFilterStatus,
   Lineup as LineupFactoryLineup,
 } from '../LineupFactory';
-import { set } from 'lodash';
+import { Variation as TestVariation } from '../service/RegistrationListService';
 
 export type Variation = [
   { position: number; id: PlayerId },
@@ -30,13 +30,18 @@ export interface Lineup {
 export interface LineupVariationsProps {
   lineups: Lineup[];
   getPlayerNameById: (id: PlayerId) => string;
+  isFavorite: (f: TestVariation) => boolean;
+  favorize: (f: TestVariation) => void;
+  unfavorize: (f: TestVariation) => void;
 }
 
 const VariationComponent: React.FC<{
   variation: Variation;
   getPlayerNameById: (id: PlayerId) => string;
-}> = ({ variation, getPlayerNameById }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  isFavorite: boolean;
+  favorize: () => void;
+  unfavorize: () => void;
+}> = ({ variation, getPlayerNameById, favorize, unfavorize, isFavorite }) => {
   return (
     <Grid item container direction={'row'}>
       <Grid item>
@@ -44,7 +49,7 @@ const VariationComponent: React.FC<{
           <IconButton
             aria-label="star"
             onClick={() => {
-              setIsFavorite(false);
+              unfavorize();
             }}
           >
             <StarIcon color={'primary'} />
@@ -53,7 +58,7 @@ const VariationComponent: React.FC<{
           <IconButton
             aria-label="unstar"
             onClick={() => {
-              setIsFavorite(true);
+              favorize();
             }}
           >
             <StarBorderIcon color={'primary'} />
@@ -92,10 +97,16 @@ const ExpandableLineup: React.FC<{
   lineupVariation: number;
   lineup: LineupFactoryLineup;
   getPlayerNameById: (id: PlayerId) => string;
+  favorize: (f: TestVariation) => void;
+  unfavorize: (f: TestVariation) => void;
+  isFavorite: (f: TestVariation) => boolean;
 }> = ({
   lineupVariation,
   lineup: { activePlayers, inactivePlayers, variations },
   getPlayerNameById,
+  favorize,
+  unfavorize,
+  isFavorite,
 }) => {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -119,15 +130,34 @@ const ExpandableLineup: React.FC<{
             }
           />
           {expanded &&
-            variations.map((v, index) => (
-              <>
-                <CustomDivider>Variant {index + 1}</CustomDivider>
-                <VariationComponent
-                  variation={v}
-                  getPlayerNameById={getPlayerNameById}
-                />
-              </>
-            ))}
+            variations.map((v, index) => {
+              const favorite: TestVariation = {
+                doubles1: {
+                  player1: v[0][0].id,
+                  player2: v[0][1].id,
+                },
+                doubles2: {
+                  player1: v[1][0].id,
+                  player2: v[1][1].id,
+                },
+                doubles3: {
+                  player1: v[2][0].id,
+                  player2: v[2][1].id,
+                },
+              };
+              return (
+                <>
+                  <CustomDivider>Variant {index + 1}</CustomDivider>
+                  <VariationComponent
+                    variation={v}
+                    getPlayerNameById={getPlayerNameById}
+                    favorize={() => favorize(favorite)}
+                    unfavorize={() => unfavorize(favorite)}
+                    isFavorite={isFavorite(favorite)}
+                  />
+                </>
+              );
+            })}
         </CardContent>
       </Card>
     </>
@@ -155,12 +185,16 @@ const useFilters = (lineups: LineupFactoryLineup[]) => {
       const newFilter = filters.filter((f) => f !== filter);
       setFilters(newFilter);
     },
+    filterFavorites: (favorizedVariations: Variation[]) => {},
   };
 };
 
 export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   lineups,
   getPlayerNameById,
+  isFavorite,
+  favorize,
+  unfavorize,
 }) => {
   const lineupFactoryLineups = lineups.map((lineup) => ({
     activePlayers: lineup.activePlayers.map((p) => p.id),
@@ -218,6 +252,9 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
             lineupVariation={index + 1}
             lineup={l}
             getPlayerNameById={getPlayerNameById}
+            isFavorite={isFavorite}
+            favorize={favorize}
+            unfavorize={unfavorize}
           />
         ))}
       </div>

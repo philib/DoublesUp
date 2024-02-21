@@ -1,14 +1,23 @@
-import { sortBy, uniqBy } from 'lodash';
+import { sortBy, uniq, uniqBy, without } from 'lodash';
 import { Player, PlayerId, RegistrationList } from '../RegistrationList';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
 import { InactivePairingFilter, Lineup, createLineups } from '../LineupFactory';
 
+export type Variation = {
+  doubles1: { player1: PlayerId; player2: PlayerId };
+  doubles2: { player1: PlayerId; player2: PlayerId };
+  doubles3: { player1: PlayerId; player2: PlayerId };
+};
+
 export class RegistrationListService {
   private repository: RegistrationListRepository;
   private selectedPlayer: PlayerId[];
+  private favorizedVariations: Variation[];
+
   constructor(repository: RegistrationListRepository) {
     this.repository = repository;
     this.selectedPlayer = [];
+    this.favorizedVariations = [];
   }
   getList(): RegistrationList {
     return this.repository.get();
@@ -165,4 +174,38 @@ export class RegistrationListService {
       },
     }));
   }
+  isVariationFavorized(variation: {
+    doubles1: { player1: PlayerId; player2: PlayerId };
+    doubles2: { player1: PlayerId; player2: PlayerId };
+    doubles3: { player1: PlayerId; player2: PlayerId };
+  }): boolean {
+    return this.favorizedVariations
+      .map(hashVariation)
+      .some((it) => it === hashVariation(variation));
+  }
+  favorizeVariation(variation: {
+    doubles1: { player1: PlayerId; player2: PlayerId };
+    doubles2: { player1: PlayerId; player2: PlayerId };
+    doubles3: { player1: PlayerId; player2: PlayerId };
+  }) {
+    this.favorizedVariations = uniqBy(
+      [...this.favorizedVariations, variation],
+      hashVariation
+    );
+  }
+  unfavorizeVariation(variation: {
+    doubles1: { player1: PlayerId; player2: PlayerId };
+    doubles2: { player1: PlayerId; player2: PlayerId };
+    doubles3: { player1: PlayerId; player2: PlayerId };
+  }) {
+    this.favorizedVariations = this.favorizedVariations.filter(
+      (it) => hashVariation(it) !== hashVariation(variation)
+    );
+  }
+  getFavorizedVariations(): Variation[] {
+    return this.favorizedVariations;
+  }
 }
+
+const hashVariation = (it: Variation) =>
+  `{${it.doubles1.player1.value},${it.doubles1.player2.value} - ${it.doubles2.player1.value},${it.doubles2.player2.value} - ${it.doubles3.player1.value},${it.doubles3.player2.value}}`;

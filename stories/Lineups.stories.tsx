@@ -1,7 +1,12 @@
 import { Lineup, createLineups } from '../app/LineupFactory';
 import { LineupsComponent } from '../app/Lineups/Lineups';
 import { PlayerId } from '../app/RegistrationList';
-import { createFakeUseService } from './useFakeService';
+import { Variation } from '../app/service/RegistrationListService';
+import {
+  ServiceProvider,
+  useService,
+} from '../app/service/useRegistrationListServiceFactory';
+import { createFakeUseService, fakeRepository } from './useFakeService';
 
 const meta = {
   title: 'Lineups',
@@ -52,6 +57,11 @@ export const Default = () => {
             {} as { [id: string]: string }
           )[id.value]
         }
+        isFavorite={function (f: Variation): boolean {
+          return false;
+        }}
+        favorize={function (f: Variation): void {}}
+        unfavorize={function (f: Variation): void {}}
       />
     </>
   );

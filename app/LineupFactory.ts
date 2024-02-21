@@ -1,6 +1,7 @@
 import _, { sortBy, uniqBy } from 'lodash';
 import { getPermutations } from './getPermutations';
 import { PlayerId } from './RegistrationList';
+import { Variation } from './service/RegistrationListService';
 
 export type PairingFilter = {
   player1: PlayerId;
@@ -91,6 +92,37 @@ export const filterLineupsByPairings = (
   }));
 
   return withFilteredVariations;
+};
+
+export const filterLineupsByVariations = (
+  lineups: Lineup[],
+  filteredVariations: Variation[]
+): Lineup[] => {
+  const isFilteredVariation = filteredVariations.reduce(
+    (acc, filter) => {
+      return (variation: DoublesPairing[]) => {
+        return (
+          acc(variation) ||
+          (variation[0][0].id.equals(filter.doubles1.player1) &&
+            variation[0][1].id.equals(filter.doubles1.player2) &&
+            variation[1][0].id.equals(filter.doubles2.player1) &&
+            variation[1][1].id.equals(filter.doubles2.player2) &&
+            variation[2][0].id.equals(filter.doubles3.player1) &&
+            variation[2][1].id.equals(filter.doubles3.player2))
+        );
+      };
+    },
+    (() => {
+      return false;
+    }) as (pairings: DoublesPairing[]) => boolean
+  );
+  const result = lineups
+    .map((lineup) => ({
+      ...lineup,
+      variations: lineup.variations.filter(isFilteredVariation),
+    }))
+    .filter((lineup) => lineup.variations.length > 0);
+  return result;
 };
 
 export const getFilterStatus = (

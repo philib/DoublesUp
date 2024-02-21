@@ -5,6 +5,7 @@ import { Meldeliste, MeldelistePlayer } from './Meldeliste/Meldeliste';
 import { PlayerId } from './RegistrationList';
 import { LineupsComponent } from './Lineups/Lineups';
 import { useService } from './service/useRegistrationListServiceFactory';
+import { Variation } from './service/RegistrationListService';
 
 const RegistrationComponentWithState: React.FunctionComponent<{}> = () => {
   const service = useService();
@@ -38,7 +39,7 @@ const RegistrationComponentWithState: React.FunctionComponent<{}> = () => {
     />
   );
 };
-const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
+export const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
   const service = useService();
   return (
     <LineupsComponent
@@ -68,6 +69,15 @@ const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
       }))}
       getPlayerNameById={(id) => {
         return service.getPlayerById(id)!!.name;
+      }}
+      isFavorite={(f: Variation) => {
+        return service.isFavorized(f);
+      }}
+      favorize={(f: Variation) => {
+        service.favorize(f);
+      }}
+      unfavorize={(f: Variation) => {
+        service.unfavorize(f);
       }}
     />
   );

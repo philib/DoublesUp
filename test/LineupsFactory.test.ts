@@ -3,10 +3,12 @@ import {
   Lineup,
   createLineups,
   filterLineupsByPairings,
+  filterLineupsByVariations,
   getFilterStatus,
 } from '../app/LineupFactory';
 import { PlayerId } from '../app/RegistrationList';
 import { getPermutations } from '../app/getPermutations';
+import { Variation } from '../app/service/RegistrationListService';
 
 const playerId = (id: number) => PlayerId.create(`Player ${id}`);
 
@@ -656,6 +658,112 @@ describe('LineupsFactory', () => {
           },
         }))
       );
+    });
+    it('filters lineups by variations', () => {
+      //given
+      const player = (id: number) => ({
+        id: PlayerId.create(id.toString()),
+        name: `Player ${id}`,
+      });
+      const players = {
+        1: player(1).id,
+        2: player(2).id,
+        3: player(3).id,
+        4: player(4).id,
+        5: player(5).id,
+        6: player(6).id,
+        7: player(7).id,
+        8: player(8).id,
+      };
+
+      const lineups = createLineups(players) as Lineup[];
+
+      const filteredByVariations = filterLineupsByVariations(lineups, [
+        {
+          doubles1: {
+            player1: player(1).id,
+            player2: player(6).id,
+          },
+          doubles2: {
+            player1: player(2).id,
+            player2: player(7).id,
+          },
+          doubles3: {
+            player1: player(3).id,
+            player2: player(8).id,
+          },
+        },
+        {
+          doubles1: {
+            player1: player(1).id,
+            player2: player(2).id,
+          },
+          doubles2: {
+            player1: player(3).id,
+            player2: player(4).id,
+          },
+          doubles3: {
+            player1: player(5).id,
+            player2: player(6).id,
+          },
+        },
+      ]);
+      expect(filteredByVariations).toEqual([
+        {
+          activePlayers: [
+            player(1).id,
+            player(2).id,
+            player(3).id,
+            player(4).id,
+            player(5).id,
+            player(6).id,
+          ],
+          inactivePlayers: [player(7).id, player(8).id],
+          variations: [
+            [
+              [
+                { position: 1, id: player(1).id },
+                { position: 2, id: player(2).id },
+              ],
+              [
+                { position: 3, id: player(3).id },
+                { position: 4, id: player(4).id },
+              ],
+              [
+                { position: 5, id: player(5).id },
+                { position: 6, id: player(6).id },
+              ],
+            ],
+          ],
+        },
+        {
+          activePlayers: [
+            player(1).id,
+            player(2).id,
+            player(3).id,
+            player(6).id,
+            player(7).id,
+            player(8).id,
+          ],
+          inactivePlayers: [player(4).id, player(5).id],
+          variations: [
+            [
+              [
+                { position: 1, id: player(1).id },
+                { position: 4, id: player(6).id },
+              ],
+              [
+                { position: 2, id: player(2).id },
+                { position: 5, id: player(7).id },
+              ],
+              [
+                { position: 3, id: player(3).id },
+                { position: 6, id: player(8).id },
+              ],
+            ],
+          ],
+        },
+      ] as Lineup[]);
     });
   });
 });
