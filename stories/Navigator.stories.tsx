@@ -64,6 +64,11 @@ export const WithRegistrationList = () => {
         editPlayer={() => 'SUCCESS'}
         sortPlayer={(rankFrom, rankTo) => service.sortPlayer(rankFrom, rankTo)}
         onPlayerListModified={() => {}}
+        selectPlayer={function (id: PlayerId): void {}}
+        deselectPlayer={function (id: PlayerId): void {}}
+        isPlayerSelected={function (id: PlayerId): boolean {
+          return false;
+        }}
       />
     ),
   };
