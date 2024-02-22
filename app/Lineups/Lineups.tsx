@@ -7,7 +7,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { CustomDivider } from '../customDivider';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { PlayerId } from '../RegistrationList';
@@ -113,7 +113,7 @@ const ExpandableLineup: React.FC<{
   const [expanded, setExpanded] = useState(false);
   return (
     <>
-      <Card style={{ margin: '10px' }}>
+      <LineupCard>
         <CardContent>
           <CardHeader
             onClick={() => setExpanded(!expanded)}
@@ -121,11 +121,11 @@ const ExpandableLineup: React.FC<{
             subheader={
               <>
                 <div>
-                  With:{' '}
+                  With:
                   {activePlayers.map((p) => getPlayerNameById(p)).join(' ,')}
                 </div>
                 <div>
-                  Without:{' '}
+                  Without:
                   {inactivePlayers.map((p) => getPlayerNameById(p)).join(' ,')}
                 </div>
               </>
@@ -161,7 +161,7 @@ const ExpandableLineup: React.FC<{
               );
             })}
         </CardContent>
-      </Card>
+      </LineupCard>
     </>
   );
 };
@@ -233,6 +233,10 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         filterFavorites ? favoritesFilter(filter(f)) : filter(f)
     );
   }, [filters, filterFavorites, favorites]);
+  const filteredLineups = activeFilter(lineupFactoryLineups);
+  const visibleVariationsLength = filteredLineups.flatMap(
+    (lineup) => lineup.variations
+  ).length;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div
@@ -242,11 +246,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
           scrollbarWidth: 'none',
         }}
       >
-        {
-          activeFilter(lineupFactoryLineups).flatMap(
-            (lineup) => lineup.variations
-          ).length
-        }
+        {visibleVariationsLength}
         <FilterChip
           key={`filter-favorites`}
           text={'Filters Favorites'}
@@ -288,7 +288,13 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         })}
       </div>
       <div style={{ flex: 1, overflow: 'auto' }}>
-        {activeFilter(lineupFactoryLineups).map((l, index) => (
+        {filteredLineups.length === 0 && (
+          <LineupCard>
+            <CardHeader title={'Nothing to see here'} />
+            <CardContent>No variation matches your given filter</CardContent>
+          </LineupCard>
+        )}
+        {filteredLineups.map((l, index) => (
           <ExpandableLineup
             key={`lineup-${index}`}
             lineupVariation={index + 1}
@@ -303,6 +309,10 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
     </div>
   );
 };
+
+const LineupCard: React.FC<{ children: ReactNode | ReactNode[] }> = ({
+  children,
+}) => <Card style={{ margin: '10px' }}>{children}</Card>;
 
 const FilterChip: React.FC<{
   text: string;
