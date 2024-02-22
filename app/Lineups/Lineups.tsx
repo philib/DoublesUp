@@ -70,6 +70,7 @@ const VariationComponent: React.FC<{
         <Grid item container direction={'column'}>
           {variation.map((doublesPairing, index) => (
             <Grid
+              key={`variation-${index}`}
               item
               container
               direction={'row'}
@@ -147,7 +148,7 @@ const ExpandableLineup: React.FC<{
                 },
               };
               return (
-                <>
+                <div key={`variant ${index}`}>
                   <CustomDivider>Variant {index + 1}</CustomDivider>
                   <VariationComponent
                     variation={v}
@@ -156,7 +157,7 @@ const ExpandableLineup: React.FC<{
                     unfavorize={() => unfavorize(favorite)}
                     isFavorite={isFavorite(favorite)}
                   />
-                </>
+                </div>
               );
             })}
         </CardContent>
