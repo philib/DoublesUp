@@ -6,6 +6,7 @@ import {
 import React from 'react';
 
 export interface Navigation {
+  show: () => boolean;
   title: string;
   icon: React.ElementType<SvgIconProps>;
   component: React.ReactElement;
@@ -17,12 +18,14 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   navigations,
 }) => {
   const [bottomNavigationValue, setBottomNavigationValue] = React.useState(0);
-  const bottomNavigationActions = navigations.map((navigation) => (
-    <BottomNavigationAction
-      label={navigation.title}
-      icon={<navigation.icon />}
-    />
-  ));
+  const bottomNavigationActions = navigations
+    .filter((it) => it.show())
+    .map((navigation) => (
+      <BottomNavigationAction
+        label={navigation.title}
+        icon={<navigation.icon />}
+      />
+    ));
   return (
     <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div
@@ -46,7 +49,9 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
           msOverflowStyle: 'none',
         }}
       >
-        {navigations[bottomNavigationValue]?.component}
+        {navigations.map((it, index) => (
+          <div hidden={index != bottomNavigationValue}>{it.component}</div>
+        ))}
       </div>
       <footer style={{ border: 'solid' }}>
         <BottomNavigation

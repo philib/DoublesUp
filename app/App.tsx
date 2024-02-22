@@ -1,11 +1,10 @@
-import { Navigation, Navigator, NavigatorProps } from './Navigator/Navigator';
+import { Navigator } from './Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import React, { useEffect } from 'react';
 import { Meldeliste, MeldelistePlayer } from './Meldeliste/Meldeliste';
 import { PlayerId } from './RegistrationList';
 import { LineupsComponent } from './Lineups/Lineups';
 import { useService } from './service/useRegistrationListServiceFactory';
-import { Variation } from './service/RegistrationListService';
 
 const RegistrationComponentWithState: React.FunctionComponent<{}> = () => {
   const service = useService();
@@ -41,69 +40,58 @@ const RegistrationComponentWithState: React.FunctionComponent<{}> = () => {
 };
 export const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
   const service = useService();
+  const [lineups, setLineups] = React.useState(service.lineups);
+  useEffect(() => {
+    setLineups(service.lineups);
+  }, [service.lineups]);
   return (
     <LineupsComponent
-      lineups={service.lineups.map((lineup) => ({
+      lineups={lineups.map((lineup) => ({
         activePlayers: lineup.activePlayers.map((player) => ({
           id: player,
-          name: service.getPlayerById(player)!!.name,
+          name: service.getPlayerById(player)?.name ?? '',
         })),
         inactivePlayers: lineup.inactivePlayers.map((player) => ({
           id: player,
-          name: service.getPlayerById(player)!!.name,
+          name: service.getPlayerById(player)?.name ?? '',
         })),
         variations: lineup.variations.map((doublePairings) => {
           return doublePairings.map(([firstPlayer, secondPlayer]) => {
             return [
               {
                 ...firstPlayer,
-                name: service.getPlayerById(firstPlayer.id)!!.name,
+                name: service.getPlayerById(firstPlayer.id)?.name ?? '',
               },
               {
                 ...secondPlayer,
-                name: service.getPlayerById(secondPlayer.id)!!.name,
+                name: service.getPlayerById(secondPlayer.id)?.name ?? '',
               },
             ];
           });
         }),
       }))}
       getPlayerNameById={(id) => {
-        return service.getPlayerById(id)!!.name;
-      }}
-      isFavorite={(f: Variation) => {
-        return service.isFavorized(f);
-      }}
-      favorize={(f: Variation) => {
-        service.favorize(f);
-      }}
-      unfavorize={(f: Variation) => {
-        service.unfavorize(f);
+        return service.getPlayerById(id)?.name ?? '';
       }}
     />
   );
 };
 
 export const App: React.FunctionComponent<{}> = () => {
-  const service = useService();
   const RegistrationComponent = {
+    show: () => true,
     title: 'Registration List',
     icon: AccountCircleIcon,
     component: <RegistrationComponentWithState />,
   };
   const LineupsComponent = {
+    show: () => {
+      return useService().playerSelection.length >= 6;
+    },
     title: 'Lineups',
     icon: AccountCircleIcon,
     component: <LineupsComponentWithState />,
   };
 
-  const [navigations, setNavigations] = React.useState([RegistrationComponent]);
-  useEffect(() => {
-    if (service.playerSelection.length >= 6) {
-      setNavigations([RegistrationComponent, LineupsComponent]);
-    } else {
-      setNavigations([RegistrationComponent]);
-    }
-  }, [service.playerSelection]);
-
-  return <Navigator navigations={navigations} />;
+  return <Navigator navigations={[RegistrationComponent, LineupsComponent]} />;
 };

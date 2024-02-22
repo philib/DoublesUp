@@ -13,10 +13,14 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { PlayerId } from '../RegistrationList';
 import {
   filterLineupsByPairings,
+  filterLineupsByVariations,
   getFilterStatus,
   Lineup as LineupFactoryLineup,
 } from '../LineupFactory';
-import { Variation as TestVariation } from '../service/RegistrationListService';
+import {
+  Variation as TestVariation,
+  isEqual,
+} from '../service/RegistrationListService';
 
 export type Variation = [
   { position: number; id: PlayerId },
@@ -30,9 +34,6 @@ export interface Lineup {
 export interface LineupVariationsProps {
   lineups: Lineup[];
   getPlayerNameById: (id: PlayerId) => string;
-  isFavorite: (f: TestVariation) => boolean;
-  favorize: (f: TestVariation) => void;
-  unfavorize: (f: TestVariation) => void;
 }
 
 const VariationComponent: React.FC<{
@@ -164,19 +165,16 @@ const ExpandableLineup: React.FC<{
   );
 };
 
-const useFilters = (lineups: LineupFactoryLineup[]) => {
+const useFilters = () => {
   const [filters, setFilters] = useState<
     { player1: PlayerId; player2: PlayerId }[]
   >([]);
-  const [filteredLineups, setFilteredLineups] =
-    useState<LineupFactoryLineup[]>(lineups);
-  useEffect(() => {
-    const newFilteredLineups = filterLineupsByPairings(lineups, filters);
-    setFilteredLineups(newFilteredLineups);
-  }, [filters]);
+
   return {
     filters,
-    filteredLineups,
+    filter: (lineups: LineupFactoryLineup[]) => {
+      return filterLineupsByPairings(lineups, filters);
+    },
     addFilter: (filter: { player1: PlayerId; player2: PlayerId }) => {
       const newFilter = [...filters, filter];
       setFilters(newFilter);
@@ -185,24 +183,55 @@ const useFilters = (lineups: LineupFactoryLineup[]) => {
       const newFilter = filters.filter((f) => f !== filter);
       setFilters(newFilter);
     },
-    filterFavorites: (favorizedVariations: Variation[]) => {},
+  };
+};
+
+const useFavorites = () => {
+  const [favorites, setFavorites] = useState<TestVariation[]>([]);
+  return {
+    favorites,
+    isFavorite: (f: TestVariation) => {
+      const equal = isEqual(f);
+      return favorites.find(equal) !== undefined;
+    },
+    favorize: (f: TestVariation) => {
+      setFavorites([...favorites, f]);
+    },
+    unfavorize: (f: TestVariation) => {
+      const equal = isEqual(f);
+      setFavorites(favorites.filter((fav) => !equal(fav)));
+    },
+    favoritesFilter: (lineups: LineupFactoryLineup[]) => {
+      return filterLineupsByVariations(lineups, favorites);
+    },
   };
 };
 
 export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   lineups,
   getPlayerNameById,
-  isFavorite,
-  favorize,
-  unfavorize,
 }) => {
   const lineupFactoryLineups = lineups.map((lineup) => ({
     activePlayers: lineup.activePlayers.map((p) => p.id),
     inactivePlayers: lineup.inactivePlayers.map((p) => p.id),
     variations: lineup.variations,
   }));
-  const { filters, filteredLineups, addFilter, removeFilter } =
-    useFilters(lineupFactoryLineups);
+
+  const [filterFavorites, setFilterFavorites] = useState(false);
+
+  const { favorites, favorize, unfavorize, favoritesFilter, isFavorite } =
+    useFavorites();
+
+  const { filters, filter, addFilter, removeFilter } = useFilters();
+  const [activeFilter, setActiveFilter] = useState<
+    (f: LineupFactoryLineup[]) => LineupFactoryLineup[]
+  >(() => filter);
+  useEffect(() => {
+    setActiveFilter(
+      () => (f: LineupFactoryLineup[]) =>
+        filterFavorites ? favoritesFilter(filter(f)) : filter(f)
+    );
+  }, [filters, filterFavorites, favorites]);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div
@@ -212,7 +241,19 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
           scrollbarWidth: 'none',
         }}
       >
-        {filteredLineups.flatMap((lineup) => lineup.variations).length}
+        {
+          activeFilter(lineupFactoryLineups).flatMap(
+            (lineup) => lineup.variations
+          ).length
+        }
+        <FilterChip
+          key={`filter-favorites`}
+          text={'Filters Favorites'}
+          active={filterFavorites}
+          onClick={() => {
+            setFilterFavorites(!filterFavorites);
+          }}
+        />
         {filters.map((filter, index) => {
           const text = `${getPlayerNameById(
             filter.player1
@@ -246,7 +287,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         })}
       </div>
       <div style={{ flex: 1, overflow: 'auto' }}>
-        {filteredLineups.map((l, index) => (
+        {activeFilter(lineupFactoryLineups).map((l, index) => (
           <ExpandableLineup
             key={`lineup-${index}`}
             lineupVariation={index + 1}

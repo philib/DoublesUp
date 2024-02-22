@@ -4,8 +4,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import React from 'react';
 import { PlayerId, RegistrationList } from '../app/RegistrationList';
 import { Meldeliste } from '../app/Meldeliste/Meldeliste';
-import { createUseService } from '../app/service/useRegistrationListServiceFactory';
-import { RegistrationListRepositoryFake } from '../test/service/RegistrationListRepositoryFake';
 import { createFakeUseService } from './useFakeService';
 const meta = {
   title: 'Navigator',
@@ -35,6 +33,7 @@ export const Default = () => {
     </div>
   );
   const registrationList = {
+    show: () => true,
     title: 'Registration List',
     icon: AccountCircleIcon,
     component: (
@@ -43,6 +42,7 @@ export const Default = () => {
   };
 
   const matchMaking = {
+    show: () => true,
     title: 'Match Making',
     icon: AccountCircleIcon,
     component: <CenteredDivContent>Match Making</CenteredDivContent>,
@@ -54,6 +54,7 @@ const useFakeService = createFakeUseService(20);
 export const WithRegistrationList = () => {
   const service = useFakeService();
   const registrationList = {
+    show: () => true,
     title: 'Registration List',
     icon: AccountCircleIcon,
     component: (

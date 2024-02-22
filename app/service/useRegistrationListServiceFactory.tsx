@@ -24,9 +24,6 @@ interface ServiceContextType {
   selectPlayer: (id: PlayerId) => void;
   deselectPlayer: (id: PlayerId) => void;
   isPlayerSelected: (id: PlayerId) => boolean;
-  isFavorized: (variation: Variation) => boolean;
-  favorize: (variation: Variation) => void;
-  unfavorize: (variation: Variation) => void;
 }
 
 export const ServiceContext = createContext<ServiceContextType | null>(null);
@@ -43,7 +40,6 @@ export const ServiceProvider: React.FunctionComponent<{
   repo: RegistrationListRepository;
 }> = ({ children, repo }) => {
   const [service] = useState(new RegistrationListService(repo));
-  const [change, forceUpdate] = useReducer((x) => x + 1, 0);
   const [players, setPlayers] = useState<MeldelistePlayer[]>(
     toMeldeliste(service)
   );
@@ -51,7 +47,7 @@ export const ServiceProvider: React.FunctionComponent<{
   const [lineups, setLineups] = useState<Lineup[]>([]);
   useEffect(() => {
     setLineups(service.getLineups());
-  }, [playerSelection, players, change]);
+  }, [playerSelection, players]);
 
   const value = {
     players,
@@ -97,17 +93,6 @@ export const ServiceProvider: React.FunctionComponent<{
     },
     isPlayerSelected(id: PlayerId) {
       return service.isPlayerSelected(id);
-    },
-    isFavorized(variation: Variation) {
-      return service.isVariationFavorized(variation);
-    },
-    favorize(variation: Variation) {
-      service.favorizeVariation(variation);
-      forceUpdate();
-    },
-    unfavorize(variation: Variation) {
-      service.unfavorizeVariation(variation);
-      forceUpdate();
     },
   };
   return (
