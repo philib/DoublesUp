@@ -177,9 +177,6 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
       {editDialog}
       {addDialog}
       <Grid container spacing={2}>
-        <Grid item container xs={12} justifyContent={'center'}>
-          <Grid item>Meldeliste</Grid>
-        </Grid>
         <Grid item container xs={12}>
           <SortableList
             cards={players.map((player) => ({
