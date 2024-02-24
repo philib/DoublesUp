@@ -5,6 +5,8 @@ import { Meldeliste, MeldelistePlayer } from './Meldeliste/Meldeliste';
 import { PlayerId } from './RegistrationList';
 import { LineupsComponent } from './Lineups/Lineups';
 import { useService } from './service/useRegistrationListServiceFactory';
+import { ThemeProvider } from '@mui/material';
+import { theme } from './theme';
 
 const RegistrationComponentWithState: React.FunctionComponent<{}> = () => {
   const service = useService();
@@ -93,5 +95,9 @@ export const App: React.FunctionComponent<{}> = () => {
     component: <LineupsComponentWithState />,
   };
 
-  return <Navigator navigations={[RegistrationComponent, LineupsComponent]} />;
+  return (
+    <ThemeProvider theme={theme}>
+      <Navigator navigations={[RegistrationComponent, LineupsComponent]} />
+    </ThemeProvider>
+  );
 };

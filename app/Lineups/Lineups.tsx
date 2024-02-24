@@ -21,6 +21,7 @@ import {
   Variation as TestVariation,
   isEqual,
 } from '../service/RegistrationListService';
+import { theme } from '../theme';
 
 export type Variation = [
   { position: number; id: PlayerId },
@@ -249,7 +250,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         {visibleVariationsLength}
         <FilterChip
           key={`filter-favorites`}
-          text={'Filters Favorites'}
+          text={'Show Favorites'}
           active={filterFavorites}
           onClick={() => {
             setFilterFavorites(!filterFavorites);
@@ -319,12 +320,7 @@ const FilterChip: React.FC<{
   active: boolean;
   onClick: () => void;
 }> = ({ text, active, onClick }) => {
-  const style: {
-    variant: 'filled' | 'outlined';
-    color: 'default' | 'primary';
-  } = active
-    ? { variant: 'filled', color: 'primary' }
-    : { variant: 'outlined', color: 'primary' };
+  const variant = active ? ('filled' as const) : ('outlined' as const);
   return (
     <Chip
       style={{
@@ -333,8 +329,8 @@ const FilterChip: React.FC<{
         marginLeft: '5px',
         marginRight: '5px',
       }}
-      variant={style.variant}
-      color={style.color}
+      variant={variant}
+      color="primary"
       label={text}
       onClick={onClick}
     />

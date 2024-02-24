@@ -5,9 +5,10 @@ import {
   DraggingStyle,
   NotDraggingStyle,
 } from 'react-beautiful-dnd';
-import { Divider, List, ListItem } from '@mui/material';
+import { Card, CardContent, Divider, List, ListItem } from '@mui/material';
 import React, { CSSProperties } from 'react';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
+import { theme } from '../theme';
 
 export interface SortableListProps {
   cards: { id: any; component: React.ReactElement }[];
@@ -21,7 +22,11 @@ interface CardProps {
   moveCard: (dragIndex: number, hoverIndex: number) => void;
 }
 
-const Card: React.FunctionComponent<CardProps> = ({ id, index, children }) => {
+const CardElement: React.FunctionComponent<CardProps> = ({
+  id,
+  index,
+  children,
+}) => {
   const getItemStyle = (
     isDragging: boolean,
     draggableStyle: DraggingStyle | NotDraggingStyle | undefined
@@ -32,7 +37,7 @@ const Card: React.FunctionComponent<CardProps> = ({ id, index, children }) => {
     margin: `0 0 2px 0`,
 
     // change background colour if dragging
-    background: isDragging ? 'lightgreen' : undefined,
+    background: isDragging ? theme.palette.primary.main : undefined,
 
     // styles we need to apply on draggables
     ...draggableStyle,
@@ -41,7 +46,7 @@ const Card: React.FunctionComponent<CardProps> = ({ id, index, children }) => {
     <Draggable key={id} draggableId={id.toString()} index={index}>
       {(provided, snapshot) => {
         return (
-          <div
+          <ListItem
             ref={provided.innerRef}
             {...provided.draggableProps}
             style={{
@@ -49,22 +54,27 @@ const Card: React.FunctionComponent<CardProps> = ({ id, index, children }) => {
                 snapshot.isDragging,
                 provided.draggableProps.style
               ),
-              display: 'flex',
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                paddingLeft: '10px',
-                paddingRight: '30px',
-              }}
-              {...provided.dragHandleProps}
-            >
-              <DragHandleIcon />
-            </div>
-            {children}
-          </div>
+            <Card sx={{ width: '100%' }}>
+              <CardContent sx={{ paddingBottom: '16px!important' }}>
+                <div style={{ display: 'flex' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      paddingLeft: '10px',
+                      paddingRight: '30px',
+                    }}
+                    {...provided.dragHandleProps}
+                  >
+                    <DragHandleIcon />
+                  </div>
+                  {children}
+                </div>
+              </CardContent>
+            </Card>
+          </ListItem>
         );
       }}
     </Draggable>
@@ -88,10 +98,9 @@ export const SortableList: React.FunctionComponent<SortableListProps> = ({
   };
   const renderCard = (card: React.ReactElement, id: number, index: number) => {
     return (
-      <Card key={id} moveCard={moveCards} id={id} index={index}>
-        <ListItem sx={{ width: '100%' }}>{card}</ListItem>
-        <Divider variant="middle" component="li" />
-      </Card>
+      <CardElement key={id} moveCard={moveCards} id={id} index={index}>
+        {card}
+      </CardElement>
     );
   };
   return (

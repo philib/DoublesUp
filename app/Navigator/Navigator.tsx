@@ -4,6 +4,8 @@ import {
   SvgIconProps,
 } from '@mui/material';
 import React from 'react';
+import { theme } from '../theme';
+import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 
 export interface Navigation {
   show: () => boolean;
@@ -23,7 +25,12 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
     .map((navigation) => (
       <BottomNavigationAction
         label={navigation.title}
-        icon={<navigation.icon />}
+        icon={
+          <navigation.icon
+            style={{ color: theme.palette.background.default }}
+          />
+        }
+        style={{ color: theme.palette.background.default }}
       />
     ));
   return (
@@ -33,13 +40,21 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
           display: 'flex',
           alignItems: 'center',
           flexDirection: 'row',
-          backgroundColor: '#d90e29',
+          backgroundColor: theme.palette.primary.main,
           height: '5rem',
           border: 'solid',
         }}
       >
-        <div style={{ width: '100px' }}>Logo</div>
-        <div style={{ width: '100vw' }}>Header Title</div>
+        <SportsTennisIcon
+          color="secondary"
+          fontSize="large"
+          style={{ paddingRight: '20px', paddingLeft: '20px' }}
+        />
+        <div
+          style={{ width: '100vw', color: theme.palette.background.default }}
+        >
+          Header Title
+        </div>
       </div>
       <div
         style={{
@@ -55,6 +70,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
       </div>
       <footer style={{ border: 'solid' }}>
         <BottomNavigation
+          style={{ backgroundColor: theme.palette.primary.main }}
           showLabels
           value={bottomNavigationValue}
           onChange={(event, newValue) => {

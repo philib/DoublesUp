@@ -2,6 +2,8 @@ import { PlayerCard } from './PlayerCard';
 import AddIcon from '@mui/icons-material/Add';
 import {
   Button,
+  Card,
+  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,6 +18,7 @@ import { PlayerId } from '../RegistrationList';
 import { SortableList } from '../SortableList/SortableList';
 
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
+import { theme } from '../theme';
 export interface MeldelistePlayer {
   id: PlayerId;
   rank: number;
@@ -48,7 +51,7 @@ const SortableListElement: React.FunctionComponent<{
   onSelectClicked: (active: boolean) => void;
 }> = ({ player, isPlayerSelected, onPlayerCardClicked, onSelectClicked }) => {
   return (
-    <div style={{ display: 'flex', width: '100%' }}>
+    <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
       <div style={{ width: '100%', flexGrow: 2 }} onClick={onPlayerCardClicked}>
         <PlayerCard rank={player.rank} name={player.name} />
       </div>
@@ -58,7 +61,9 @@ const SortableListElement: React.FunctionComponent<{
         }}
         style={{
           flexGrow: 1,
-          color: isPlayerSelected ? 'green' : 'black',
+          color: isPlayerSelected
+            ? theme.palette.primary.main
+            : theme.palette.secondary.main,
         }}
       />
     </div>
