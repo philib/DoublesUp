@@ -14,8 +14,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { EditDialog } from './EditDialog';
 import { PlayerId } from '../RegistrationList';
 import { SortableList } from '../SortableList/SortableList';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
+import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 export interface MeldelistePlayer {
   id: PlayerId;
   rank: number;
@@ -52,7 +52,7 @@ const SortableListElement: React.FunctionComponent<{
       <div style={{ width: '100%', flexGrow: 2 }} onClick={onPlayerCardClicked}>
         <PlayerCard rank={player.rank} name={player.name} />
       </div>
-      <AddCircleOutlineIcon
+      <SportsTennisIcon
         onClick={() => {
           onSelectClicked(!isPlayerSelected);
         }}
