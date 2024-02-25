@@ -1,11 +1,12 @@
 import { Navigator } from './Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import GroupIcon from '@mui/icons-material/Group';
 import React, { useEffect } from 'react';
 import { Meldeliste, MeldelistePlayer } from './Meldeliste/Meldeliste';
 import { PlayerId } from './RegistrationList';
 import { LineupsComponent } from './Lineups/Lineups';
 import { useService } from './service/useRegistrationListServiceFactory';
-import { ThemeProvider } from '@mui/material';
+import { Badge, ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 
 const RegistrationComponentWithState: React.FunctionComponent<{}> = () => {
@@ -81,17 +82,27 @@ export const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
 
 export const App: React.FunctionComponent<{}> = () => {
   const RegistrationComponent = {
-    show: () => true,
+    disabledHint: undefined,
     title: 'Registration List',
-    icon: AccountCircleIcon,
+    icon: <AccountCircleIcon fontSize="large" />,
     component: <RegistrationComponentWithState />,
   };
   const LineupsComponent = {
-    show: () => {
-      return useService().playerSelection.length >= 6;
-    },
+    disabledHint:
+      useService().playerSelection.length < 6
+        ? 'At least 6 players must be selected'
+        : undefined,
     title: 'Lineups',
-    icon: AccountCircleIcon,
+    icon: (
+      <Badge
+        sx={{ marginTop: '2px' }}
+        invisible={useService().playerSelection.length >= 6}
+        color={'secondary'}
+        badgeContent={`${useService().playerSelection.length}/6`}
+      >
+        <GroupIcon fontSize="large" />
+      </Badge>
+    ),
     component: <LineupsComponentWithState />,
   };
 

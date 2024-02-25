@@ -33,18 +33,18 @@ export const Default = () => {
     </div>
   );
   const registrationList = {
-    show: () => true,
+    disabledHint: undefined,
     title: 'Registration List',
-    icon: AccountCircleIcon,
+    icon: <AccountCircleIcon />,
     component: (
       <CenteredDivContent height="900px">Registration List</CenteredDivContent>
     ),
   };
 
   const matchMaking = {
-    show: () => true,
+    disabledHint: undefined,
     title: 'Match Making',
-    icon: AccountCircleIcon,
+    icon: <AccountCircleIcon />,
     component: <CenteredDivContent>Match Making</CenteredDivContent>,
   };
 
@@ -54,9 +54,9 @@ const useFakeService = createFakeUseService(20);
 export const WithRegistrationList = () => {
   const service = useFakeService();
   const registrationList = {
-    show: () => true,
+    disabledHint: undefined,
     title: 'Registration List',
-    icon: AccountCircleIcon,
+    icon: <AccountCircleIcon />,
     component: (
       <Meldeliste
         players={service.players}

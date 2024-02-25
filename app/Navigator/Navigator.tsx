@@ -1,6 +1,7 @@
 import {
   BottomNavigation,
   BottomNavigationAction,
+  Snackbar,
   SvgIconProps,
 } from '@mui/material';
 import React from 'react';
@@ -8,9 +9,9 @@ import { theme } from '../theme';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 
 export interface Navigation {
-  show: () => boolean;
+  disabledHint: string | undefined;
   title: string;
-  icon: React.ElementType<SvgIconProps>;
+  icon: React.JSX.Element;
   component: React.ReactElement;
 }
 export interface NavigatorProps {
@@ -20,19 +21,27 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   navigations,
 }) => {
   const [bottomNavigationValue, setBottomNavigationValue] = React.useState(0);
-  const bottomNavigationActions = navigations
-    .filter((it) => it.show())
-    .map((navigation) => (
-      <BottomNavigationAction
-        label={navigation.title}
-        icon={
-          <navigation.icon
-            style={{ color: theme.palette.background.default }}
-          />
-        }
-        style={{ color: theme.palette.background.default }}
-      />
-    ));
+  const [snackbarState, setSnackbarState] = React.useState<
+    { open: false } | { open: true; message: string }
+  >({ open: false });
+  const getHintByIndex = (index: number) => {
+    const hintByIndex = navigations.reduce(
+      (acc, cur, index) => ({ ...acc, [index]: cur.disabledHint }),
+      {} as { [index: number]: string | undefined }
+    );
+    if (hintByIndex[index] == undefined || hintByIndex[index] == '') {
+      return undefined;
+    } else {
+      return hintByIndex[index];
+    }
+  };
+  const bottomNavigationActions = navigations.map((navigation) => (
+    <BottomNavigationAction
+      label={navigation.title}
+      icon={navigation.icon}
+      style={{ color: theme.palette.background.default }}
+    />
+  ));
   return (
     <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div
@@ -68,13 +77,33 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
           <div hidden={index != bottomNavigationValue}>{it.component}</div>
         ))}
       </div>
-      <footer style={{ border: 'solid' }}>
+      <footer
+        style={{
+          border: 'solid',
+          padding: '10px 0px 10px 0px',
+          backgroundColor: theme.palette.primary.main,
+        }}
+      >
+        <Snackbar
+          sx={{ paddingBottom: '80px' }}
+          color="primary"
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={snackbarState.open}
+          autoHideDuration={1200}
+          onClose={() => setSnackbarState({ open: false })}
+          message={snackbarState.open && snackbarState.message}
+        ></Snackbar>
         <BottomNavigation
-          style={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: 'transparent' }}
           showLabels
           value={bottomNavigationValue}
           onChange={(event, newValue) => {
-            setBottomNavigationValue(newValue);
+            const hint = getHintByIndex(newValue);
+            if (hint) {
+              setSnackbarState({ open: true, message: hint });
+            } else {
+              setBottomNavigationValue(newValue);
+            }
           }}
         >
           {bottomNavigationActions}
