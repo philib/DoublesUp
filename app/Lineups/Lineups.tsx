@@ -296,7 +296,6 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
         alignItems: 'center',
       }}
     >
@@ -317,7 +316,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
           }}
         />
       </div>
-      <div style={{ flex: 1, overflow: 'auto' }}>
+      <div style={{ flex: 1, overflow: 'auto', width: '100%' }}>
         {filteredLineups.length === 0 && (
           <LineupCard>
             <CardHeader title={'Nothing to see here'} />
