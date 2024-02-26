@@ -1,8 +1,14 @@
 import {
+  Button,
   Card,
   CardContent,
   CardHeader,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
   Grid,
   IconButton,
 } from '@mui/material';
@@ -21,7 +27,8 @@ import {
   Variation as TestVariation,
   isEqual,
 } from '../service/RegistrationListService';
-import { theme } from '../theme';
+import { CustomFab } from '../components/CustomFab';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 export type Variation = [
   { position: number; id: PlayerId },
@@ -218,6 +225,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
     inactivePlayers: lineup.inactivePlayers.map((p) => p.id),
     variations: lineup.variations,
   }));
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const [filterFavorites, setFilterFavorites] = useState(false);
 
@@ -238,37 +246,30 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   const visibleVariationsLength = filteredLineups.flatMap(
     (lineup) => lineup.variations
   ).length;
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <div
-        style={{
-          overflow: 'auto',
-          whiteSpace: 'nowrap',
-          scrollbarWidth: 'none',
-        }}
-      >
-        {visibleVariationsLength}
-        <FilterChip
-          key={`filter-favorites`}
-          text={'Show Favorites'}
-          active={filterFavorites}
-          onClick={() => {
-            setFilterFavorites(!filterFavorites);
-          }}
-        />
-        {filters.map((filter, index) => {
-          const text = `${getPlayerNameById(
-            filter.player1
-          )} + ${getPlayerNameById(filter.player2)}`;
-          return (
-            <FilterChip
-              key={`filter-active-${text}`}
-              text={text}
-              active={true}
-              onClick={() => removeFilter(filter)}
-            />
-          );
-        })}
+
+  const activeFilters = filters.map((filter, index) => {
+    const text = `${getPlayerNameById(filter.player1)} + ${getPlayerNameById(
+      filter.player2
+    )}`;
+    return (
+      <FilterChip
+        key={`filter-active-${text}`}
+        text={text}
+        active={true}
+        onClick={() => removeFilter(filter)}
+      />
+    );
+  });
+  const filterDialog = (
+    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+      <DialogTitle>Choose Filter</DialogTitle>
+      <DialogContent>
+        {activeFilters.length > 0 && (
+          <>
+            {activeFilters}
+            <Divider style={{ margin: '10px' }} />
+          </>
+        )}
         {getFilterStatus(lineupFactoryLineups, filters).map((filter) => {
           const text = `${getPlayerNameById(
             filter.filter.player1
@@ -287,6 +288,37 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
             />
           );
         })}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setDialogOpen(false)}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  );
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        alignItems: 'center',
+      }}
+    >
+      {filterDialog}
+      <div
+        style={{
+          overflow: 'auto',
+          whiteSpace: 'nowrap',
+          scrollbarWidth: 'none',
+        }}
+      >
+        <FilterChip
+          key={`filter-favorites`}
+          text={'Show Favorites'}
+          active={filterFavorites}
+          onClick={() => {
+            setFilterFavorites(!filterFavorites);
+          }}
+        />
       </div>
       <div style={{ flex: 1, overflow: 'auto' }}>
         {filteredLineups.length === 0 && (
@@ -306,6 +338,22 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
             unfavorize={unfavorize}
           />
         ))}
+      </div>
+      <div
+        style={{
+          zIndex: 1,
+          position: 'fixed',
+          bottom: 0,
+          transform: 'translate(0%, -67%)',
+        }}
+      >
+        <CustomFab
+          onClick={() => {
+            setDialogOpen(!dialogOpen);
+          }}
+        >
+          <FilterAltIcon />
+        </CustomFab>
       </div>
     </div>
   );
