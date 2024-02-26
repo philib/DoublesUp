@@ -1,15 +1,11 @@
 import { PlayerCard } from './PlayerCard';
-import AddIcon from '@mui/icons-material/Add';
 import {
   Button,
-  Card,
-  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Fab,
-  Grid,
   TextField,
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
@@ -18,6 +14,7 @@ import { PlayerId } from '../RegistrationList';
 import { SortableList } from '../SortableList/SortableList';
 
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
+import AddIcon from '@mui/icons-material/Add';
 import { theme } from '../theme';
 export interface MeldelistePlayer {
   id: PlayerId;
@@ -178,50 +175,86 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
     onPlayerListModified(players.sort((a, b) => a.rank - b.rank));
   }, [players]);
   return (
-    <>
+    <div
+      id="#meldeliste"
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
       {editDialog}
       {addDialog}
-      <Grid container spacing={2}>
-        <Grid item container xs={12}>
-          <SortableList
-            cards={players.map((player) => ({
-              id: player.id.value,
-              component: (
-                <SortableListElement
-                  player={player}
-                  isPlayerSelected={isPlayerSelected(player.id)}
-                  onSelectClicked={(active) => {
-                    if (active) {
-                      selectPlayer(player.id);
-                    } else {
-                      deselectPlayer(player.id);
-                    }
-                  }}
-                  onPlayerCardClicked={() =>
-                    setEditDialogOpen({ open: true, player })
+      <div style={{ flex: 1, width: '100%', overflow: 'auto' }}>
+        <SortableList
+          cards={players.map((player) => ({
+            id: player.id.value,
+            component: (
+              <SortableListElement
+                player={player}
+                isPlayerSelected={isPlayerSelected(player.id)}
+                onSelectClicked={(active) => {
+                  if (active) {
+                    selectPlayer(player.id);
+                  } else {
+                    deselectPlayer(player.id);
                   }
-                />
-              ),
-            }))}
-            moveCards={(dragIndex, hoverIndex) => {
-              sortPlayer(dragIndex + 1, hoverIndex + 1);
-            }}
+                }}
+                onPlayerCardClicked={() =>
+                  setEditDialogOpen({ open: true, player })
+                }
+              />
+            ),
+          }))}
+          moveCards={(dragIndex, hoverIndex) => {
+            sortPlayer(dragIndex + 1, hoverIndex + 1);
+          }}
+        />
+      </div>
+      <div
+        style={{
+          height: '0px',
+        }}
+      >
+        <svg
+          width={80}
+          height={80}
+          style={{
+            zIndex: 1049,
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <path
+            d="M2,40 A8,8 0 0 0 78 40"
+            fill={theme.palette.background.default}
+            stroke={theme.palette.secondary.main}
+            strokeWidth={3}
           />
-        </Grid>
-        <Grid item container justifyContent="flex-end" alignItems="flex-end">
-          <>
-            <Fab
-              color="primary"
-              aria-label="add"
-              onClick={() => {
-                setDialogOpen(dialogOpen ? false : true);
-              }}
-            >
-              <AddIcon />
-            </Fab>
-          </>
-        </Grid>
-      </Grid>
-    </>
+          <rect
+            width={76}
+            height={3}
+            x={2}
+            y={38}
+            fill={theme.palette.background.default}
+          />
+        </svg>
+        <Fab
+          style={{
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            borderRadius: '50%',
+          }}
+          color="primary"
+          aria-label="add"
+          onClick={() => {
+            setDialogOpen(dialogOpen ? false : true);
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      </div>
+    </div>
   );
 };

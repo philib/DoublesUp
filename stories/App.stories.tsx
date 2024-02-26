@@ -15,7 +15,7 @@ export default meta;
 
 export const Default = () => {
   return (
-    <ServiceProvider repo={fakeRepository(20)}>
+    <ServiceProvider repo={fakeRepository(28)}>
       <App />
     </ServiceProvider>
   );

@@ -2,7 +2,6 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Snackbar,
-  SvgIconProps,
 } from '@mui/material';
 import React from 'react';
 import { theme } from '../theme';
@@ -14,9 +13,11 @@ export interface Navigation {
   icon: React.JSX.Element;
   component: React.ReactElement;
 }
+
 export interface NavigatorProps {
   navigations: Navigation[];
 }
+
 export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   navigations,
 }) => {
@@ -42,6 +43,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
       style={{ color: theme.palette.background.default }}
     />
   ));
+
   return (
     <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div
@@ -74,14 +76,21 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
         }}
       >
         {navigations.map((it, index) => (
-          <div hidden={index != bottomNavigationValue}>{it.component}</div>
+          <div
+            style={{ height: '100%' }}
+            hidden={index != bottomNavigationValue}
+          >
+            {it.component}
+          </div>
         ))}
       </div>
       <footer
         style={{
-          border: 'solid',
-          padding: '10px 0px 10px 0px',
-          backgroundColor: theme.palette.primary.main,
+          position: 'relative',
+          zIndex: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
         <Snackbar
@@ -94,7 +103,12 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
           message={snackbarState.open && snackbarState.message}
         ></Snackbar>
         <BottomNavigation
-          style={{ backgroundColor: 'transparent' }}
+          style={{
+            backgroundColor: theme.palette.primary.main,
+            width: '100%',
+            border: 'solid',
+          }}
+          className="bottomNavigation"
           showLabels
           value={bottomNavigationValue}
           onChange={(event, newValue) => {
