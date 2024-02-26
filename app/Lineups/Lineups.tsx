@@ -239,13 +239,10 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   useEffect(() => {
     setActiveFilter(
       () => (f: LineupFactoryLineup[]) =>
-        filterFavorites ? favoritesFilter(filter(f)) : filter(f)
+        filterFavorites ? favoritesFilter(f) : filter(f)
     );
   }, [filters, filterFavorites, favorites]);
   const filteredLineups = activeFilter(lineupFactoryLineups);
-  const visibleVariationsLength = filteredLineups.flatMap(
-    (lineup) => lineup.variations
-  ).length;
 
   const activeFilters = filters.map((filter, index) => {
     const text = `${getPlayerNameById(filter.player1)} + ${getPlayerNameById(
