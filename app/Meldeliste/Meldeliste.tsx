@@ -16,6 +16,7 @@ import { SortableList } from '../SortableList/SortableList';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import AddIcon from '@mui/icons-material/Add';
 import { theme } from '../theme';
+import { CustomFab } from '../components/CustomFab';
 export interface MeldelistePlayer {
   id: PlayerId;
   rank: number;
@@ -214,46 +215,19 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
       </div>
       <div
         style={{
-          height: '0px',
+          zIndex: 1,
+          position: 'fixed',
+          bottom: 0,
+          transform: 'translate(0%, -67%)',
         }}
       >
-        <svg
-          width={80}
-          height={80}
-          style={{
-            zIndex: 1049,
-            position: 'absolute',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          <path
-            d="M2,40 A8,8 0 0 0 78 40"
-            fill={theme.palette.background.default}
-            stroke={theme.palette.secondary.main}
-            strokeWidth={3}
-          />
-          <rect
-            width={76}
-            height={3}
-            x={2}
-            y={38}
-            fill={theme.palette.background.default}
-          />
-        </svg>
-        <Fab
-          style={{
-            position: 'absolute',
-            transform: 'translate(-50%, -50%)',
-            borderRadius: '50%',
-          }}
-          color="primary"
-          aria-label="add"
+        <CustomFab
           onClick={() => {
-            setDialogOpen(dialogOpen ? false : true);
+            setDialogOpen(!dialogOpen);
           }}
         >
           <AddIcon />
-        </Fab>
+        </CustomFab>
       </div>
     </div>
   );
