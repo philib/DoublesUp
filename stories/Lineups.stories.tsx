@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Lineup, createLineups } from '../app/LineupFactory';
 import { LineupsComponent } from '../app/Lineups/Lineups';
 import { PlayerId } from '../app/RegistrationList';
+import { Meta } from '@storybook/react';
 
 const meta = {
   title: 'Lineups',

@@ -1,3 +1,4 @@
+import { Meta } from '@storybook/react';
 import { App } from '../app/App';
 import { ServiceProvider } from '../app/service/useRegistrationListServiceFactory';
 import { fakeRepository } from './useFakeService';

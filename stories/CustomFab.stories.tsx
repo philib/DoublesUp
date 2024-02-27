@@ -1,6 +1,6 @@
-import { Add } from '@mui/icons-material';
 import { CustomFab } from '../app/components/CustomFab';
 import AddIcon from '@mui/icons-material/Add';
+import { Meta } from '@storybook/react';
 
 const meta = {
   title: 'CustomFab',

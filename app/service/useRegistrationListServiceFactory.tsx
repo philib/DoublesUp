@@ -47,7 +47,7 @@ export const ServiceProvider: React.FunctionComponent<{
   const [lineups, setLineups] = useState<Lineup[]>([]);
   useEffect(() => {
     setLineups(service.getLineups());
-  }, [playerSelection, players]);
+  }, [playerSelection, players, service]);
 
   const value = {
     players,

@@ -241,7 +241,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
       () => (f: LineupFactoryLineup[]) =>
         filterFavorites ? favoritesFilter(f) : filter(f)
     );
-  }, [filters, filterFavorites, favorites]);
+  }, [filters, filterFavorites, favorites, favoritesFilter, filter]);
   const filteredLineups = activeFilter(lineupFactoryLineups);
 
   const activeFilters = filters.map((filter, index) => {

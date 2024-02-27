@@ -38,6 +38,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   };
   const bottomNavigationActions = navigations.map((navigation) => (
     <BottomNavigationAction
+      key={navigation.title}
       label={navigation.title}
       icon={navigation.icon}
       style={{ color: theme.palette.background.default }}
@@ -77,6 +78,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
       >
         {navigations.map((it, index) => (
           <div
+            key={`navigation-${index}`}
             style={{ height: '100%' }}
             hidden={index != bottomNavigationValue}
           >

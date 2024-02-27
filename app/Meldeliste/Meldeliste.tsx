@@ -174,7 +174,7 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
 
   useEffect(() => {
     onPlayerListModified(players.sort((a, b) => a.rank - b.rank));
-  }, [players]);
+  }, [players, onPlayerListModified]);
   return (
     <div
       id="#meldeliste"
