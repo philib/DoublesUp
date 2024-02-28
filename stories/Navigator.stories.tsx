@@ -2,7 +2,7 @@ import { Meta } from '@storybook/react';
 import { Navigator } from '../app/Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import React from 'react';
-import { PlayerId, RegistrationList } from '../app/RegistrationList';
+import { PlayerId } from '../app/RegistrationList';
 import { Meldeliste } from '../app/Meldeliste/Meldeliste';
 import { createFakeUseService } from './useFakeService';
 const meta = {
@@ -50,6 +50,7 @@ export const Default = () => {
 
   return <Navigator navigations={[registrationList, matchMaking]} />;
 };
+
 const useFakeService = createFakeUseService(20);
 export const WithRegistrationList = () => {
   const service = useFakeService();
