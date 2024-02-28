@@ -28,7 +28,6 @@ import {
   Variation as TestVariation,
   isEqual,
 } from '../service/RegistrationListService';
-import { CustomFab } from '../components/CustomFab';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 export type Variation = [

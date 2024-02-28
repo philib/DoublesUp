@@ -16,7 +16,6 @@ import { SortableList } from '../SortableList/SortableList';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import AddIcon from '@mui/icons-material/Add';
 import { theme } from '../theme';
-import { CustomFab } from '../components/CustomFab';
 export interface MeldelistePlayer {
   id: PlayerId;
   rank: number;
