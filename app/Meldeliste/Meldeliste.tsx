@@ -213,22 +213,21 @@ export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
           }}
         />
       </div>
-      <div
+
+      <Fab
         style={{
-          zIndex: 1,
           position: 'fixed',
-          bottom: 0,
-          transform: 'translate(0%, -67%)',
+          bottom: '35px',
+          borderRadius: '50%',
+        }}
+        color="primary"
+        aria-label="add"
+        onClick={() => {
+          setDialogOpen(!dialogOpen);
         }}
       >
-        <CustomFab
-          onClick={() => {
-            setDialogOpen(!dialogOpen);
-          }}
-        >
-          <AddIcon />
-        </CustomFab>
-      </div>
+        <AddIcon />
+      </Fab>
     </div>
   );
 };

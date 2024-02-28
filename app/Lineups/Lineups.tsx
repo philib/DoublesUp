@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  Fab,
   Grid,
   IconButton,
 } from '@mui/material';
@@ -335,22 +336,20 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
           />
         ))}
       </div>
-      <div
+      <Fab
         style={{
-          zIndex: 1,
           position: 'fixed',
-          bottom: 0,
-          transform: 'translate(0%, -67%)',
+          bottom: '35px',
+          borderRadius: '50%',
+        }}
+        color="primary"
+        aria-label="add"
+        onClick={() => {
+          setDialogOpen(!dialogOpen);
         }}
       >
-        <CustomFab
-          onClick={() => {
-            setDialogOpen(!dialogOpen);
-          }}
-        >
-          <FilterAltIcon />
-        </CustomFab>
-      </div>
+        <FilterAltIcon />
+      </Fab>
     </div>
   );
 };
