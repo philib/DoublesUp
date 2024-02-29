@@ -14,7 +14,13 @@ import {
   IconButton,
 } from '@mui/material';
 import { CustomDivider } from '../customDivider';
-import { ReactNode, useEffect, useState } from 'react';
+import {
+  CSSProperties,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { PlayerId } from '../RegistrationList';
@@ -179,24 +185,42 @@ const useFilters = () => {
     { player1: PlayerId; player2: PlayerId }[]
   >([]);
 
-  return {
-    filters,
-    filter: (lineups: LineupFactoryLineup[]) => {
-      return filterLineupsByPairings(lineups, filters);
-    },
-    addFilter: (filter: { player1: PlayerId; player2: PlayerId }) => {
+  const addFilter = useCallback(
+    (filter: { player1: PlayerId; player2: PlayerId }) => {
       const newFilter = [...filters, filter];
       setFilters(newFilter);
     },
-    removeFilter: (filter: { player1: PlayerId; player2: PlayerId }) => {
+    [filters, setFilters]
+  );
+
+  const removeFilter = useCallback(
+    (filter: { player1: PlayerId; player2: PlayerId }) => {
       const newFilter = filters.filter((f) => f !== filter);
       setFilters(newFilter);
     },
+    [filters, setFilters]
+  );
+  const filter = useCallback(
+    (lineups: LineupFactoryLineup[]) => {
+      return filterLineupsByPairings(lineups, filters);
+    },
+    [filters]
+  );
+  return {
+    filters,
+    filter,
+    addFilter,
+    removeFilter,
   };
 };
-
 const useFavorites = () => {
   const [favorites, setFavorites] = useState<TestVariation[]>([]);
+  const favoritesFilter = useCallback(
+    (lineups: LineupFactoryLineup[]) => {
+      return filterLineupsByVariations(lineups, favorites);
+    },
+    [favorites]
+  );
   return {
     favorites,
     isFavorite: (f: TestVariation) => {
@@ -210,9 +234,7 @@ const useFavorites = () => {
       const equal = isEqual(f);
       setFavorites(favorites.filter((fav) => !equal(fav)));
     },
-    favoritesFilter: (lineups: LineupFactoryLineup[]) => {
-      return filterLineupsByVariations(lineups, favorites);
-    },
+    favoritesFilter,
   };
 };
 
@@ -229,8 +251,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
 
   const [filterFavorites, setFilterFavorites] = useState(false);
 
-  const { favorites, favorize, unfavorize, favoritesFilter, isFavorite } =
-    useFavorites();
+  const { favorize, unfavorize, favoritesFilter, isFavorite } = useFavorites();
 
   const { filters, filter, addFilter, removeFilter } = useFilters();
   const [activeFilter, setActiveFilter] = useState<
@@ -241,7 +262,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
       () => (f: LineupFactoryLineup[]) =>
         filterFavorites ? favoritesFilter(f) : filter(f)
     );
-  }, [filters, filterFavorites, favorites, favoritesFilter, filter]);
+  }, [filterFavorites, favoritesFilter, filter]);
   const filteredLineups = activeFilter(lineupFactoryLineups);
 
   const activeFilters = filters.map((filter, index) => {
@@ -299,23 +320,19 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         alignItems: 'center',
       }}
     >
-      {filterDialog}
-      <div
+      <FilterChip
         style={{
-          overflow: 'auto',
-          whiteSpace: 'nowrap',
-          scrollbarWidth: 'none',
+          position: 'fixed',
+          top: '5rem',
         }}
-      >
-        <FilterChip
-          key={`filter-favorites`}
-          text={'Show Favorites'}
-          active={filterFavorites}
-          onClick={() => {
-            setFilterFavorites(!filterFavorites);
-          }}
-        />
-      </div>
+        key={`filter-favorites`}
+        text={'Show Favorites'}
+        active={filterFavorites}
+        onClick={() => {
+          setFilterFavorites(!filterFavorites);
+        }}
+      />
+      {filterDialog}
       <div style={{ flex: 1, overflow: 'auto', width: '100%' }}>
         {filteredLineups.length === 0 && (
           <LineupCard>
@@ -361,15 +378,18 @@ const FilterChip: React.FC<{
   text: string;
   active: boolean;
   onClick: () => void;
-}> = ({ text, active, onClick }) => {
+  style?: CSSProperties;
+}> = ({ text, active, onClick, style }) => {
   const variant = active ? ('filled' as const) : ('outlined' as const);
   return (
     <Chip
       style={{
+        backgroundColor: active ? undefined : 'white',
         marginTop: '10px',
         marginBottom: '10px',
         marginLeft: '5px',
         marginRight: '5px',
+        ...style,
       }}
       variant={variant}
       color="primary"
