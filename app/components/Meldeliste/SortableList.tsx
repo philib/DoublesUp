@@ -8,7 +8,7 @@ import {
 import { Card, CardContent, Divider, List, ListItem } from '@mui/material';
 import React, { CSSProperties } from 'react';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
-import { theme } from '../theme';
+import { theme } from '../../theme';
 
 export interface SortableListProps {
   cards: { id: any; component: React.ReactElement }[];

@@ -1,7 +1,7 @@
 'use client';
 
 import { fakeRepository } from '../stories/useFakeService';
-import { App } from './App';
+import { App } from './components/App/App';
 import { ServiceProvider } from './service/useRegistrationListServiceFactory';
 
 export default function Home() {

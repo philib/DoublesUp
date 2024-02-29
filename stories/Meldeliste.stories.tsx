@@ -1,9 +1,11 @@
 import { Meta } from '@storybook/react';
-import { Meldeliste, MeldelistePlayer } from '../app/Meldeliste/Meldeliste';
-import { PlayerCard } from '../app/Meldeliste/PlayerCard';
+import {
+  Meldeliste,
+  MeldelistePlayer,
+} from '../app/components/Meldeliste/Meldeliste';
+import { PlayerCard } from '../app/components/Meldeliste/PlayerCard';
 import { PlayerId, RegistrationList } from '../app/RegistrationList';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
-import { createUseService } from '../app/service/useRegistrationListServiceFactory';
 import { createFakeUseService } from './useFakeService';
 import React from 'react';
 

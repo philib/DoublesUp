@@ -10,12 +10,12 @@ import {
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { EditDialog } from './EditDialog';
-import { PlayerId } from '../RegistrationList';
-import { SortableList } from '../SortableList/SortableList';
+import { PlayerId } from '../../RegistrationList';
+import { SortableList } from './SortableList';
 
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import AddIcon from '@mui/icons-material/Add';
-import { theme } from '../theme';
+import { theme } from '../../theme';
 export interface MeldelistePlayer {
   id: PlayerId;
   rank: number;

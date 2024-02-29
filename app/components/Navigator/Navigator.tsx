@@ -4,7 +4,7 @@ import {
   Snackbar,
 } from '@mui/material';
 import React, { useEffect } from 'react';
-import { theme } from '../theme';
+import { theme } from '../../theme';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 
 export interface Navigation {

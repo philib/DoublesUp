@@ -1,5 +1,5 @@
 import { Meta } from '@storybook/react';
-import { App } from '../app/App';
+import { App } from '../app/components/App/App';
 import { ServiceProvider } from '../app/service/useRegistrationListServiceFactory';
 import { fakeRepository } from './useFakeService';
 

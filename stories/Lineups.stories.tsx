@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Lineup, createLineups } from '../app/LineupFactory';
-import { LineupsComponent } from '../app/Lineups/Lineups';
+import { LineupsComponent } from '../app/components/Lineups/Lineups';
 import { PlayerId } from '../app/RegistrationList';
 import { Meta } from '@storybook/react';
 

@@ -1,9 +1,9 @@
 import { Meta } from '@storybook/react';
-import { Navigator } from '../app/Navigator/Navigator';
+import { Navigator } from '../app/components/Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import React from 'react';
 import { PlayerId } from '../app/RegistrationList';
-import { Meldeliste } from '../app/Meldeliste/Meldeliste';
+import { Meldeliste } from '../app/components/Meldeliste/Meldeliste';
 import { createFakeUseService } from './useFakeService';
 const meta = {
   title: 'Navigator',
