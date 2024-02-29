@@ -2,9 +2,6 @@ import { Meta } from '@storybook/react';
 import { Navigator } from '../app/components/Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import React from 'react';
-import { PlayerId } from '../app/RegistrationList';
-import { Meldeliste } from '../app/components/Meldeliste/Meldeliste';
-import { createFakeUseService } from './useFakeService';
 const meta = {
   title: 'Navigator',
   component: Navigator,
@@ -20,7 +17,7 @@ export const Default = () => {
   const CenteredDivContent: React.FunctionComponent<{
     children: React.ReactNode;
     height?: string;
-  }> = ({ children, height = '100%' }) => (
+  }> = ({ children, height = '100vh' }) => (
     <div
       style={{
         display: 'flex',
@@ -36,9 +33,7 @@ export const Default = () => {
     disabledHint: undefined,
     title: 'Registration List',
     icon: <AccountCircleIcon />,
-    component: (
-      <CenteredDivContent height="900px">Registration List</CenteredDivContent>
-    ),
+    component: <CenteredDivContent>Registration List</CenteredDivContent>,
   };
 
   const matchMaking = {
@@ -49,31 +44,4 @@ export const Default = () => {
   };
 
   return <Navigator navigations={[registrationList, matchMaking]} />;
-};
-
-const useFakeService = createFakeUseService(20);
-export const WithRegistrationList = () => {
-  const service = useFakeService();
-  const registrationList = {
-    disabledHint: undefined,
-    title: 'Registration List',
-    icon: <AccountCircleIcon />,
-    component: (
-      <Meldeliste
-        players={service.players}
-        addPlayer={() => {}}
-        deletePlayer={() => {}}
-        editPlayer={() => 'SUCCESS'}
-        sortPlayer={(rankFrom, rankTo) => service.sortPlayer(rankFrom, rankTo)}
-        onPlayerListModified={() => {}}
-        selectPlayer={function (id: PlayerId): void {}}
-        deselectPlayer={function (id: PlayerId): void {}}
-        isPlayerSelected={function (id: PlayerId): boolean {
-          return false;
-        }}
-      />
-    ),
-  };
-
-  return <Navigator navigations={[registrationList]} />;
 };
