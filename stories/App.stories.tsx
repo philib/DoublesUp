@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react';
 import { App } from '../app/components/App/App';
 import { ServiceProvider } from '../app/components/ServiceProvider/useRegistrationListServiceFactory';
-import { InMemoryRepositoryWithPrefilledPlayers } from '@/app/repository/RegistrationListRepositoryInMemory';
+import { InMemoryRepositoryWithPrefilledPlayers } from '../app/repository/RegistrationListRepositoryInMemory';
 
 const meta = {
   title: 'App',

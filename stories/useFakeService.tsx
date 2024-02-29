@@ -4,7 +4,7 @@ import { Player, PlayerId } from '../app/RegistrationList';
 import { MeldelistePlayer } from '../app/components/Meldeliste/Meldeliste';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
 import { RegistrationListService } from '../app/service/RegistrationListService';
-import { InMemoryRepositoryWithPrefilledPlayers } from '@/app/repository/RegistrationListRepositoryInMemory';
+import { InMemoryRepositoryWithPrefilledPlayers } from '../app/repository/RegistrationListRepositoryInMemory';
 
 export const createFakeUseService = (playersCount: number) =>
   createUseService(InMemoryRepositoryWithPrefilledPlayers(playersCount));
