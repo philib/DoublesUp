@@ -1,22 +1,22 @@
 import { Meta } from '@storybook/react';
 import {
-  Meldeliste,
+  EditableRegistrationList,
   MeldelistePlayer,
-} from '../app/components/Meldeliste/Meldeliste';
-import { PlayerCard } from '../app/components/Meldeliste/PlayerCard';
+} from '../app/components/EditableRegistrationList/EditableRegistrationList';
+import { PlayerCard } from '../app/components/EditableRegistrationList/PlayerCard';
 import { PlayerId, RegistrationList } from '../app/RegistrationList';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
 import { createFakeUseService } from './useFakeService';
 import React from 'react';
 
 const meta = {
-  title: 'Meldeliste',
-  component: Meldeliste,
+  title: 'Editable Registration List',
+  component: EditableRegistrationList,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof Meldeliste>;
+} satisfies Meta<typeof EditableRegistrationList>;
 
 export default meta;
 
@@ -36,15 +36,15 @@ class Repo implements RegistrationListRepository {
 
 const useService = createFakeUseService(10);
 
-export const Liste = () => {
+export const Default = () => {
   const service = useService();
   const [playerSelection, setPlayerSelection] = React.useState<{
     [id: string]: boolean;
   }>({});
 
   return (
-    <div style={{ height: '500px', width: '400px', backgroundColor: 'yellow' }}>
-      <Meldeliste
+    <div style={{ height: '100vh', width: '400px', backgroundColor: 'yellow' }}>
+      <EditableRegistrationList
         players={service.players}
         addPlayer={(p) => {
           service.addPlayer(p.rank, p.name);

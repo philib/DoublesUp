@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
-import { MeldelistePlayer } from './Meldeliste';
+import { MeldelistePlayer } from './EditableRegistrationList';
 
 interface EditDialogProps {
   open: boolean;

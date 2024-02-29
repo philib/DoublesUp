@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { v4 } from 'uuid';
 import { Player, PlayerId } from '../app/RegistrationList';
-import { MeldelistePlayer } from '../app/components/Meldeliste/Meldeliste';
+import { MeldelistePlayer } from '../app/components/EditableRegistrationList/EditableRegistrationList';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
 import { RegistrationListService } from '../app/service/RegistrationListService';
 import { InMemoryRepositoryWithPrefilledPlayers } from '../app/repository/RegistrationListRepositoryInMemory';

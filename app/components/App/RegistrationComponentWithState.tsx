@@ -1,5 +1,8 @@
 import React from 'react';
-import { Meldeliste, MeldelistePlayer } from '../Meldeliste/Meldeliste';
+import {
+  EditableRegistrationList,
+  MeldelistePlayer,
+} from '../EditableRegistrationList/EditableRegistrationList';
 import { PlayerId } from '../../RegistrationList';
 import { useService } from '../ServiceProvider/useRegistrationListServiceFactory';
 
@@ -7,7 +10,7 @@ export const RegistrationComponentWithState: React.FunctionComponent<{}> =
   () => {
     const service = useService();
     return (
-      <Meldeliste
+      <EditableRegistrationList
         players={service.players}
         addPlayer={(p) => {
           service.addPlayer(p.rank, p.name);

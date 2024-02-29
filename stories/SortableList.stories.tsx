@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
 import { Meta } from '@storybook/react';
-import { SortableList } from '../app/components/Meldeliste/SortableList';
+import { SortableList } from '../app/components/EditableRegistrationList/SortableList';
 import { useCallback, useState } from 'react';
 import React from 'react';
 

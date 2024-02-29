@@ -22,7 +22,7 @@ export interface MeldelistePlayer {
   name: string;
 }
 
-interface MeldelisteProps {
+interface EditableRegistrationListProps {
   players: MeldelistePlayer[];
   addPlayer: (player: { name: string; rank: number }) => void;
   editPlayer: (player: MeldelistePlayer) => 'Rank already taken' | 'SUCCESS';
@@ -67,7 +67,9 @@ const SortableListElement: React.FunctionComponent<{
   );
 };
 
-export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
+export const EditableRegistrationList: React.FunctionComponent<
+  EditableRegistrationListProps
+> = ({
   players,
   addPlayer,
   editPlayer,
