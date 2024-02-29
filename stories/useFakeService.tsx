@@ -4,23 +4,10 @@ import { Player, PlayerId } from '../app/RegistrationList';
 import { MeldelistePlayer } from '../app/components/Meldeliste/Meldeliste';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
 import { RegistrationListService } from '../app/service/RegistrationListService';
-import { RegistrationListRepositoryFake } from '../test/service/RegistrationListRepositoryFake';
+import { InMemoryRepositoryWithPrefilledPlayers } from '@/app/repository/RegistrationListRepositoryInMemory';
 
-export const fakeRepository = (playersCount: number) =>
-  new RegistrationListRepositoryFake(
-    Array.from(Array(playersCount).keys()).reduce(
-      (acc, curr) => ({
-        ...acc,
-        [(curr + 1).toString()]: {
-          name: `Player ${curr + 1}`,
-          id: PlayerId.create((curr + 1).toString()),
-        },
-      }),
-      {}
-    )
-  );
 export const createFakeUseService = (playersCount: number) =>
-  createUseService(fakeRepository(playersCount));
+  createUseService(InMemoryRepositoryWithPrefilledPlayers(playersCount));
 
 const createUseService = (repo: RegistrationListRepository) => () => {
   const service = new RegistrationListService(repo);

@@ -1,13 +1,13 @@
 'use client';
 
-import { fakeRepository } from '../stories/useFakeService';
+import { InMemoryRepositoryWithPrefilledPlayers } from './repository/RegistrationListRepositoryInMemory';
 import { App } from './components/App/App';
 import { ServiceProvider } from './service/useRegistrationListServiceFactory';
 
 export default function Home() {
   return (
     <main>
-      <ServiceProvider repo={fakeRepository(2)}>
+      <ServiceProvider repo={InMemoryRepositoryWithPrefilledPlayers(2)}>
         <App />
       </ServiceProvider>
     </main>

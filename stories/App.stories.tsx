@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react';
 import { App } from '../app/components/App/App';
 import { ServiceProvider } from '../app/service/useRegistrationListServiceFactory';
-import { fakeRepository } from './useFakeService';
+import { InMemoryRepositoryWithPrefilledPlayers } from '@/app/repository/RegistrationListRepositoryInMemory';
 
 const meta = {
   title: 'App',
@@ -16,7 +16,7 @@ export default meta;
 
 export const Default = () => {
   return (
-    <ServiceProvider repo={fakeRepository(28)}>
+    <ServiceProvider repo={InMemoryRepositoryWithPrefilledPlayers(28)}>
       <App />
     </ServiceProvider>
   );

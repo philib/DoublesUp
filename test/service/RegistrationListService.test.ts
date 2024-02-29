@@ -1,7 +1,7 @@
 import { PlayerId, RegistrationList } from '../../app/RegistrationList';
 import { getPermutations } from '../../app/getPermutations';
 import { RegistrationListService } from '../../app/service/RegistrationListService';
-import { RegistrationListRepositoryFake } from './RegistrationListRepositoryFake';
+import { RegistrationListRepositoryInMemory } from '../../app/repository/RegistrationListRepositoryInMemory';
 import { every, some } from 'lodash';
 
 describe('RegistrationListService', () => {
@@ -10,7 +10,7 @@ describe('RegistrationListService', () => {
     const initialList = {
       1: { id: PlayerId.create('1'), name: 'Test' },
     };
-    const repository = new RegistrationListRepositoryFake();
+    const repository = new RegistrationListRepositoryInMemory();
     repository.save(RegistrationList.create(initialList) as RegistrationList);
     const sut = new RegistrationListService(repository);
     //when
@@ -21,7 +21,7 @@ describe('RegistrationListService', () => {
 
   it('adds player', () => {
     //given
-    const repository = new RegistrationListRepositoryFake();
+    const repository = new RegistrationListRepositoryInMemory();
     const sut = new RegistrationListService(repository);
     //when
     const result = sut.addPlayer(1, { id: PlayerId.create('1'), name: 'Test' });
@@ -37,7 +37,7 @@ describe('RegistrationListService', () => {
     const initialList = {
       1: { id: PlayerId.create('1'), name: 'Test' },
     };
-    const repository = new RegistrationListRepositoryFake();
+    const repository = new RegistrationListRepositoryInMemory();
     repository.save(RegistrationList.create(initialList) as RegistrationList);
     const sut = new RegistrationListService(repository);
     //when
@@ -50,7 +50,7 @@ describe('RegistrationListService', () => {
     const initialList = {
       1: { id: PlayerId.create('1'), name: 'Test' },
     };
-    const repository = new RegistrationListRepositoryFake();
+    const repository = new RegistrationListRepositoryInMemory();
     repository.save(RegistrationList.create(initialList) as RegistrationList);
     const sut = new RegistrationListService(repository);
     //when
@@ -70,7 +70,7 @@ describe('RegistrationListService', () => {
       2: { id: PlayerId.create('2'), name: 'Test2' },
       3: { id: PlayerId.create('3'), name: 'Test3' },
     };
-    const repository = new RegistrationListRepositoryFake();
+    const repository = new RegistrationListRepositoryInMemory();
     repository.save(RegistrationList.create(initialList) as RegistrationList);
     const sut = new RegistrationListService(repository);
     //when
@@ -90,7 +90,7 @@ describe('RegistrationListService', () => {
       2: { id: PlayerId.create('2'), name: 'Test2' },
       3: { id: PlayerId.create('3'), name: 'Test3' },
     };
-    const repository = new RegistrationListRepositoryFake();
+    const repository = new RegistrationListRepositoryInMemory();
     repository.save(RegistrationList.create(initialList) as RegistrationList);
     const sut = new RegistrationListService(repository);
     //when
@@ -102,7 +102,7 @@ describe('RegistrationListService', () => {
   it('selection works as expected', () => {
     //given
     const player1 = { id: PlayerId.create('1'), name: 'Test' };
-    const repository = new RegistrationListRepositoryFake({
+    const repository = new RegistrationListRepositoryInMemory({
       1: player1,
     });
     const sut = new RegistrationListService(repository);
@@ -122,7 +122,7 @@ describe('RegistrationListService', () => {
   it('when player is deleted, selection is removed', () => {
     //given
     const player1 = { id: PlayerId.create('1'), name: 'Test' };
-    const repository = new RegistrationListRepositoryFake({
+    const repository = new RegistrationListRepositoryInMemory({
       1: player1,
     });
     const sut = new RegistrationListService(repository);
@@ -149,7 +149,7 @@ describe('RegistrationListService', () => {
       7: player(7),
       8: player(8),
     };
-    const repository = new RegistrationListRepositoryFake(players);
+    const repository = new RegistrationListRepositoryInMemory(players);
     const sut = new RegistrationListService(repository);
 
     [player(1), player(2), player(3), player(4), player(5)].forEach((p) => {
@@ -182,7 +182,7 @@ describe('RegistrationListService', () => {
       7: player(7),
       8: player(8),
     };
-    const repository = new RegistrationListRepositoryFake(players);
+    const repository = new RegistrationListRepositoryInMemory(players);
     const sut = new RegistrationListService(repository);
 
     [
@@ -366,7 +366,7 @@ describe('RegistrationListService', () => {
         7: player(7),
         8: player(8),
       };
-      const repository = new RegistrationListRepositoryFake(players);
+      const repository = new RegistrationListRepositoryInMemory(players);
       const sut = new RegistrationListService(repository);
 
       [
