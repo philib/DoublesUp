@@ -2,7 +2,7 @@ import { Navigator } from '../Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import React from 'react';
-import { useService } from '../../service/useRegistrationListServiceFactory';
+import { useService } from '../ServiceProvider/useRegistrationListServiceFactory';
 import { Badge, ThemeProvider } from '@mui/material';
 import { theme } from '../../theme';
 import { LineupsComponentWithState } from './LineupsComponentWithState';

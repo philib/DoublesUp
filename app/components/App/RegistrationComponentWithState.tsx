@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meldeliste, MeldelistePlayer } from '../Meldeliste/Meldeliste';
 import { PlayerId } from '../../RegistrationList';
-import { useService } from '../../service/useRegistrationListServiceFactory';
+import { useService } from '../ServiceProvider/useRegistrationListServiceFactory';
 
 export const RegistrationComponentWithState: React.FunctionComponent<{}> =
   () => {

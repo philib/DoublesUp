@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { LineupsComponent } from '../Lineups/Lineups';
-import { useService } from '../../service/useRegistrationListServiceFactory';
+import { useService } from '../ServiceProvider/useRegistrationListServiceFactory';
 
 export const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
   const service = useService();

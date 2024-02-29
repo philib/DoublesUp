@@ -2,7 +2,7 @@
 
 import { InMemoryRepositoryWithPrefilledPlayers } from './repository/RegistrationListRepositoryInMemory';
 import { App } from './components/App/App';
-import { ServiceProvider } from './service/useRegistrationListServiceFactory';
+import { ServiceProvider } from './components/ServiceProvider/useRegistrationListServiceFactory';
 
 export default function Home() {
   return (
