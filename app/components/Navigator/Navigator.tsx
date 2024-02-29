@@ -2,10 +2,11 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Snackbar,
+  Typography,
 } from '@mui/material';
 import React, { useEffect } from 'react';
 import { theme } from '../../theme';
-import SportsTennisIcon from '@mui/icons-material/SportsTennis';
+import Icon from '../../icons/header';
 
 export interface Navigation {
   disabledHint: string | undefined;
@@ -65,18 +66,24 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
               border: 'solid',
             }}
           >
-            <SportsTennisIcon
-              color="secondary"
-              fontSize="large"
-              style={{ paddingRight: '20px', paddingLeft: '20px' }}
-            />
+            <div style={{ paddingLeft: '20px', paddingRight: '20px' }}>
+              <Icon />
+            </div>
             <div
               style={{
+                display: 'flex',
+                alignItems: 'center',
+                alignContent: 'center',
                 width: '100vw',
                 color: theme.palette.background.default,
               }}
             >
-              Header Title
+              <Typography
+                variant="h6"
+                style={{ flexGrow: 1, alignContent: 'center' }}
+              >
+                Doppelgenerator
+              </Typography>
             </div>
           </div>
         </div>

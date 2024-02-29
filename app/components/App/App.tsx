@@ -21,7 +21,7 @@ import { Player, PlayerId } from '../../RegistrationList';
 import { LineupsComponent } from '../Lineups/Lineups';
 
 export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
-  staticList = false,
+  staticList = true,
 }) => {
   const [playerSelection, setPlayerSelection] =
     React.useState<Selection | null>(null);
