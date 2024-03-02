@@ -24,11 +24,11 @@ export const LineupsComponentWithState: React.FunctionComponent<{}> = () => {
             return [
               {
                 ...firstPlayer,
-                name: service.getPlayerById(firstPlayer.id)?.name ?? '',
+                name: service.getPlayerById(firstPlayer.value)?.name ?? '',
               },
               {
                 ...secondPlayer,
-                name: service.getPlayerById(secondPlayer.id)?.name ?? '',
+                name: service.getPlayerById(secondPlayer.value)?.name ?? '',
               },
             ];
           });

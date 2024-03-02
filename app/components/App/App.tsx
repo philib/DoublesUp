@@ -14,7 +14,7 @@ import {
 import { teamConfig } from '../../../team.config';
 
 export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
-  staticList = true,
+  staticList = false,
 }) => {
   const [playerSelection, setPlayerSelection] =
     React.useState<Selection | null>(null);

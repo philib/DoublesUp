@@ -9,7 +9,7 @@ import { VariationComponent } from './VariationComponent';
 
 export const ExpandableLineup: React.FC<{
   lineupVariation: number;
-  lineup: LineupFactoryLineup;
+  lineup: LineupFactoryLineup<PlayerId>;
   getPlayerNameById: (id: PlayerId) => string;
   favorize: (f: TestVariation) => void;
   unfavorize: (f: TestVariation) => void;
@@ -47,16 +47,16 @@ export const ExpandableLineup: React.FC<{
             variations.map((v, index) => {
               const favorite: TestVariation = {
                 doubles1: {
-                  player1: v[0][0].id,
-                  player2: v[0][1].id,
+                  player1: v[0][0].value,
+                  player2: v[0][1].value,
                 },
                 doubles2: {
-                  player1: v[1][0].id,
-                  player2: v[1][1].id,
+                  player1: v[1][0].value,
+                  player2: v[1][1].value,
                 },
                 doubles3: {
-                  player1: v[2][0].id,
-                  player2: v[2][1].id,
+                  player1: v[2][0].value,
+                  player2: v[2][1].value,
                 },
               };
               return (

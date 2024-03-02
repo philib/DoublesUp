@@ -1,7 +1,7 @@
-import { sortBy, uniqBy } from 'lodash';
+import { sortBy } from 'lodash';
 import { Player, PlayerId, RegistrationList } from '../RegistrationList';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
-import { InactivePairingFilter, Lineup, createLineups } from '../LineupFactory';
+import { Lineup, createLineups } from '../LineupFactory';
 
 export type Variation = {
   doubles1: { player1: PlayerId; player2: PlayerId };
@@ -82,14 +82,11 @@ export class RegistrationListService {
     );
     return sortBy(selectedPlayer, (p) => registrationList.getRankById(p.id));
   }
-  getLineups(filters: PlayerId[] = []): Lineup[] {
+  getLineups(filters: PlayerId[] = []): Lineup<PlayerId>[] {
     const registrationList = this.repository.get();
-    const selectedPlayer = this.selectedPlayer.reduce(
-      (acc, id) => ({
-        ...acc,
-        [registrationList.getRankById(id)!!]: id,
-      }),
-      {} as { [rank: number]: PlayerId }
+    const selectedPlayer = this.selectedPlayer.sort(
+      (a, b) =>
+        registrationList.getRankById(a)!! - registrationList.getRankById(b)!!
     );
     const lineups = createLineups(selectedPlayer);
     return filters.reduce((acc, filter) => {
@@ -97,83 +94,5 @@ export class RegistrationListService {
         return lineup.activePlayers.find((player) => player.equals(filter));
       });
     }, lineups);
-  }
-  filterLineups(
-    lineups: Lineup[],
-    filter: { player1: PlayerId; player2: PlayerId }[] = []
-  ): Lineup[] {
-    const lineupsWithPlayersPlaying = filter.reduce((acc, filter) => {
-      return acc.filter((lineup) => {
-        const player1Playing = lineup.activePlayers.find((player) =>
-          player.equals(filter.player1)
-        );
-        const player2Playing = lineup.activePlayers.find((player) =>
-          player.equals(filter.player2)
-        );
-        return player1Playing && player2Playing;
-      });
-    }, lineups);
-
-    const withFilteredVariations = lineupsWithPlayersPlaying.map((lineup) => ({
-      ...lineup,
-      variations: filter.reduce((acc, filter) => {
-        return acc.filter((variation) => {
-          return variation.some((pairing) => {
-            const newLocal =
-              pairing[0].id.equals(filter.player1) &&
-              pairing[1].id.equals(filter.player2);
-            return newLocal;
-          });
-        });
-      }, lineup.variations),
-    }));
-
-    return withFilteredVariations;
-  }
-  getAvailableFilters(
-    appliedFilters: { player1: PlayerId; player2: PlayerId }[]
-  ): InactivePairingFilter[] {
-    const registrationList = this.repository.get();
-    const selectedPlayer = this.selectedPlayer.reduce(
-      (acc, id) => ({
-        ...acc,
-        [registrationList.getRankById(id)!!]: id,
-      }),
-      {} as { [rank: number]: PlayerId }
-    );
-    const lineups = createLineups(selectedPlayer);
-    const variationsMatchingFilters = appliedFilters.reduce(
-      (acc, filter) => {
-        return acc.filter((variation) => {
-          return variation.some((pairing) => {
-            const newLocal =
-              pairing[0].id.equals(filter.player1) &&
-              pairing[1].id.equals(filter.player2);
-            return newLocal;
-          });
-        });
-      },
-      lineups.flatMap((it) => it.variations)
-    );
-
-    const uniqueVariations = sortBy(
-      uniqBy(
-        variationsMatchingFilters.flatMap((it) => it),
-        (it) => `${it[0].position} - ${it[1].position}`
-      ),
-      [(it) => it[0].position, (it) => it[1].position]
-    );
-    const remainingVariations = appliedFilters.reduce((acc, filter) => {
-      return acc.filter(
-        (it) =>
-          !(it[0].id.equals(filter.player1) && it[1].id.equals(filter.player2))
-      );
-    }, uniqueVariations);
-    return remainingVariations.map((variation) => ({
-      filter: {
-        player1: selectedPlayer[variation[0].position],
-        player2: selectedPlayer[variation[1].position],
-      },
-    }));
   }
 }

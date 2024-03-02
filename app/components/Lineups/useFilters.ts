@@ -26,8 +26,8 @@ export const useFilters = () => {
     [filters, setFilters]
   );
   const filter = useCallback(
-    (lineups: LineupFactoryLineup[]) => {
-      return filterLineupsByPairings(lineups, filters);
+    (lineups: LineupFactoryLineup<PlayerId>[]) => {
+      return filterLineupsByPairings(lineups, filters, (a, b) => a.equals(b));
     },
     [filters]
   );

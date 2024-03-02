@@ -8,7 +8,7 @@ import { Lineup } from '../../LineupFactory';
 
 interface ServiceContextType {
   players: MeldelistePlayer[];
-  lineups: Lineup[];
+  lineups: Lineup<PlayerId>[];
   playerSelection: Player[];
   addPlayer: (rank: number, name: string) => void;
   editPlayer: (player: MeldelistePlayer) => 'SUCCESS' | 'Rank already taken';
@@ -38,7 +38,7 @@ export const ServiceProvider: React.FunctionComponent<{
     toMeldeliste(service)
   );
   const [playerSelection, setPlayerSelection] = useState<Player[]>([]);
-  const [lineups, setLineups] = useState<Lineup[]>([]);
+  const [lineups, setLineups] = useState<Lineup<PlayerId>[]>([]);
   useEffect(() => {
     setLineups(service.getLineups());
   }, [playerSelection, players, service]);

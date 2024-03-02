@@ -7,11 +7,12 @@ import {
   Variation as TestVariation,
   isEqual,
 } from '../../service/RegistrationListService';
+import { PlayerId } from '../../RegistrationList';
 
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState<TestVariation[]>([]);
   const favoritesFilter = useCallback(
-    (lineups: LineupFactoryLineup[]) => {
+    (lineups: LineupFactoryLineup<PlayerId>[]) => {
       return filterLineupsByVariations(lineups, favorites);
     },
     [favorites]

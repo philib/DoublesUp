@@ -45,11 +45,11 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
 
   const { filters, filter, addFilter, removeFilter } = useFilters();
   const [activeFilter, setActiveFilter] = useState<
-    (f: LineupFactoryLineup[]) => LineupFactoryLineup[]
+    (f: LineupFactoryLineup<PlayerId>[]) => LineupFactoryLineup<PlayerId>[]
   >(() => filter);
   useEffect(() => {
     setActiveFilter(
-      () => (f: LineupFactoryLineup[]) =>
+      () => (f: LineupFactoryLineup<PlayerId>[]) =>
         filterFavorites ? favoritesFilter(f) : filter(f)
     );
   }, [filterFavorites, favoritesFilter, filter]);
@@ -78,7 +78,11 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
             <Divider style={{ margin: '10px' }} />
           </>
         )}
-        {getFilterStatus(lineupFactoryLineups, filters).map((filter) => {
+        {getFilterStatus(
+          lineupFactoryLineups,
+          (a, b) => a.equals(b),
+          filters
+        ).map((filter) => {
           const text = `${getPlayerNameById(
             filter.filter.player1
           )} + ${getPlayerNameById(filter.filter.player2)}`;

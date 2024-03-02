@@ -1,6 +1,5 @@
-import { create, every, some } from 'lodash';
+import { every, some, without } from 'lodash';
 import {
-  Lineup,
   createLineups,
   filterLineupsByPairings,
   filterLineupsByVariations,
@@ -8,31 +7,30 @@ import {
 } from '../app/LineupFactory';
 import { PlayerId } from '../app/RegistrationList';
 import { getPermutations } from '../app/getPermutations';
-import { Variation } from '../app/service/RegistrationListService';
 
 const playerId = (id: number) => PlayerId.create(`Player ${id}`);
 
 describe('LineupsFactory', () => {
   it('cannot create lineups for less then 6 players', () => {
-    const input = {
-      1: playerId(1),
-      2: playerId(2),
-      3: playerId(3),
-      4: playerId(4),
-      5: playerId(5),
-    };
+    const input = [
+      playerId(1),
+      playerId(2),
+      playerId(3),
+      playerId(4),
+      playerId(5),
+    ];
     const result = createLineups(input);
     expect(result).toEqual([]);
   });
   it('creates lineups for 6 players', () => {
-    const input = {
-      1: playerId(1),
-      2: playerId(2),
-      3: playerId(3),
-      4: playerId(4),
-      5: playerId(5),
-      6: playerId(6),
-    };
+    const input = [
+      playerId(1),
+      playerId(2),
+      playerId(3),
+      playerId(4),
+      playerId(5),
+      playerId(6),
+    ];
     const result = createLineups(input);
     expect(result).toEqual([
       {
@@ -48,310 +46,310 @@ describe('LineupsFactory', () => {
         variations: [
           [
             [
-              { position: 1, id: playerId(1) },
-              { position: 2, id: playerId(2) },
+              { position: 1, value: playerId(1) },
+              { position: 2, value: playerId(2) },
             ],
             [
-              { position: 3, id: playerId(3) },
-              { position: 4, id: playerId(4) },
+              { position: 3, value: playerId(3) },
+              { position: 4, value: playerId(4) },
             ],
             [
-              { position: 5, id: playerId(5) },
-              { position: 6, id: playerId(6) },
-            ],
-          ],
-          [
-            [
-              { position: 1, id: playerId(1) },
-              { position: 2, id: playerId(2) },
-            ],
-            [
-              { position: 3, id: playerId(3) },
-              { position: 5, id: playerId(5) },
-            ],
-            [
-              { position: 4, id: playerId(4) },
-              { position: 6, id: playerId(6) },
+              { position: 5, value: playerId(5) },
+              { position: 6, value: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, id: playerId(1) },
-              { position: 2, id: playerId(2) },
+              { position: 1, value: playerId(1) },
+              { position: 2, value: playerId(2) },
             ],
             [
-              { position: 3, id: playerId(3) },
-              { position: 6, id: playerId(6) },
+              { position: 3, value: playerId(3) },
+              { position: 5, value: playerId(5) },
             ],
             [
-              { position: 4, id: playerId(4) },
-              { position: 5, id: playerId(5) },
-            ],
-          ],
-          [
-            [
-              { position: 1, id: playerId(1) },
-              { position: 2, id: playerId(2) },
-            ],
-            [
-              { position: 4, id: playerId(4) },
-              { position: 5, id: playerId(5) },
-            ],
-            [
-              { position: 3, id: playerId(3) },
-              { position: 6, id: playerId(6) },
+              { position: 4, value: playerId(4) },
+              { position: 6, value: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, id: playerId(1) },
-              { position: 3, id: playerId(3) },
+              { position: 1, value: playerId(1) },
+              { position: 2, value: playerId(2) },
             ],
             [
-              { position: 2, id: playerId(2) },
-              { position: 4, id: playerId(4) },
+              { position: 3, value: playerId(3) },
+              { position: 6, value: playerId(6) },
             ],
             [
-              { position: 5, id: playerId(5) },
-              { position: 6, id: playerId(6) },
-            ],
-          ],
-          [
-            [
-              { position: 1, id: playerId(1) },
-              { position: 3, id: playerId(3) },
-            ],
-            [
-              { position: 2, id: playerId(2) },
-              { position: 5, id: playerId(5) },
-            ],
-            [
-              { position: 4, id: playerId(4) },
-              { position: 6, id: playerId(6) },
+              { position: 4, value: playerId(4) },
+              { position: 5, value: playerId(5) },
             ],
           ],
           [
             [
-              { position: 1, id: playerId(1) },
-              { position: 3, id: playerId(3) },
+              { position: 1, value: playerId(1) },
+              { position: 2, value: playerId(2) },
             ],
             [
-              { position: 2, id: playerId(2) },
-              { position: 6, id: playerId(6) },
+              { position: 4, value: playerId(4) },
+              { position: 5, value: playerId(5) },
             ],
             [
-              { position: 4, id: playerId(4) },
-              { position: 5, id: playerId(5) },
-            ],
-          ],
-          [
-            [
-              { position: 1, id: playerId(1) },
-              { position: 4, id: playerId(4) },
-            ],
-            [
-              { position: 2, id: playerId(2) },
-              { position: 3, id: playerId(3) },
-            ],
-            [
-              { position: 5, id: playerId(5) },
-              { position: 6, id: playerId(6) },
+              { position: 3, value: playerId(3) },
+              { position: 6, value: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, id: playerId(1) },
-              { position: 4, id: playerId(4) },
+              { position: 1, value: playerId(1) },
+              { position: 3, value: playerId(3) },
             ],
             [
-              { position: 2, id: playerId(2) },
-              { position: 5, id: playerId(5) },
+              { position: 2, value: playerId(2) },
+              { position: 4, value: playerId(4) },
             ],
             [
-              { position: 3, id: playerId(3) },
-              { position: 6, id: playerId(6) },
-            ],
-          ],
-          [
-            [
-              { position: 1, id: playerId(1) },
-              { position: 4, id: playerId(4) },
-            ],
-            [
-              { position: 2, id: playerId(2) },
-              { position: 6, id: playerId(6) },
-            ],
-            [
-              { position: 3, id: playerId(3) },
-              { position: 5, id: playerId(5) },
+              { position: 5, value: playerId(5) },
+              { position: 6, value: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, id: playerId(1) },
-              { position: 4, id: playerId(4) },
+              { position: 1, value: playerId(1) },
+              { position: 3, value: playerId(3) },
             ],
             [
-              { position: 3, id: playerId(3) },
-              { position: 5, id: playerId(5) },
+              { position: 2, value: playerId(2) },
+              { position: 5, value: playerId(5) },
             ],
             [
-              { position: 2, id: playerId(2) },
-              { position: 6, id: playerId(6) },
-            ],
-          ],
-          [
-            [
-              { position: 1, id: playerId(1) },
-              { position: 5, id: playerId(5) },
-            ],
-            [
-              { position: 2, id: playerId(2) },
-              { position: 4, id: playerId(4) },
-            ],
-            [
-              { position: 3, id: playerId(3) },
-              { position: 6, id: playerId(6) },
+              { position: 4, value: playerId(4) },
+              { position: 6, value: playerId(6) },
             ],
           ],
           [
             [
-              { position: 1, id: playerId(1) },
-              { position: 5, id: playerId(5) },
+              { position: 1, value: playerId(1) },
+              { position: 3, value: playerId(3) },
             ],
             [
-              { position: 3, id: playerId(3) },
-              { position: 4, id: playerId(4) },
+              { position: 2, value: playerId(2) },
+              { position: 6, value: playerId(6) },
             ],
             [
-              { position: 2, id: playerId(2) },
-              { position: 6, id: playerId(6) },
-            ],
-          ],
-          [
-            [
-              { position: 1, id: playerId(1) },
-              { position: 6, id: playerId(6) },
-            ],
-            [
-              { position: 2, id: playerId(2) },
-              { position: 5, id: playerId(5) },
-            ],
-            [
-              { position: 3, id: playerId(3) },
-              { position: 4, id: playerId(4) },
+              { position: 4, value: playerId(4) },
+              { position: 5, value: playerId(5) },
             ],
           ],
           [
             [
-              { position: 1, id: playerId(1) },
-              { position: 6, id: playerId(6) },
+              { position: 1, value: playerId(1) },
+              { position: 4, value: playerId(4) },
             ],
             [
-              { position: 3, id: playerId(3) },
-              { position: 4, id: playerId(4) },
+              { position: 2, value: playerId(2) },
+              { position: 3, value: playerId(3) },
             ],
             [
-              { position: 2, id: playerId(2) },
-              { position: 5, id: playerId(5) },
-            ],
-          ],
-          [
-            [
-              { position: 2, id: playerId(2) },
-              { position: 3, id: playerId(3) },
-            ],
-            [
-              { position: 1, id: playerId(1) },
-              { position: 4, id: playerId(4) },
-            ],
-            [
-              { position: 5, id: playerId(5) },
-              { position: 6, id: playerId(6) },
+              { position: 5, value: playerId(5) },
+              { position: 6, value: playerId(6) },
             ],
           ],
           [
             [
-              { position: 2, id: playerId(2) },
-              { position: 3, id: playerId(3) },
+              { position: 1, value: playerId(1) },
+              { position: 4, value: playerId(4) },
             ],
             [
-              { position: 1, id: playerId(1) },
-              { position: 5, id: playerId(5) },
+              { position: 2, value: playerId(2) },
+              { position: 5, value: playerId(5) },
             ],
             [
-              { position: 4, id: playerId(4) },
-              { position: 6, id: playerId(6) },
-            ],
-          ],
-          [
-            [
-              { position: 2, id: playerId(2) },
-              { position: 3, id: playerId(3) },
-            ],
-            [
-              { position: 1, id: playerId(1) },
-              { position: 6, id: playerId(6) },
-            ],
-            [
-              { position: 4, id: playerId(4) },
-              { position: 5, id: playerId(5) },
+              { position: 3, value: playerId(3) },
+              { position: 6, value: playerId(6) },
             ],
           ],
           [
             [
-              { position: 2, id: playerId(2) },
-              { position: 4, id: playerId(4) },
+              { position: 1, value: playerId(1) },
+              { position: 4, value: playerId(4) },
             ],
             [
-              { position: 1, id: playerId(1) },
-              { position: 5, id: playerId(5) },
+              { position: 2, value: playerId(2) },
+              { position: 6, value: playerId(6) },
             ],
             [
-              { position: 3, id: playerId(3) },
-              { position: 6, id: playerId(6) },
-            ],
-          ],
-          [
-            [
-              { position: 2, id: playerId(2) },
-              { position: 4, id: playerId(4) },
-            ],
-            [
-              { position: 1, id: playerId(1) },
-              { position: 6, id: playerId(6) },
-            ],
-            [
-              { position: 3, id: playerId(3) },
-              { position: 5, id: playerId(5) },
+              { position: 3, value: playerId(3) },
+              { position: 5, value: playerId(5) },
             ],
           ],
           [
             [
-              { position: 2, id: playerId(2) },
-              { position: 5, id: playerId(5) },
+              { position: 1, value: playerId(1) },
+              { position: 4, value: playerId(4) },
             ],
             [
-              { position: 1, id: playerId(1) },
-              { position: 6, id: playerId(6) },
+              { position: 3, value: playerId(3) },
+              { position: 5, value: playerId(5) },
             ],
             [
-              { position: 3, id: playerId(3) },
-              { position: 4, id: playerId(4) },
+              { position: 2, value: playerId(2) },
+              { position: 6, value: playerId(6) },
             ],
           ],
           [
             [
-              { position: 3, id: playerId(3) },
-              { position: 4, id: playerId(4) },
+              { position: 1, value: playerId(1) },
+              { position: 5, value: playerId(5) },
             ],
             [
-              { position: 1, id: playerId(1) },
-              { position: 6, id: playerId(6) },
+              { position: 2, value: playerId(2) },
+              { position: 4, value: playerId(4) },
             ],
             [
-              { position: 2, id: playerId(2) },
-              { position: 5, id: playerId(5) },
+              { position: 3, value: playerId(3) },
+              { position: 6, value: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 1, value: playerId(1) },
+              { position: 5, value: playerId(5) },
+            ],
+            [
+              { position: 3, value: playerId(3) },
+              { position: 4, value: playerId(4) },
+            ],
+            [
+              { position: 2, value: playerId(2) },
+              { position: 6, value: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 1, value: playerId(1) },
+              { position: 6, value: playerId(6) },
+            ],
+            [
+              { position: 2, value: playerId(2) },
+              { position: 5, value: playerId(5) },
+            ],
+            [
+              { position: 3, value: playerId(3) },
+              { position: 4, value: playerId(4) },
+            ],
+          ],
+          [
+            [
+              { position: 1, value: playerId(1) },
+              { position: 6, value: playerId(6) },
+            ],
+            [
+              { position: 3, value: playerId(3) },
+              { position: 4, value: playerId(4) },
+            ],
+            [
+              { position: 2, value: playerId(2) },
+              { position: 5, value: playerId(5) },
+            ],
+          ],
+          [
+            [
+              { position: 2, value: playerId(2) },
+              { position: 3, value: playerId(3) },
+            ],
+            [
+              { position: 1, value: playerId(1) },
+              { position: 4, value: playerId(4) },
+            ],
+            [
+              { position: 5, value: playerId(5) },
+              { position: 6, value: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 2, value: playerId(2) },
+              { position: 3, value: playerId(3) },
+            ],
+            [
+              { position: 1, value: playerId(1) },
+              { position: 5, value: playerId(5) },
+            ],
+            [
+              { position: 4, value: playerId(4) },
+              { position: 6, value: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 2, value: playerId(2) },
+              { position: 3, value: playerId(3) },
+            ],
+            [
+              { position: 1, value: playerId(1) },
+              { position: 6, value: playerId(6) },
+            ],
+            [
+              { position: 4, value: playerId(4) },
+              { position: 5, value: playerId(5) },
+            ],
+          ],
+          [
+            [
+              { position: 2, value: playerId(2) },
+              { position: 4, value: playerId(4) },
+            ],
+            [
+              { position: 1, value: playerId(1) },
+              { position: 5, value: playerId(5) },
+            ],
+            [
+              { position: 3, value: playerId(3) },
+              { position: 6, value: playerId(6) },
+            ],
+          ],
+          [
+            [
+              { position: 2, value: playerId(2) },
+              { position: 4, value: playerId(4) },
+            ],
+            [
+              { position: 1, value: playerId(1) },
+              { position: 6, value: playerId(6) },
+            ],
+            [
+              { position: 3, value: playerId(3) },
+              { position: 5, value: playerId(5) },
+            ],
+          ],
+          [
+            [
+              { position: 2, value: playerId(2) },
+              { position: 5, value: playerId(5) },
+            ],
+            [
+              { position: 1, value: playerId(1) },
+              { position: 6, value: playerId(6) },
+            ],
+            [
+              { position: 3, value: playerId(3) },
+              { position: 4, value: playerId(4) },
+            ],
+          ],
+          [
+            [
+              { position: 3, value: playerId(3) },
+              { position: 4, value: playerId(4) },
+            ],
+            [
+              { position: 1, value: playerId(1) },
+              { position: 6, value: playerId(6) },
+            ],
+            [
+              { position: 2, value: playerId(2) },
+              { position: 5, value: playerId(5) },
             ],
           ],
         ],
@@ -359,39 +357,33 @@ describe('LineupsFactory', () => {
     ]);
   });
   it('creates lineups for 7 players', () => {
-    const input: { [pos: number]: PlayerId } = {
-      1: playerId(1),
-      2: playerId(2),
-      3: playerId(3),
-      4: playerId(4),
-      5: playerId(5),
-      6: playerId(6),
-      7: playerId(7),
-    };
-
-    const without = (pos: number) => {
-      const copy = { ...input } as { [pos: number]: PlayerId };
-      delete copy[pos];
-      return copy;
-    };
+    const input = [
+      playerId(1),
+      playerId(2),
+      playerId(3),
+      playerId(4),
+      playerId(5),
+      playerId(6),
+      playerId(7),
+    ];
 
     const just = (pos: number) => {
-      return [input[pos] as PlayerId];
+      return [input[pos - 1] as PlayerId];
     };
     const lineupWithout = (pos: number) =>
-      (createLineups(without(pos)) as Lineup[])[0].variations;
+      createLineups(without(input, input[pos - 1]))[0].variations;
 
-    const result = createLineups(input) as Lineup[];
+    const result = createLineups(input);
 
     expect(result.map((r) => r.activePlayers)).toEqual(
       [
-        without(7),
-        without(6),
-        without(5),
-        without(4),
-        without(3),
-        without(2),
-        without(1),
+        without(input, input[6]),
+        without(input, input[5]),
+        without(input, input[4]),
+        without(input, input[3]),
+        without(input, input[2]),
+        without(input, input[1]),
+        without(input, input[0]),
       ]
         .map((i) => Object.values(i))
         .sort()
@@ -426,18 +418,18 @@ describe('LineupsFactory', () => {
   });
 
   it('creates lineups for 8 players', () => {
-    const input: { [pos: number]: PlayerId } = {
-      1: playerId(1),
-      2: playerId(2),
-      3: playerId(3),
-      4: playerId(4),
-      5: playerId(5),
-      6: playerId(6),
-      7: playerId(7),
-      8: playerId(8),
-    };
+    const input = [
+      playerId(1),
+      playerId(2),
+      playerId(3),
+      playerId(4),
+      playerId(5),
+      playerId(6),
+      playerId(7),
+      playerId(8),
+    ];
 
-    const result = createLineups(input) as Lineup[];
+    const result = createLineups(input);
 
     expect(result.map((r) => r.activePlayers)).toEqual(
       [
@@ -511,29 +503,31 @@ describe('LineupsFactory', () => {
         id: PlayerId.create(id.toString()),
         name: `Player ${id}`,
       });
-      const players = {
-        1: player(1).id,
-        2: player(2).id,
-        3: player(3).id,
-        4: player(4).id,
-        5: player(5).id,
-        6: player(6).id,
-        7: player(7).id,
-        8: player(8).id,
-      };
+      const players = [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(4).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+        player(8).id,
+      ];
 
-      const lineups = createLineups(players) as Lineup[];
+      const lineups = createLineups(players);
 
-      const filteredByPairing = filterLineupsByPairings(lineups, [
-        { player1: player(1).id, player2: player(6).id },
-      ]);
+      const filteredByPairing = filterLineupsByPairings(
+        lineups,
+        [{ player1: player(1).id, player2: player(6).id }],
+        (a: PlayerId, b: PlayerId) => a.equals(b)
+      );
 
       expect(
         every(filteredByPairing, (lineup) =>
           every(lineup.variations, (variation) =>
             some(
               variation,
-              ([{ id: id1 }, { id: id2 }]) =>
+              ([{ value: id1 }, { value: id2 }]) =>
                 player(1).id.equals(id1) || player(6).id.equals(id2)
             )
           )
@@ -550,8 +544,8 @@ describe('LineupsFactory', () => {
           expect(
             variation.some(
               (pairing) =>
-                pairing[0].id.equals(player(1).id) &&
-                pairing[1].id.equals(player(6).id)
+                pairing[0].value.equals(player(1).id) &&
+                pairing[1].value.equals(player(6).id)
             )
           ).toBe(true);
         });
@@ -564,24 +558,24 @@ describe('LineupsFactory', () => {
         id: PlayerId.create(id.toString()),
         name: `Player ${id}`,
       });
-      const players = {
-        1: player(1).id,
-        2: player(2).id,
-        3: player(3).id,
-        4: player(4).id,
-        5: player(5).id,
-        6: player(6).id,
-        7: player(7).id,
-        8: player(8).id,
-      };
-      const lineups = createLineups(players) as Lineup[];
+      const players = [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(4).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+        player(8).id,
+      ];
+      const lineups = createLineups(players);
 
       const playersToInactiveFilters = (ids: PlayerId[]) =>
         getPermutations(ids, 2).map((permutation) => ({
           filter: { player1: permutation[0], player2: permutation[1] },
         }));
 
-      expect(getFilterStatus(lineups, [])).toEqual(
+      expect(getFilterStatus(lineups, (a, b) => a.equals(b), [])).toEqual(
         playersToInactiveFilters([
           player(1).id,
           player(2).id,
@@ -598,18 +592,18 @@ describe('LineupsFactory', () => {
     it('getFilterStatus for active filter return all possible remaining filters', () => {
       //given
       const player = (id: number) => PlayerId.create(id.toString());
-      const players = {
-        1: player(1),
-        2: player(2),
-        3: player(3),
-        4: player(4),
-        5: player(5),
-        6: player(6),
-        7: player(7),
-      };
-      const lineups = createLineups(players) as Lineup[];
+      const players = [
+        player(1),
+        player(2),
+        player(3),
+        player(4),
+        player(5),
+        player(6),
+        player(7),
+      ];
+      const lineups = createLineups(players);
       expect(
-        getFilterStatus(lineups, [
+        getFilterStatus(lineups, (a, b) => a.equals(b), [
           {
             player1: player(1),
             player2: player(2),
@@ -636,7 +630,7 @@ describe('LineupsFactory', () => {
       );
 
       expect(
-        getFilterStatus(lineups, [
+        getFilterStatus(lineups, (a, b) => a.equals(b), [
           {
             player1: player(1),
             player2: player(2),
@@ -665,18 +659,18 @@ describe('LineupsFactory', () => {
         id: PlayerId.create(id.toString()),
         name: `Player ${id}`,
       });
-      const players = {
-        1: player(1).id,
-        2: player(2).id,
-        3: player(3).id,
-        4: player(4).id,
-        5: player(5).id,
-        6: player(6).id,
-        7: player(7).id,
-        8: player(8).id,
-      };
+      const players = [
+        player(1).id,
+        player(2).id,
+        player(3).id,
+        player(4).id,
+        player(5).id,
+        player(6).id,
+        player(7).id,
+        player(8).id,
+      ];
 
-      const lineups = createLineups(players) as Lineup[];
+      const lineups = createLineups(players);
 
       const filteredByVariations = filterLineupsByVariations(lineups, [
         {
@@ -722,16 +716,16 @@ describe('LineupsFactory', () => {
           variations: [
             [
               [
-                { position: 1, id: player(1).id },
-                { position: 2, id: player(2).id },
+                { position: 1, value: player(1).id },
+                { position: 2, value: player(2).id },
               ],
               [
-                { position: 3, id: player(3).id },
-                { position: 4, id: player(4).id },
+                { position: 3, value: player(3).id },
+                { position: 4, value: player(4).id },
               ],
               [
-                { position: 5, id: player(5).id },
-                { position: 6, id: player(6).id },
+                { position: 5, value: player(5).id },
+                { position: 6, value: player(6).id },
               ],
             ],
           ],
@@ -749,21 +743,21 @@ describe('LineupsFactory', () => {
           variations: [
             [
               [
-                { position: 1, id: player(1).id },
-                { position: 4, id: player(6).id },
+                { position: 1, value: player(1).id },
+                { position: 4, value: player(6).id },
               ],
               [
-                { position: 2, id: player(2).id },
-                { position: 5, id: player(7).id },
+                { position: 2, value: player(2).id },
+                { position: 5, value: player(7).id },
               ],
               [
-                { position: 3, id: player(3).id },
-                { position: 6, id: player(8).id },
+                { position: 3, value: player(3).id },
+                { position: 6, value: player(8).id },
               ],
             ],
           ],
         },
-      ] as Lineup[]);
+      ]);
     });
   });
 });

@@ -4,8 +4,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { PlayerId } from '../../RegistrationList';
 
 export type Variation = [
-  { position: number; id: PlayerId },
-  { position: number; id: PlayerId }
+  { position: number; value: PlayerId },
+  { position: number; value: PlayerId }
 ][];
 
 export interface Lineup {
@@ -63,7 +63,7 @@ export const VariationComponent: React.FC<{
                   0
                 )}) `}
                 {doublesPairing
-                  .map((player) => getPlayerNameById(player.id))
+                  .map((player) => getPlayerNameById(player.value))
                   .join(' + ')}
               </Grid>
             </Grid>

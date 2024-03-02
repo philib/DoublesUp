@@ -16,18 +16,20 @@ const meta = {
 export default meta;
 
 export const Default = () => {
-  const players = {
-    1: PlayerId.create('Player 1'),
-    2: PlayerId.create('Player 2'),
-    3: PlayerId.create('Player 3'),
-    4: PlayerId.create('Player 4'),
-    5: PlayerId.create('Player 5'),
-    6: PlayerId.create('Player 6'),
-    7: PlayerId.create('Player 7'),
-    8: PlayerId.create('Player 8'),
-    9: PlayerId.create('Player 9'),
-  };
-  const [lineups, setLineups] = useState(createLineups(players) as Lineup[]);
+  const players = [
+    PlayerId.create('Player 1'),
+    PlayerId.create('Player 2'),
+    PlayerId.create('Player 3'),
+    PlayerId.create('Player 4'),
+    PlayerId.create('Player 5'),
+    PlayerId.create('Player 6'),
+    PlayerId.create('Player 7'),
+    PlayerId.create('Player 8'),
+    PlayerId.create('Player 9'),
+  ];
+  const [lineups, setLineups] = useState(
+    createLineups(players) as Lineup<PlayerId>[]
+  );
 
   return (
     <>

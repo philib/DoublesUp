@@ -3,46 +3,44 @@ import { getPermutations } from './getPermutations';
 import { PlayerId } from './RegistrationList';
 import { Variation } from './service/RegistrationListService';
 
-export type PairingFilter = {
-  player1: PlayerId;
-  player2: PlayerId;
+export type PairingFilter<T> = {
+  player1: T;
+  player2: T;
 };
-export type InactivePairingFilter = {
-  filter: PairingFilter;
+export type InactivePairingFilter<T> = {
+  filter: PairingFilter<T>;
 };
-type DoublesPairing = [
-  { position: number; id: PlayerId },
-  { position: number; id: PlayerId }
+type DoublesPairing<T> = [
+  { position: number; value: T },
+  { position: number; value: T }
 ];
 
-export interface Lineup {
-  activePlayers: PlayerId[];
-  inactivePlayers: PlayerId[];
-  variations: DoublesPairing[][];
+export interface Lineup<T> {
+  activePlayers: T[];
+  inactivePlayers: T[];
+  variations: DoublesPairing<T>[][];
 }
 
-export const createLineups = (players: {
-  [rank: number]: PlayerId;
-}): Lineup[] => {
-  if (Object.values(players).length < 6) {
+export const createLineups = <T>(players: T[]): Lineup<T>[] => {
+  if (players.length < 6) {
     return [];
   }
 
-  const result = getPermutations(Object.entries(players), 6);
+  const result = getPermutations(players, 6);
   return _.uniqWith(
     result.map((permutation) => {
-      const activePlayers = permutation.map(([_, id]) => id);
-      const allPossibleLineupVariantions: DoublesPairing[][] =
+      const activePlayers = permutation.map((id) => id);
+      const allPossibleLineupVariantions: DoublesPairing<T>[][] =
         allPossibleLineupVariations.map((variation) => {
           return variation.flatMap((doublesPairing) => {
-            const a: DoublesPairing = [
+            const a: DoublesPairing<T> = [
               {
                 position: doublesPairing[0],
-                id: activePlayers[doublesPairing[0] - 1],
+                value: activePlayers[doublesPairing[0] - 1],
               },
               {
                 position: doublesPairing[1],
-                id: activePlayers[doublesPairing[1] - 1],
+                value: activePlayers[doublesPairing[1] - 1],
               },
             ];
             return [a];
@@ -61,17 +59,18 @@ export const createLineups = (players: {
   );
 };
 
-export const filterLineupsByPairings = (
-  lineups: Lineup[],
-  filter: { player1: PlayerId; player2: PlayerId }[]
-): Lineup[] => {
+export const filterLineupsByPairings = <T>(
+  lineups: Lineup<T>[],
+  filter: { player1: T; player2: T }[],
+  equals: (a: T, b: T) => boolean
+): Lineup<T>[] => {
   const lineupsWithPlayersPlaying = filter.reduce((acc, filter) => {
     return acc.filter((lineup) => {
       const player1Playing = lineup.activePlayers.find((player) =>
-        player.equals(filter.player1)
+        equals(player, filter.player1)
       );
       const player2Playing = lineup.activePlayers.find((player) =>
-        player.equals(filter.player2)
+        equals(player, filter.player2)
       );
       return player1Playing && player2Playing;
     });
@@ -83,8 +82,8 @@ export const filterLineupsByPairings = (
       return acc.filter((variation) => {
         return variation.some((pairing) => {
           const newLocal =
-            pairing[0].id.equals(filter.player1) &&
-            pairing[1].id.equals(filter.player2);
+            equals(pairing[0].value, filter.player1) &&
+            equals(pairing[1].value, filter.player2);
           return newLocal;
         });
       });
@@ -94,27 +93,27 @@ export const filterLineupsByPairings = (
   return withFilteredVariations;
 };
 
-export const filterLineupsByVariations = (
-  lineups: Lineup[],
+export const filterLineupsByVariations = <T>(
+  lineups: Lineup<PlayerId>[],
   filteredVariations: Variation[]
-): Lineup[] => {
+): Lineup<PlayerId>[] => {
   const isFilteredVariation = filteredVariations.reduce(
     (acc, filter) => {
-      return (variation: DoublesPairing[]) => {
+      return (variation: DoublesPairing<PlayerId>[]) => {
         return (
           acc(variation) ||
-          (variation[0][0].id.equals(filter.doubles1.player1) &&
-            variation[0][1].id.equals(filter.doubles1.player2) &&
-            variation[1][0].id.equals(filter.doubles2.player1) &&
-            variation[1][1].id.equals(filter.doubles2.player2) &&
-            variation[2][0].id.equals(filter.doubles3.player1) &&
-            variation[2][1].id.equals(filter.doubles3.player2))
+          (variation[0][0].value.equals(filter.doubles1.player1) &&
+            variation[0][1].value.equals(filter.doubles1.player2) &&
+            variation[1][0].value.equals(filter.doubles2.player1) &&
+            variation[1][1].value.equals(filter.doubles2.player2) &&
+            variation[2][0].value.equals(filter.doubles3.player1) &&
+            variation[2][1].value.equals(filter.doubles3.player2))
         );
       };
     },
     (() => {
       return false;
-    }) as (pairings: DoublesPairing[]) => boolean
+    }) as (pairings: DoublesPairing<PlayerId>[]) => boolean
   );
   const result = lineups
     .map((lineup) => ({
@@ -125,17 +124,18 @@ export const filterLineupsByVariations = (
   return result;
 };
 
-export const getFilterStatus = (
-  result: Lineup[],
-  appliedFilters: { player1: PlayerId; player2: PlayerId }[]
-): InactivePairingFilter[] => {
+export const getFilterStatus = <T>(
+  result: Lineup<T>[],
+  equals: (a: T, b: T) => boolean,
+  appliedFilters: { player1: T; player2: T }[]
+): InactivePairingFilter<T>[] => {
   const variationsMatchingFilters = appliedFilters.reduce(
     (acc, filter) => {
       return acc.filter((variation) => {
         return variation.some((pairing) => {
           const newLocal =
-            pairing[0].id.equals(filter.player1) &&
-            pairing[1].id.equals(filter.player2);
+            equals(pairing[0].value, filter.player1) &&
+            equals(pairing[1].value, filter.player2);
           return newLocal;
         });
       });
@@ -148,7 +148,9 @@ export const getFilterStatus = (
       variationsMatchingFilters.flatMap((it) => it),
       (it) => {
         // const newLocal = `${it[0].position} ${it[0].id.value} - ${it[1].position} ${it[1].id.value}`;
-        const newLocal = `${it[0].id.value} - ${it[1].id.value}`;
+        const newLocal = `${JSON.stringify(it[0].value)} - ${JSON.stringify(
+          it[1].value
+        )}`;
         return newLocal;
       }
     ),
@@ -157,14 +159,17 @@ export const getFilterStatus = (
   const remainingVariations = appliedFilters.reduce((acc, filter) => {
     return acc.filter(
       (it) =>
-        !(it[0].id.equals(filter.player1) && it[1].id.equals(filter.player2))
+        !(
+          equals(it[0].value, filter.player1) &&
+          equals(it[1].value, filter.player2)
+        )
     );
   }, uniqueVariations);
   return remainingVariations.map((variation) => ({
     filter: {
-      player1: variation[0].id,
+      player1: variation[0].value,
 
-      player2: variation[1].id,
+      player2: variation[1].value,
     },
   }));
 };

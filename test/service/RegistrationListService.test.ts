@@ -3,6 +3,7 @@ import { getPermutations } from '../../app/getPermutations';
 import { RegistrationListService } from '../../app/service/RegistrationListService';
 import { RegistrationListRepositoryInMemory } from '../../app/repository/RegistrationListRepositoryInMemory';
 import { every, some } from 'lodash';
+import { InactivePairingFilter } from '../../app/LineupFactory';
 
 describe('RegistrationListService', () => {
   it('get list', () => {
@@ -263,7 +264,7 @@ describe('RegistrationListService', () => {
         every(lineup.variations, (variation) =>
           some(
             variation,
-            ([{ id: id1 }, { id: id2 }]) =>
+            ([{ value: id1 }, { value: id2 }]) =>
               player(1).id.equals(id1) || player(1).id.equals(id2)
           )
         )
@@ -336,88 +337,16 @@ describe('RegistrationListService', () => {
           (variation) =>
             some(
               variation,
-              ([{ id: id1 }, { id: id2 }]) =>
+              ([{ value: id1 }, { value: id2 }]) =>
                 player(1).id.equals(id1) || player(1).id.equals(id2)
             ) &&
             some(
               variation,
-              ([{ id: id1 }, { id: id2 }]) =>
+              ([{ value: id1 }, { value: id2 }]) =>
                 player(7).id.equals(id1) || player(7).id.equals(id2)
             )
         )
       )
     );
-  });
-
-  describe('available filters', () => {
-    it('with no filters applied, return all possible filters', () => {
-      //given
-      const player = (id: number) => ({
-        id: PlayerId.create(id.toString()),
-        name: `Player ${id}`,
-      });
-      const players = {
-        1: player(1),
-        2: player(2),
-        3: player(3),
-        4: player(4),
-        5: player(5),
-        6: player(6),
-        7: player(7),
-        8: player(8),
-      };
-      const repository = new RegistrationListRepositoryInMemory(players);
-      const sut = new RegistrationListService(repository);
-
-      [
-        player(1),
-        player(2),
-        player(3),
-        player(4),
-        player(5),
-        player(6),
-      ].forEach((p) => {
-        sut.selectPlayer(p.id);
-      });
-
-      const playersToInactiveFilters = (ids: PlayerId[]) =>
-        getPermutations(ids, 2).map((permutation) => ({
-          filter: { player1: permutation[0], player2: permutation[1] },
-        }));
-
-      expect(sut.getAvailableFilters([])).toEqual(
-        playersToInactiveFilters([
-          player(1).id,
-          player(2).id,
-          player(3).id,
-          player(4).id,
-          player(5).id,
-          player(6).id,
-        ])
-      );
-
-      expect(
-        sut.getAvailableFilters([
-          {
-            player1: player(1).id,
-            player2: player(2).id,
-          },
-        ])
-      ).toEqual(
-        [
-          [3, 4],
-          [3, 5],
-          [3, 6],
-          [4, 5],
-          [4, 6],
-          [5, 6],
-        ].map((pairing) => ({
-          filter: {
-            player1: player(pairing[0]).id,
-            player2: player(pairing[1]).id,
-          },
-        }))
-      );
-    });
   });
 });
