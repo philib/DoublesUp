@@ -34,11 +34,11 @@ export const ExpandableLineup: React.FC<{
               <>
                 <div>
                   With:
-                  {activePlayers.map((p) => getPlayerNameById(p)).join(' ,')}
+                  {activePlayers.map((p) => getPlayerNameById(p)).join(', ')}
                 </div>
                 <div>
                   Without:
-                  {inactivePlayers.map((p) => getPlayerNameById(p)).join(' ,')}
+                  {inactivePlayers.map((p) => getPlayerNameById(p)).join(', ')}
                 </div>
               </>
             }

@@ -12,12 +12,47 @@ import {
   StaticRegistrationList,
 } from '../StaticRegistrationList/StaticRegistrationList';
 import { teamConfig } from '../../../team.config';
+import { Lineup, createLineups } from '../../LineupFactory';
+import {
+  Lineup as ComponentLineup,
+  Variation,
+} from '../Lineups/VariationComponent';
+import { Player, PlayerId } from '../../RegistrationList';
+import { LineupsComponent } from '../Lineups/Lineups';
 
 export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
   staticList = false,
 }) => {
   const [playerSelection, setPlayerSelection] =
     React.useState<Selection | null>(null);
+  const playerSelectionLengthByService = useService().playerSelection.length;
+  const playerSelectionLengthByStatic = playerSelection?.players.length ?? 0;
+  const lineups = createLineups(playerSelection?.players ?? []);
+  const toLineup = (lineup: Lineup<Player>): ComponentLineup => ({
+    activePlayers: lineup.activePlayers.map((player) => ({
+      id: player.id,
+    })),
+    inactivePlayers: lineup.inactivePlayers.map((player) => ({
+      id: player.id,
+    })),
+    variations: lineup.variations.map((doublesPairing) =>
+      doublesPairing.map((pairing) =>
+        pairing.map((player) => ({
+          position: player.position,
+          value: player.value.id,
+        }))
+      )
+    ) as Variation[],
+  });
+  const getPlayerNameById = (id: PlayerId) => {
+    const players = playerSelection?.players ?? [];
+    const playerById = players.reduce(
+      (acc, player) => ({ ...acc, [player.id.value]: player.name }),
+      {} as { [id: string]: string }
+    );
+    return playerById[id.value] ?? '';
+  };
+  console.log(JSON.stringify(lineups, null, 2));
   const RegistrationComponent = {
     disabledHint: undefined,
     title: 'Registration List',
@@ -33,11 +68,12 @@ export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
       <RegistrationComponentWithState />
     ),
   };
+
   const LineupsComponentConfig = {
     disabledHint: (
       staticList
-        ? playerSelection?.players && playerSelection.players.length < 6
-        : useService().playerSelection.length < 6
+        ? playerSelectionLengthByStatic < 6
+        : playerSelectionLengthByService < 6
     )
       ? 'At least 6 players must be selected'
       : undefined,
@@ -47,20 +83,27 @@ export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
         sx={{ marginTop: '2px' }}
         invisible={
           staticList
-            ? playerSelection?.players && playerSelection.players.length >= 6
-            : useService().playerSelection.length >= 6
+            ? playerSelectionLengthByStatic >= 6
+            : playerSelectionLengthByService >= 6
         }
         color={'secondary'}
         badgeContent={`${
           staticList
-            ? playerSelection?.players && playerSelection.players.length
-            : useService().playerSelection.length
+            ? playerSelectionLengthByStatic
+            : playerSelectionLengthByService
         }/6`}
       >
         <GroupIcon fontSize="large" />
       </Badge>
     ),
-    component: <LineupsComponentWithState />,
+    component: staticList ? (
+      <LineupsComponent
+        lineups={lineups.map(toLineup)}
+        getPlayerNameById={getPlayerNameById}
+      />
+    ) : (
+      <LineupsComponentWithState />
+    ),
   };
 
   return (
