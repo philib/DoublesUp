@@ -7,26 +7,56 @@ import { Badge, ThemeProvider } from '@mui/material';
 import { theme } from '../../theme';
 import { LineupsComponentWithState } from './LineupsComponentWithState';
 import { RegistrationComponentWithState } from './RegistrationComponentWithState';
+import {
+  Selection,
+  StaticRegistrationList,
+} from '../StaticRegistrationList/StaticRegistrationList';
+import { teamConfig } from '../../../team.config';
 
-export const App: React.FunctionComponent<{}> = () => {
+export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
+  staticList = true,
+}) => {
+  const [playerSelection, setPlayerSelection] =
+    React.useState<Selection | null>(null);
   const RegistrationComponent = {
     disabledHint: undefined,
     title: 'Registration List',
     icon: <AccountCircleIcon fontSize="large" />,
-    component: <RegistrationComponentWithState />,
+    component: staticList ? (
+      <StaticRegistrationList
+        onSelectionChanged={(players) => {
+          console.log(JSON.stringify(players, null, 2));
+          setPlayerSelection(players);
+        }}
+        teams={teamConfig.teams}
+      />
+    ) : (
+      <RegistrationComponentWithState />
+    ),
   };
-  const LineupsComponent = {
-    disabledHint:
-      useService().playerSelection.length < 6
-        ? 'At least 6 players must be selected'
-        : undefined,
+  const LineupsComponentConfig = {
+    disabledHint: (
+      staticList
+        ? playerSelection?.players && playerSelection.players.length < 6
+        : useService().playerSelection.length < 6
+    )
+      ? 'At least 6 players must be selected'
+      : undefined,
     title: 'Lineups',
     icon: (
       <Badge
         sx={{ marginTop: '2px' }}
-        invisible={useService().playerSelection.length >= 6}
+        invisible={
+          staticList
+            ? playerSelection?.players && playerSelection.players.length >= 6
+            : useService().playerSelection.length >= 6
+        }
         color={'secondary'}
-        badgeContent={`${useService().playerSelection.length}/6`}
+        badgeContent={`${
+          staticList
+            ? playerSelection?.players && playerSelection.players.length
+            : useService().playerSelection.length
+        }/6`}
       >
         <GroupIcon fontSize="large" />
       </Badge>
@@ -36,7 +66,9 @@ export const App: React.FunctionComponent<{}> = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Navigator navigations={[RegistrationComponent, LineupsComponent]} />
+      <Navigator
+        navigations={[RegistrationComponent, LineupsComponentConfig]}
+      />
     </ThemeProvider>
   );
 };

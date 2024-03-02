@@ -1,6 +1,10 @@
+import { v4 } from 'uuid';
 import update from 'immutability-helper';
 export class PlayerId {
   value: string;
+  public static random(): PlayerId {
+    return new PlayerId(v4());
+  }
   public static create(id: string): PlayerId {
     return new PlayerId(id);
   }
