@@ -25,7 +25,6 @@ export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
     component: staticList ? (
       <StaticRegistrationList
         onSelectionChanged={(players) => {
-          console.log(JSON.stringify(players, null, 2));
           setPlayerSelection(players);
         }}
         teams={teamConfig.teams}
