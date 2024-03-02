@@ -23,9 +23,9 @@ export interface Lineup {
 
 export const createLineups = (players: {
   [rank: number]: PlayerId;
-}): 'Not enough players' | Lineup[] => {
+}): Lineup[] => {
   if (Object.values(players).length < 6) {
-    return 'Not enough players';
+    return [];
   }
 
   const result = getPermutations(Object.entries(players), 6);

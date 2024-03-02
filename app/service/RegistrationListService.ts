@@ -92,12 +92,11 @@ export class RegistrationListService {
       {} as { [rank: number]: PlayerId }
     );
     const lineups = createLineups(selectedPlayer);
-    const result = lineups === 'Not enough players' ? [] : lineups;
     return filters.reduce((acc, filter) => {
       return acc.filter((lineup) => {
         return lineup.activePlayers.find((player) => player.equals(filter));
       });
-    }, result);
+    }, lineups);
   }
   filterLineups(
     lineups: Lineup[],
@@ -143,7 +142,6 @@ export class RegistrationListService {
       {} as { [rank: number]: PlayerId }
     );
     const lineups = createLineups(selectedPlayer);
-    const result = lineups === 'Not enough players' ? [] : lineups;
     const variationsMatchingFilters = appliedFilters.reduce(
       (acc, filter) => {
         return acc.filter((variation) => {
@@ -155,7 +153,7 @@ export class RegistrationListService {
           });
         });
       },
-      result.flatMap((it) => it.variations)
+      lineups.flatMap((it) => it.variations)
     );
 
     const uniqueVariations = sortBy(

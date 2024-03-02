@@ -22,7 +22,7 @@ describe('LineupsFactory', () => {
       5: playerId(5),
     };
     const result = createLineups(input);
-    expect(result).toEqual('Not enough players');
+    expect(result).toEqual([]);
   });
   it('creates lineups for 6 players', () => {
     const input = {
