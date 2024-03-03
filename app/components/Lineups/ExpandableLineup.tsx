@@ -8,14 +8,12 @@ import { LineupCard } from './LineupCard';
 import { VariationComponent } from './VariationComponent';
 
 export const ExpandableLineup: React.FC<{
-  lineupVariation: number;
   lineup: LineupFactoryLineup<PlayerId>;
   getPlayerNameById: (id: PlayerId) => string;
   favorize: (f: TestVariation) => void;
   unfavorize: (f: TestVariation) => void;
   isFavorite: (f: TestVariation) => boolean;
 }> = ({
-  lineupVariation,
   lineup: { activePlayers, inactivePlayers, variations },
   getPlayerNameById,
   favorize,
@@ -29,21 +27,15 @@ export const ExpandableLineup: React.FC<{
         <CardContent>
           <CardHeader
             onClick={() => setExpanded(!expanded)}
-            title={'Lineup #' + lineupVariation}
+            title={activePlayers.map((p) => getPlayerNameById(p)).join(', ')}
             subheader={
-              <>
-                <div>
-                  With:
-                  {activePlayers.map((p) => getPlayerNameById(p)).join(', ')}
-                </div>
-                <div>
-                  Without:
-                  {inactivePlayers.map((p) => getPlayerNameById(p)).join(', ')}
-                </div>
-              </>
+              <div hidden={inactivePlayers.length == 0}>
+                Without:
+                {inactivePlayers.map((p) => getPlayerNameById(p)).join(', ')}
+              </div>
             }
           />
-          {expanded &&
+          {true &&
             variations.map((v, index) => {
               const favorite: TestVariation = {
                 doubles1: {

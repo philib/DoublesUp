@@ -137,7 +137,6 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         {filteredLineups.map((l, index) => (
           <ExpandableLineup
             key={`lineup-${index}`}
-            lineupVariation={index + 1}
             lineup={l}
             getPlayerNameById={getPlayerNameById}
             isFavorite={isFavorite}
