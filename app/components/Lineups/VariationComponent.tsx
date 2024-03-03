@@ -56,14 +56,11 @@ export const VariationComponent: React.FC<{
               alignItems={'center'}
             >
               <Grid item key={index}>
-                {`(${doublesPairing
-                  .map((player) => player.position)
-                  .join(' + ')} = ${doublesPairing.reduce(
-                  (acc, cur) => acc + cur.position,
-                  0
-                )}) `}
                 {doublesPairing
-                  .map((player) => getPlayerNameById(player.value))
+                  .map(
+                    (player) =>
+                      `(${player.position}) ${getPlayerNameById(player.value)}`
+                  )
                   .join(' + ')}
               </Grid>
             </Grid>
