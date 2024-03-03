@@ -6,7 +6,6 @@ import {
   DialogTitle,
   Divider,
   Fab,
-  List,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { PlayerId } from '../../RegistrationList';
@@ -15,7 +14,6 @@ import {
   Lineup as LineupFactoryLineup,
 } from '../../LineupFactory';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { LineupCard } from './LineupCard';
 import { FilterChip } from './FilterChip';
 import { useFilters } from './useFilters';
 import { useFavorites } from './useFavorites';
@@ -24,6 +22,7 @@ import { Lineup } from './VariationComponent';
 import { headerAndBottomNavigationHeight } from '../Navigator/Navigator';
 import { useFormatMessage } from '../../MyIntlProvider';
 import { CustomDivider } from './customDivider';
+import { Virtuoso } from 'react-virtuoso';
 
 export interface LineupVariationsProps {
   lineups: Lineup[];
@@ -125,29 +124,34 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
       </DialogActions>
     </Dialog>
   );
+  const renderRow = (index: number) => {
+    const l = filteredLineups[index];
+    return (
+      <ExpandableLineup
+        key={`lineup-${index}`}
+        lineup={l}
+        getPlayerNameById={getPlayerNameById}
+        isFavorite={isFavorite}
+        favorize={favorize}
+        unfavorize={unfavorize}
+      />
+    );
+  };
   return (
     <div
       style={{
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
       }}
     >
       {filterDialog}
-      <div style={{ flex: 1, width: '100%' }}>
-        <List>
-          {filteredLineups.map((l, index) => (
-            <ExpandableLineup
-              key={`lineup-${index}`}
-              lineup={l}
-              getPlayerNameById={getPlayerNameById}
-              isFavorite={isFavorite}
-              favorize={favorize}
-              unfavorize={unfavorize}
-            />
-          ))}
-        </List>
-      </div>
+      <Virtuoso
+        style={{ height: '100%', width: '100%' }}
+        totalCount={filteredLineups.length}
+        itemContent={renderRow}
+      />
       <Fab
         style={{
           position: 'fixed',

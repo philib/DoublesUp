@@ -8044,6 +8044,7 @@ __metadata:
     react-beautiful-dnd: "npm:^13.1.1"
     react-dom: "npm:18.2.0"
     react-intl: "npm:^6.6.2"
+    react-virtuoso: "npm:^4.7.2"
     storybook: "npm:^7.6.10"
     styled-components: "npm:^6.1.8"
     tsc-watch: "npm:^6.0.4"
@@ -13797,6 +13798,16 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 2ba754ba748faefa15f87c96dfa700d5525054a0141de8c75763aae6734af0740e77e11261a1e8f4ffc08fd9ab78510122e05c21c2d79066c38bb6861a886c82
+  languageName: node
+  linkType: hard
+
+"react-virtuoso@npm:^4.7.2":
+  version: 4.7.2
+  resolution: "react-virtuoso@npm:4.7.2"
+  peerDependencies:
+    react: ">=16 || >=17 || >= 18"
+    react-dom: ">=16 || >=17 || >= 18"
+  checksum: 581c40458f6653bb1de55745761013d406ffd0b11423703fe363dd93a003b0bc35a9be754c490da97511d13cf5c3b1c286aec98a86fa64aadd5524d25847e325
   languageName: node
   linkType: hard
 
