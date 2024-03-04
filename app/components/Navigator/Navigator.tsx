@@ -3,7 +3,7 @@ import {
   BottomNavigationAction,
   Snackbar,
 } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { theme } from '../../theme';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 
@@ -18,9 +18,22 @@ export interface NavigatorProps {
   navigations: Navigation[];
 }
 
+export const headerAndBottomNavigationHeight = '5rem';
+
 export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   navigations,
 }) => {
+  const bottomNavigationRef = useRef<HTMLDivElement>(null);
+  const [maxContentHeight, setMaxContentHeight] = React.useState('0%');
+  useEffect(() => {
+    if (bottomNavigationRef.current) {
+      const top = bottomNavigationRef.current.getBoundingClientRect().top;
+      setMaxContentHeight(
+        `calc(${top}px - ${headerAndBottomNavigationHeight})`
+      );
+    }
+  }, [bottomNavigationRef]);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [bottomNavigationValue, setBottomNavigationValue] = React.useState(0);
   const [scrollPosition, setScrollPosition] = React.useState<{
     [navigation: number]: number;
@@ -48,8 +61,33 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
     />
   ));
   useEffect(() => {
-    window.scrollTo(0, scrollPosition[bottomNavigationValue] ?? 0);
-  }, [bottomNavigationValue, scrollPosition]);
+    const onScroll = () => {
+      if (containerRef.current) {
+        setScrollPosition({
+          ...scrollPosition,
+          [bottomNavigationValue]: containerRef.current.scrollTop,
+        });
+      }
+    };
+
+    if (containerRef.current) {
+      containerRef.current.addEventListener('scroll', onScroll);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.removeEventListener('scroll', onScroll);
+      }
+    };
+  }, [bottomNavigationValue]);
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo(
+        0,
+        scrollPosition[bottomNavigationValue] ?? 0
+      );
+    }
+  }, [bottomNavigationValue]);
 
   return (
     <main>
@@ -61,7 +99,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
               alignItems: 'center',
               flexDirection: 'row',
               backgroundColor: theme.palette.primary.main,
-              height: '5rem',
+              height: headerAndBottomNavigationHeight,
               border: 'solid',
             }}
           >
@@ -80,9 +118,18 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
             </div>
           </div>
         </div>
-        <div style={{ height: '5rem' }} />
       </>
-      <div>
+      <div
+        ref={containerRef}
+        style={{
+          zIndex: 1,
+          position: 'fixed',
+          top: headerAndBottomNavigationHeight,
+          width: '100%',
+          overflow: 'auto',
+          maxHeight: maxContentHeight,
+        }}
+      >
         {navigations.map((it, index) => (
           <div
             key={`navigation-${index}`}
@@ -103,10 +150,14 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
         message={snackbarState.open && snackbarState.message}
       ></Snackbar>
       <>
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}>
+        <div
+          ref={bottomNavigationRef}
+          style={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}
+        >
           <BottomNavigation
             style={{
               backgroundColor: theme.palette.primary.main,
+              height: headerAndBottomNavigationHeight,
               width: '100%',
               border: 'solid',
             }}
@@ -118,10 +169,6 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
               if (hint) {
                 setSnackbarState({ open: true, message: hint });
               } else {
-                setScrollPosition({
-                  ...scrollPosition,
-                  [bottomNavigationValue]: window.scrollY,
-                });
                 setBottomNavigationValue(newValue);
               }
             }}
@@ -129,8 +176,6 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
             {bottomNavigationActions}
           </BottomNavigation>
         </div>
-        {/* This is a dummy to prevent items hiding behind the actual bottom navigation due to its fixed position */}
-        <BottomNavigation />
       </>
     </main>
   );

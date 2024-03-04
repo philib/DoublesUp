@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Divider,
   Fab,
+  List,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { PlayerId } from '../../RegistrationList';
@@ -22,6 +23,7 @@ import { useFilters } from './useFilters';
 import { useFavorites } from './useFavorites';
 import { ExpandableLineup } from './ExpandableLineup';
 import { Lineup } from './VariationComponent';
+import { headerAndBottomNavigationHeight } from '../Navigator/Navigator';
 
 export interface LineupVariationsProps {
   lineups: Lineup[];
@@ -117,7 +119,8 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
       <FilterChip
         style={{
           position: 'fixed',
-          top: '5rem',
+          top: headerAndBottomNavigationHeight,
+          zIndex: 1,
         }}
         key={`filter-favorites`}
         text={'Show Favorites'}
@@ -127,29 +130,30 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         }}
       />
       {filterDialog}
-      <div style={{ flex: 1, overflow: 'auto', width: '100%' }}>
+      <div style={{ flex: 1, width: '100%' }}>
         {filteredLineups.length === 0 && (
           <LineupCard>
             <CardHeader title={'Nothing to see here'} />
             <CardContent>No variation matches your given filter</CardContent>
           </LineupCard>
         )}
-        {filteredLineups.map((l, index) => (
-          <ExpandableLineup
-            key={`lineup-${index}`}
-            lineup={l}
-            getPlayerNameById={getPlayerNameById}
-            isFavorite={isFavorite}
-            favorize={favorize}
-            unfavorize={unfavorize}
-          />
-        ))}
+        <List>
+          {filteredLineups.map((l, index) => (
+            <ExpandableLineup
+              key={`lineup-${index}`}
+              lineup={l}
+              getPlayerNameById={getPlayerNameById}
+              isFavorite={isFavorite}
+              favorize={favorize}
+              unfavorize={unfavorize}
+            />
+          ))}
+        </List>
       </div>
       <Fab
         style={{
           position: 'fixed',
-          bottom: '35px',
-          borderRadius: '50%',
+          bottom: `calc(${headerAndBottomNavigationHeight} - 28px)`,
         }}
         color="primary"
         aria-label="add"

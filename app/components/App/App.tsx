@@ -52,7 +52,6 @@ export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
     );
     return playerById[id.value] ?? '';
   };
-  console.log(JSON.stringify(lineups, null, 2));
   const RegistrationComponent = {
     disabledHint: undefined,
     title: 'Registration List',

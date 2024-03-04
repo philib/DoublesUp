@@ -12,10 +12,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { EditDialog } from './EditDialog';
 import { PlayerId } from '../../RegistrationList';
 import { SortableList } from './SortableList';
-
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import AddIcon from '@mui/icons-material/Add';
 import { theme } from '../../theme';
+import { headerAndBottomNavigationHeight } from '../Navigator/Navigator';
 export interface MeldelistePlayer {
   id: PlayerId;
   rank: number;
@@ -218,8 +218,7 @@ export const EditableRegistrationList: React.FunctionComponent<
       <Fab
         style={{
           position: 'fixed',
-          bottom: '35px',
-          borderRadius: '50%',
+          bottom: `calc(${headerAndBottomNavigationHeight} - 28px)`,
         }}
         color="primary"
         aria-label="add"
