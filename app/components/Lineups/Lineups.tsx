@@ -24,6 +24,7 @@ import { useFavorites } from './useFavorites';
 import { ExpandableLineup } from './ExpandableLineup';
 import { Lineup } from './VariationComponent';
 import { headerAndBottomNavigationHeight } from '../Navigator/Navigator';
+import { useFormatMessage } from '../../MyIntlProvider';
 
 export interface LineupVariationsProps {
   lineups: Lineup[];
@@ -34,6 +35,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   lineups,
   getPlayerNameById,
 }) => {
+  const formatMessage = useFormatMessage();
   const lineupFactoryLineups = lineups.map((lineup) => ({
     activePlayers: lineup.activePlayers.map((p) => p.id),
     inactivePlayers: lineup.inactivePlayers.map((p) => p.id),
@@ -72,7 +74,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   });
   const filterDialog = (
     <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-      <DialogTitle>Choose Filter</DialogTitle>
+      <DialogTitle>{formatMessage('filterDialog.chooseFilter')}</DialogTitle>
       <DialogContent>
         {activeFilters.length > 0 && (
           <>
@@ -104,7 +106,9 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         })}
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setDialogOpen(false)}>Close</Button>
+        <Button onClick={() => setDialogOpen(false)}>
+          {formatMessage('filterDialog.close')}
+        </Button>
       </DialogActions>
     </Dialog>
   );
@@ -120,10 +124,10 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         style={{
           position: 'fixed',
           top: headerAndBottomNavigationHeight,
-          zIndex: 1,
+          zIndex: 2,
         }}
         key={`filter-favorites`}
-        text={'Show Favorites'}
+        text={formatMessage('lineups.showFavorites')}
         active={filterFavorites}
         onClick={() => {
           setFilterFavorites(!filterFavorites);

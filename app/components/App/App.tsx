@@ -19,10 +19,12 @@ import {
 } from '../Lineups/VariationComponent';
 import { Player, PlayerId } from '../../RegistrationList';
 import { LineupsComponent } from '../Lineups/Lineups';
+import { useFormatMessage } from '../../MyIntlProvider';
 
 export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
   staticList = false,
 }) => {
+  const formatMessage = useFormatMessage();
   const [playerSelection, setPlayerSelection] =
     React.useState<Selection | null>(null);
   const playerSelectionLengthByService = useService().playerSelection.length;
@@ -54,7 +56,7 @@ export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
   };
   const RegistrationComponent = {
     disabledHint: undefined,
-    title: 'Registration List',
+    title: formatMessage('registrationList.title'),
     icon: <AccountCircleIcon fontSize="large" />,
     component: staticList ? (
       <StaticRegistrationList
@@ -74,9 +76,9 @@ export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
         ? playerSelectionLengthByStatic < 6
         : playerSelectionLengthByService < 6
     )
-      ? 'At least 6 players must be selected'
+      ? formatMessage('lineups.atLeast6PlayersNeeded')
       : undefined,
-    title: 'Lineups',
+    title: formatMessage('lineups.title'),
     icon: (
       <Badge
         sx={{ marginTop: '2px' }}

@@ -2,6 +2,7 @@ import { Meta } from '@storybook/react';
 import { App } from '../app/components/App/App';
 import { ServiceProvider } from '../app/components/ServiceProvider/useRegistrationListServiceFactory';
 import { InMemoryRepositoryWithPrefilledPlayers } from '../app/repository/RegistrationListRepositoryInMemory';
+import { MyIntlProvider } from '../app/MyIntlProvider';
 
 const meta = {
   title: 'App',
@@ -16,8 +17,10 @@ export default meta;
 
 export const Default = () => {
   return (
-    <ServiceProvider repo={InMemoryRepositoryWithPrefilledPlayers(28)}>
-      <App />
-    </ServiceProvider>
+    <MyIntlProvider>
+      <ServiceProvider repo={InMemoryRepositoryWithPrefilledPlayers(28)}>
+        <App />
+      </ServiceProvider>
+    </MyIntlProvider>
   );
 };
