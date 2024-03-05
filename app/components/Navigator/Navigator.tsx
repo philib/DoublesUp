@@ -61,25 +61,26 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
     />
   ));
   useEffect(() => {
+    const currentContainerRef = containerRef.current;
     const onScroll = () => {
-      if (containerRef.current) {
+      if (currentContainerRef) {
         setScrollPosition({
           ...scrollPosition,
-          [bottomNavigationValue]: containerRef.current.scrollTop,
+          [bottomNavigationValue]: currentContainerRef.scrollTop,
         });
       }
     };
 
-    if (containerRef.current) {
-      containerRef.current.addEventListener('scroll', onScroll);
+    if (currentContainerRef) {
+      currentContainerRef.addEventListener('scroll', onScroll);
     }
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.removeEventListener('scroll', onScroll);
+      if (currentContainerRef) {
+        currentContainerRef.removeEventListener('scroll', onScroll);
       }
     };
-  }, [bottomNavigationValue]);
+  }, [bottomNavigationValue, scrollPosition]);
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTo(
@@ -87,7 +88,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
         scrollPosition[bottomNavigationValue] ?? 0
       );
     }
-  }, [bottomNavigationValue]);
+  }, [bottomNavigationValue, scrollPosition]);
 
   return (
     <main>
