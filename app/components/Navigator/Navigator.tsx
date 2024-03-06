@@ -15,6 +15,7 @@ export interface Navigation {
 }
 
 export interface NavigatorProps {
+  icon?: React.JSX.Element;
   navigations: Navigation[];
 }
 
@@ -22,6 +23,7 @@ export const headerAndBottomNavigationHeight = '5rem';
 
 export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   navigations,
+  icon = <SportsTennisIcon color="secondary" fontSize="large" />,
 }) => {
   const bottomNavigationRef = useRef<HTMLDivElement>(null);
   const [maxContentHeight, setMaxContentHeight] = React.useState('0%');
@@ -104,11 +106,9 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
               border: 'solid',
             }}
           >
-            <SportsTennisIcon
-              color="secondary"
-              fontSize="large"
-              style={{ paddingRight: '20px', paddingLeft: '20px' }}
-            />
+            <div style={{ paddingRight: '20px', paddingLeft: '20px' }}>
+              {icon}
+            </div>
             <div
               style={{
                 width: '100vw',

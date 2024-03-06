@@ -5,12 +5,13 @@ import teams from './teams.json';
 import { MyIntlProvider } from '../MyIntlProvider';
 import { StaticApp } from '../components/App/StaticApp';
 import { readTeams } from '../teams/readTeams';
+import Icon from './logo';
 
 const Home: React.FC = (props) => {
   return (
     <main>
       <MyIntlProvider>
-        <StaticApp teams={readTeams(teams)} {...props} />
+        <StaticApp icon={<Icon />} teams={readTeams(teams)} {...props} />
       </MyIntlProvider>
     </main>
   );

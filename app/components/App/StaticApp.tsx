@@ -1,7 +1,7 @@
 import { Navigator } from '../Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GroupIcon from '@mui/icons-material/Group';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Badge, ThemeProvider } from '@mui/material';
 import { theme } from '../../theme';
 import {
@@ -17,11 +17,11 @@ import {
 import { Player, PlayerId } from '../../RegistrationList';
 import { LineupsComponent } from '../Lineups/Lineups';
 import { useFormatMessage } from '../../MyIntlProvider';
-import { readTeams } from '../../teams/readTeams';
 
-export const StaticApp: React.FunctionComponent<{ teams: Team[] }> = ({
-  teams,
-}) => {
+export const StaticApp: React.FunctionComponent<{
+  teams: Team[];
+  icon?: React.JSX.Element;
+}> = ({ teams, icon }) => {
   const formatMessage = useFormatMessage();
   const [playerSelection, setPlayerSelection] =
     React.useState<Selection | null>(null);
@@ -92,6 +92,7 @@ export const StaticApp: React.FunctionComponent<{ teams: Team[] }> = ({
   return (
     <ThemeProvider theme={theme}>
       <Navigator
+        icon={icon}
         navigations={[RegistrationComponent, LineupsComponentConfig]}
       />
     </ThemeProvider>
