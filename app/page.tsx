@@ -1,21 +1,19 @@
 'use client';
 import React from 'react';
-
-import { InMemoryRepositoryWithPrefilledPlayers } from './repository/RegistrationListRepositoryInMemory';
-import { App } from './components/App/App';
-import { ServiceProvider } from './components/ServiceProvider/useRegistrationListServiceFactory';
-
 import { MyIntlProvider } from './MyIntlProvider';
+import { DynamicApp } from './components/App/DynamicApp';
+import { ServiceProvider } from './components/ServiceProvider/useRegistrationListServiceFactory';
+import { InMemoryRepositoryWithPrefilledPlayers } from './repository/RegistrationListRepositoryInMemory';
 
-const Home: React.FC = (props) => {
+const HomePage: React.FC = (props) => {
   return (
     <main>
       <MyIntlProvider>
         <ServiceProvider repo={InMemoryRepositoryWithPrefilledPlayers(8)}>
-          <App {...props} />
+          <DynamicApp {...props} />
         </ServiceProvider>
       </MyIntlProvider>
     </main>
   );
 };
-export default Home;
+export default HomePage;

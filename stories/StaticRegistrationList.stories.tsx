@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/react';
 import { StaticRegistrationList } from '../app/components/StaticRegistrationList/StaticRegistrationList';
-import { teamConfig } from '../team.config';
+import { readTeams } from '../app/teams/readTeams';
 
 const meta = {
   title: 'Static Registration List',
@@ -14,10 +14,9 @@ const meta = {
 export default meta;
 
 export const Default = () => {
-  return (
-    <StaticRegistrationList
-      teams={teamConfig.teams}
-      onSelectionChanged={() => {}}
-    />
-  );
+  const teams = readTeams({
+    'Team 1': { 1: 'Player 1', 2: 'Player 2' },
+    'Team 2': { 3: 'Player 3', 4: 'Player 4' },
+  });
+  return <StaticRegistrationList teams={teams} onSelectionChanged={() => {}} />;
 };

@@ -1,17 +1,14 @@
 import { Navigator } from '../Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GroupIcon from '@mui/icons-material/Group';
-import React from 'react';
-import { useService } from '../ServiceProvider/useRegistrationListServiceFactory';
+import React, { useEffect } from 'react';
 import { Badge, ThemeProvider } from '@mui/material';
 import { theme } from '../../theme';
-import { LineupsComponentWithState } from './LineupsComponentWithState';
-import { RegistrationComponentWithState } from './RegistrationComponentWithState';
 import {
   Selection,
   StaticRegistrationList,
+  Team,
 } from '../StaticRegistrationList/StaticRegistrationList';
-import { teamConfig } from '../../../team.config';
 import { Lineup, createLineups } from '../../LineupFactory';
 import {
   Lineup as ComponentLineup,
@@ -20,14 +17,14 @@ import {
 import { Player, PlayerId } from '../../RegistrationList';
 import { LineupsComponent } from '../Lineups/Lineups';
 import { useFormatMessage } from '../../MyIntlProvider';
+import { readTeams } from '../../teams/readTeams';
 
-export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
-  staticList = false,
+export const StaticApp: React.FunctionComponent<{ teams: Team[] }> = ({
+  teams,
 }) => {
   const formatMessage = useFormatMessage();
   const [playerSelection, setPlayerSelection] =
     React.useState<Selection | null>(null);
-  const playerSelectionLengthByService = useService().playerSelection.length;
   const playerSelectionLengthByStatic = playerSelection?.players.length ?? 0;
   const lineups = createLineups(playerSelection?.players ?? []);
   const toLineup = (lineup: Lineup<Player>): ComponentLineup => ({
@@ -58,52 +55,37 @@ export const App: React.FunctionComponent<{ staticList?: boolean }> = ({
     disabledHint: undefined,
     title: formatMessage('registrationList.title'),
     icon: <AccountCircleIcon fontSize="large" />,
-    component: staticList ? (
+    component: (
       <StaticRegistrationList
         onSelectionChanged={(players) => {
           setPlayerSelection(players);
         }}
-        teams={teamConfig.teams}
+        teams={teams}
       />
-    ) : (
-      <RegistrationComponentWithState />
     ),
   };
 
   const LineupsComponentConfig = {
-    disabledHint: (
-      staticList
-        ? playerSelectionLengthByStatic < 6
-        : playerSelectionLengthByService < 6
-    )
-      ? formatMessage('lineups.atLeast6PlayersNeeded')
-      : undefined,
+    disabledHint:
+      playerSelectionLengthByStatic < 6
+        ? formatMessage('lineups.atLeast6PlayersNeeded')
+        : undefined,
     title: formatMessage('lineups.title'),
     icon: (
       <Badge
         sx={{ marginTop: '2px' }}
-        invisible={
-          staticList
-            ? playerSelectionLengthByStatic >= 6
-            : playerSelectionLengthByService >= 6
-        }
+        invisible={playerSelectionLengthByStatic >= 6}
         color={'secondary'}
-        badgeContent={`${
-          staticList
-            ? playerSelectionLengthByStatic
-            : playerSelectionLengthByService
-        }/6`}
+        badgeContent={`${playerSelectionLengthByStatic}/6`}
       >
         <GroupIcon fontSize="large" />
       </Badge>
     ),
-    component: staticList ? (
+    component: (
       <LineupsComponent
         lineups={lineups.map(toLineup)}
         getPlayerNameById={getPlayerNameById}
       />
-    ) : (
-      <LineupsComponentWithState />
     ),
   };
 
