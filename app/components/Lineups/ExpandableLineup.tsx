@@ -1,11 +1,9 @@
-import {
-  ListItem,
-  ListSubheader,
-} from '@mui/material';
+import { ListItem, ListSubheader } from '@mui/material';
 import { PlayerId } from '../../RegistrationList';
 import { Lineup as LineupFactoryLineup } from '../../LineupFactory';
 import { Variation as TestVariation } from '../../service/RegistrationListService';
 import { VariationComponent } from './VariationComponent';
+import { useFormatMessage } from '../../MyIntlProvider';
 
 export const ExpandableLineup: React.FC<{
   lineup: LineupFactoryLineup<PlayerId>;
@@ -20,11 +18,15 @@ export const ExpandableLineup: React.FC<{
   unfavorize,
   isFavorite,
 }) => {
+  const formatMessage = useFormatMessage();
   return (
     <>
-      <ListSubheader>
-        Without: {inactivePlayers.map((p) => getPlayerNameById(p)).join(', ')}
-      </ListSubheader>
+      {inactivePlayers.length > 0 && (
+        <ListSubheader>
+          {formatMessage('lineup.without')}:{' '}
+          {inactivePlayers.map((p) => getPlayerNameById(p)).join(', ')}
+        </ListSubheader>
+      )}
       {variations.map((v, index) => {
         const favorite: TestVariation = {
           doubles1: {

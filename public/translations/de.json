@@ -3,6 +3,7 @@
   "lineups.title": "Aufstellungen",
   "lineups.atLeast6PlayersNeeded": "Selektiere mindestens 6 Spieler",
   "lineups.showFavorites": "Favoriten",
+  "lineup.without": "Ohne Spieler",
   "filterDialog.title": "Filter",
   "filterDialog.pairings": "Nach Paarungen",
   "filterDialog.close": "Schließen"
