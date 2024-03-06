@@ -6,6 +6,7 @@ import {
 import React, { useEffect, useRef } from 'react';
 import { theme } from '../../theme';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
+import { useFormatMessage } from '../../MyIntlProvider';
 
 export interface Navigation {
   disabledHint: string | undefined;
@@ -25,6 +26,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   navigations,
   icon = <SportsTennisIcon color="secondary" fontSize="large" />,
 }) => {
+  const formatMessage = useFormatMessage();
   const bottomNavigationRef = useRef<HTMLDivElement>(null);
   const [maxContentHeight, setMaxContentHeight] = React.useState('0%');
   useEffect(() => {
@@ -115,7 +117,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
                 color: theme.palette.background.default,
               }}
             >
-              Header Title
+              {formatMessage('app.title')}
             </div>
           </div>
         </div>
