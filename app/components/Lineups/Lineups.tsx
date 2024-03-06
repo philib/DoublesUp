@@ -25,6 +25,7 @@ import { ExpandableLineup } from './ExpandableLineup';
 import { Lineup } from './VariationComponent';
 import { headerAndBottomNavigationHeight } from '../Navigator/Navigator';
 import { useFormatMessage } from '../../MyIntlProvider';
+import { CustomDivider } from './customDivider';
 
 export interface LineupVariationsProps {
   lineups: Lineup[];
@@ -45,7 +46,8 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
 
   const [filterFavorites, setFilterFavorites] = useState(false);
 
-  const { favorize, unfavorize, favoritesFilter, isFavorite } = useFavorites();
+  const { favorites, favorize, unfavorize, favoritesFilter, isFavorite } =
+    useFavorites();
 
   const { filters, filter, addFilter, removeFilter } = useFilters();
   const [activeFilter, setActiveFilter] = useState<
@@ -67,6 +69,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
       <FilterChip
         key={`filter-active-${text}`}
         text={text}
+        disabled={filterFavorites}
         active={true}
         onClick={() => removeFilter(filter)}
       />
@@ -74,8 +77,19 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
   });
   const filterDialog = (
     <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-      <DialogTitle>{formatMessage('filterDialog.chooseFilter')}</DialogTitle>
+      <DialogTitle>{formatMessage('filterDialog.title')}</DialogTitle>
       <DialogContent>
+        <FilterChip
+          style={{ width: '100%' }}
+          key={`filter-favorites`}
+          text={formatMessage('lineups.showFavorites')}
+          active={filterFavorites}
+          disabled={favorites.length === 0}
+          onClick={() => {
+            setFilterFavorites(!filterFavorites);
+          }}
+        />
+        <CustomDivider>{formatMessage('filterDialog.pairings')}</CustomDivider>
         {activeFilters.length > 0 && (
           <>
             {activeFilters}
@@ -95,6 +109,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
               key={`filter-inactive-${text}`}
               text={text}
               active={false}
+              disabled={filterFavorites}
               onClick={() =>
                 addFilter({
                   player1: filter.filter.player1,
@@ -120,27 +135,8 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         alignItems: 'center',
       }}
     >
-      <FilterChip
-        style={{
-          position: 'fixed',
-          top: headerAndBottomNavigationHeight,
-          zIndex: 2,
-        }}
-        key={`filter-favorites`}
-        text={formatMessage('lineups.showFavorites')}
-        active={filterFavorites}
-        onClick={() => {
-          setFilterFavorites(!filterFavorites);
-        }}
-      />
       {filterDialog}
       <div style={{ flex: 1, width: '100%' }}>
-        {filteredLineups.length === 0 && (
-          <LineupCard>
-            <CardHeader title={'Nothing to see here'} />
-            <CardContent>No variation matches your given filter</CardContent>
-          </LineupCard>
-        )}
         <List>
           {filteredLineups.map((l, index) => (
             <ExpandableLineup

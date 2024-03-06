@@ -6,7 +6,8 @@ export const FilterChip: React.FC<{
   active: boolean;
   onClick: () => void;
   style?: CSSProperties;
-}> = ({ text, active, onClick, style }) => {
+  disabled?: boolean;
+}> = ({ text, active, onClick, style, disabled }) => {
   const variant = active ? ('filled' as const) : ('outlined' as const);
   return (
     <Chip
@@ -18,6 +19,7 @@ export const FilterChip: React.FC<{
         marginRight: '5px',
         ...style,
       }}
+      disabled={disabled}
       variant={variant}
       color="primary"
       label={text}
