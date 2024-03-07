@@ -130,6 +130,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
           top: headerAndBottomNavigationHeight,
           width: '100%',
           overflow: 'auto',
+          height: '100%',
           maxHeight: maxContentHeight,
         }}
       >
