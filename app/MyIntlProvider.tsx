@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { IntlProvider, PrimitiveType, useIntl } from 'react-intl';
 import de from '../public/translations/de.json';
 import en from '../public/translations/en.json';
@@ -7,16 +7,22 @@ import en from '../public/translations/en.json';
 export const MyIntlProvider: React.FC<{ children: ReactNode | ReactNode[] }> = (
   props
 ) => {
-  const language = navigator.language.split(/[-_]/)[0];
-  return (
+  const [locale, setLocale] = React.useState<string | null>(null);
+  useEffect(() => {
+    setLocale(navigator.language);
+  }, [locale]);
+
+  return locale ? (
     <IntlProvider
-      locale={navigator.language}
+      locale={locale}
       defaultLocale="en"
-      messages={messages[language] ?? en}
+      messages={messages[locale.split(/[-_]/)[0]] ?? en}
       {...props}
     >
       {props.children}
     </IntlProvider>
+  ) : (
+    <></>
   );
 };
 export function useFormatMessage(): (
