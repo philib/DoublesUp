@@ -56,6 +56,11 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
         filterFavorites ? favoritesFilter(f) : filter(f)
     );
   }, [filterFavorites, favoritesFilter, filter]);
+  useEffect(() => {
+    if (favorites.length === 0) {
+      setFilterFavorites(false);
+    }
+  }, [favorites]);
   const filteredLineups = activeFilter(lineupFactoryLineups);
 
   const activeFilters = filters.map((filter, index) => {
