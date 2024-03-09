@@ -1,4 +1,4 @@
-import { RegistrationList } from '../RegistrationList';
+import { RegistrationList } from '../logic/RegistrationList';
 
 export interface RegistrationListRepository {
   save(registrationList: RegistrationList): void;

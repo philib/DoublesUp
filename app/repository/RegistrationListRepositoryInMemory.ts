@@ -1,4 +1,4 @@
-import { Player, PlayerId, RegistrationList } from '../RegistrationList';
+import { Player, PlayerId, RegistrationList } from '../logic/RegistrationList';
 import { RegistrationListRepository } from './RegistrationListRepository';
 
 export class RegistrationListRepositoryInMemory

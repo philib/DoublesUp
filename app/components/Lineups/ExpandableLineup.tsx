@@ -1,6 +1,6 @@
 import { ListItem, ListSubheader } from '@mui/material';
-import { PlayerId } from '../../RegistrationList';
-import { Lineup as LineupFactoryLineup } from '../../LineupFactory';
+import { PlayerId } from '../../logic/RegistrationList';
+import { Lineup as LineupFactoryLineup } from '@/app/logic/Lineup';
 import { Variation as TestVariation } from '../../service/RegistrationListService';
 import { VariationComponent } from './VariationComponent';
 import { useFormatMessage } from '../../MyIntlProvider';
@@ -28,20 +28,9 @@ export const ExpandableLineup: React.FC<{
         </ListSubheader>
       )}
       {variations.map((v, index) => {
-        const favorite: TestVariation = {
-          doubles1: {
-            player1: v[0][0].value,
-            player2: v[0][1].value,
-          },
-          doubles2: {
-            player1: v[1][0].value,
-            player2: v[1][1].value,
-          },
-          doubles3: {
-            player1: v[2][0].value,
-            player2: v[2][1].value,
-          },
-        };
+        const favorite = v.flatMap((pairing) => [
+          { player1: pairing[0].value, player2: pairing[1].value },
+        ]);
         return (
           <ListItem key={`variant ${index}`}>
             <VariationComponent

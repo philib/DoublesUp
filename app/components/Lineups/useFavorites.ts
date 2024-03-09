@@ -1,19 +1,20 @@
 import { useCallback, useState } from 'react';
-import {
-  filterLineupsByVariations,
-  Lineup as LineupFactoryLineup,
-} from '../../LineupFactory';
+import { filterLineupsByVariations } from '@/app/logic/filterLineupsByVariations';
+import { Lineup as LineupFactoryLineup } from '@/app/logic/Lineup';
 import {
   Variation as TestVariation,
   isEqual,
 } from '../../service/RegistrationListService';
-import { PlayerId } from '../../RegistrationList';
+import { PlayerId } from '../../logic/RegistrationList';
 
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState<TestVariation[]>([]);
   const favoritesFilter = useCallback(
     (lineups: LineupFactoryLineup<PlayerId>[]) => {
-      return filterLineupsByVariations(lineups, favorites);
+      return filterLineupsByVariations(
+        lineups,
+        favorites.map((f) => f.map((it) => [it.player1, it.player2]))
+      );
     },
     [favorites]
   );

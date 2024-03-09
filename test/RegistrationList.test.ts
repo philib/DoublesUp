@@ -1,4 +1,8 @@
-import { Player, PlayerId, RegistrationList } from '../app/RegistrationList';
+import {
+  Player,
+  PlayerId,
+  RegistrationList,
+} from '../app/logic/RegistrationList';
 function createValidRegistrationList(list: {
   [rank: number]: Player;
 }): RegistrationList {

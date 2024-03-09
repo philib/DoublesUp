@@ -1,9 +1,7 @@
 import { useCallback, useState } from 'react';
-import { PlayerId } from '../../RegistrationList';
-import {
-  filterLineupsByPairings,
-  Lineup as LineupFactoryLineup,
-} from '../../LineupFactory';
+import { PlayerId } from '../../logic/RegistrationList';
+import { filterLineupsByPairings } from '@/app/logic/filterLineupsByPairings';
+import { Lineup as LineupFactoryLineup } from '@/app/logic/Lineup';
 
 export const useFilters = () => {
   const [filters, setFilters] = useState<

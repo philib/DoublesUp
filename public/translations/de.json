@@ -2,7 +2,7 @@
   "app.title": "Doppel Assistent",
   "registrationList.title": "Meldeliste",
   "lineups.title": "Aufstellungen",
-  "lineups.atLeast6PlayersNeeded": "Selektiere mindestens 6 Spieler",
+  "lineups.notEnoughPlayers": "Selektiere genügend Spieler",
   "lineups.showFavorites": "Favoriten",
   "lineup.without": "Ohne Spieler",
   "filterDialog.title": "Filter",

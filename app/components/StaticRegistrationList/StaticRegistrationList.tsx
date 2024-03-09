@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import { PlayerId } from '../../RegistrationList';
+import { PlayerId } from '../../logic/RegistrationList';
 import { Id } from '../model/Id';
 
 import ExpandLess from '@mui/icons-material/ExpandLess';
@@ -22,6 +22,7 @@ export interface Player {
 
 export interface Team {
   id: TeamId;
+  size: 4 | 6;
   name: string;
   registrationList: {
     [rank: number]: Player;

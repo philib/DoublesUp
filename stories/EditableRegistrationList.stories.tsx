@@ -4,7 +4,7 @@ import {
   MeldelistePlayer,
 } from '../app/components/EditableRegistrationList/EditableRegistrationList';
 import { PlayerCard } from '../app/components/EditableRegistrationList/PlayerCard';
-import { PlayerId, RegistrationList } from '../app/RegistrationList';
+import { PlayerId, RegistrationList } from '../app/logic/RegistrationList';
 import { RegistrationListRepository } from '../app/repository/RegistrationListRepository';
 import { createFakeUseService } from './useFakeService';
 import React from 'react';

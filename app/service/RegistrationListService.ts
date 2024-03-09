@@ -1,19 +1,18 @@
 import { sortBy } from 'lodash';
-import { Player, PlayerId, RegistrationList } from '../RegistrationList';
+import { Player, PlayerId, RegistrationList } from '../logic/RegistrationList';
 import { RegistrationListRepository } from '../repository/RegistrationListRepository';
-import { Lineup, createLineups } from '../LineupFactory';
+import { createLineupsFor6Players } from '../logic/createLineups';
+import { Lineup } from '../logic/Lineup';
 
-export type Variation = {
-  doubles1: { player1: PlayerId; player2: PlayerId };
-  doubles2: { player1: PlayerId; player2: PlayerId };
-  doubles3: { player1: PlayerId; player2: PlayerId };
-};
+export type Variation = { player1: PlayerId; player2: PlayerId }[];
 
 export const isEqual = (v1: Variation) => (v2: Variation) =>
   hashVariation(v1) === hashVariation(v2);
 
 const hashVariation = (it: Variation) =>
-  `{${it.doubles1.player1.value},${it.doubles1.player2.value} - ${it.doubles2.player1.value},${it.doubles2.player2.value} - ${it.doubles3.player1.value},${it.doubles3.player2.value}}`;
+  it
+    .map((pairing) => `${pairing.player1.value},${pairing.player2.value}`)
+    .join('-');
 
 export class RegistrationListService {
   private repository: RegistrationListRepository;
@@ -88,7 +87,7 @@ export class RegistrationListService {
       (a, b) =>
         registrationList.getRankById(a)!! - registrationList.getRankById(b)!!
     );
-    const lineups = createLineups(selectedPlayer);
+    const lineups = createLineupsFor6Players(selectedPlayer);
     return filters.reduce((acc, filter) => {
       return acc.filter((lineup) => {
         return lineup.activePlayers.find((player) => player.equals(filter));

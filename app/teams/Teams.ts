@@ -1,3 +1,11 @@
+export interface RegistrationList {
+  [rank: number]: string;
+}
 export interface Teams {
-  [teamName: string]: { [rank: number]: string };
+  4: {
+    [teamName: string]: RegistrationList;
+  };
+  6: {
+    [teamName: string]: RegistrationList;
+  };
 }

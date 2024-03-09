@@ -1,12 +1,10 @@
 import { every, some, without } from 'lodash';
-import {
-  createLineups,
-  filterLineupsByPairings,
-  filterLineupsByVariations,
-  getFilterStatus,
-} from '../app/LineupFactory';
-import { PlayerId } from '../app/RegistrationList';
-import { getPermutations } from '../app/getPermutations';
+import { createLineupsFor6Players } from '../app/logic/createLineups';
+import { getFilterStatus } from '@/app/logic/getFilterStatus';
+import { filterLineupsByVariations } from '@/app/logic/filterLineupsByVariations';
+import { filterLineupsByPairings } from '@/app/logic/filterLineupsByPairings';
+import { PlayerId } from '../app/logic/RegistrationList';
+import { getPermutations } from '../app/logic/getPermutations';
 
 const playerId = (id: number) => PlayerId.create(`Player ${id}`);
 
@@ -19,7 +17,7 @@ describe('LineupsFactory', () => {
       playerId(4),
       playerId(5),
     ];
-    const result = createLineups(input);
+    const result = createLineupsFor6Players(input);
     expect(result).toEqual([]);
   });
   it('creates lineups for 6 players', () => {
@@ -31,7 +29,7 @@ describe('LineupsFactory', () => {
       playerId(5),
       playerId(6),
     ];
-    const result = createLineups(input);
+    const result = createLineupsFor6Players(input);
     expect(result).toEqual([
       {
         activePlayers: [
@@ -371,9 +369,9 @@ describe('LineupsFactory', () => {
       return [input[pos - 1] as PlayerId];
     };
     const lineupWithout = (pos: number) =>
-      createLineups(without(input, input[pos - 1]))[0].variations;
+      createLineupsFor6Players(without(input, input[pos - 1]))[0].variations;
 
-    const result = createLineups(input);
+    const result = createLineupsFor6Players(input);
 
     expect(result.map((r) => r.activePlayers)).toEqual(
       [
@@ -429,7 +427,7 @@ describe('LineupsFactory', () => {
       playerId(8),
     ];
 
-    const result = createLineups(input);
+    const result = createLineupsFor6Players(input);
 
     expect(result.map((r) => r.activePlayers)).toEqual(
       [
@@ -514,7 +512,7 @@ describe('LineupsFactory', () => {
         player(8).id,
       ];
 
-      const lineups = createLineups(players);
+      const lineups = createLineupsFor6Players(players);
 
       const filteredByPairing = filterLineupsByPairings(
         lineups,
@@ -568,7 +566,7 @@ describe('LineupsFactory', () => {
         player(7).id,
         player(8).id,
       ];
-      const lineups = createLineups(players);
+      const lineups = createLineupsFor6Players(players);
 
       const playersToInactiveFilters = (ids: PlayerId[]) =>
         getPermutations(ids, 2).map((permutation) => ({
@@ -601,7 +599,7 @@ describe('LineupsFactory', () => {
         player(6),
         player(7),
       ];
-      const lineups = createLineups(players);
+      const lineups = createLineupsFor6Players(players);
       expect(
         getFilterStatus(lineups, (a, b) => a.equals(b), [
           {
@@ -670,37 +668,19 @@ describe('LineupsFactory', () => {
         player(8).id,
       ];
 
-      const lineups = createLineups(players);
+      const lineups = createLineupsFor6Players(players);
 
       const filteredByVariations = filterLineupsByVariations(lineups, [
-        {
-          doubles1: {
-            player1: player(1).id,
-            player2: player(6).id,
-          },
-          doubles2: {
-            player1: player(2).id,
-            player2: player(7).id,
-          },
-          doubles3: {
-            player1: player(3).id,
-            player2: player(8).id,
-          },
-        },
-        {
-          doubles1: {
-            player1: player(1).id,
-            player2: player(2).id,
-          },
-          doubles2: {
-            player1: player(3).id,
-            player2: player(4).id,
-          },
-          doubles3: {
-            player1: player(5).id,
-            player2: player(6).id,
-          },
-        },
+        [
+          [player(1).id, player(6).id],
+          [player(2).id, player(7).id],
+          [player(3).id, player(8).id],
+        ],
+        [
+          [player(1).id, player(2).id],
+          [player(3).id, player(4).id],
+          [player(5).id, player(6).id],
+        ],
       ]);
       expect(filteredByVariations).toEqual([
         {
