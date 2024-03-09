@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Lineup, createLineups } from '../app/LineupFactory';
+import { createLineupsFor6Players } from '../app/logic/createLineups';
+import { Lineup } from '@/app/logic/Lineup';
 import { LineupsComponent } from '../app/components/Lineups/Lineups';
-import { PlayerId } from '../app/RegistrationList';
+import { PlayerId } from '../app/logic/RegistrationList';
 import { Meta } from '@storybook/react';
 
 const meta = {
@@ -28,7 +29,7 @@ export const Default = () => {
     PlayerId.create('Player 9'),
   ];
   const [lineups, setLineups] = useState(
-    createLineups(players) as Lineup<PlayerId>[]
+    createLineupsFor6Players(players) as Lineup<PlayerId>[]
   );
 
   return (

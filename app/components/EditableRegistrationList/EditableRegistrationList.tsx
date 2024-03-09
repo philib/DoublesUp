@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { EditDialog } from './EditDialog';
-import { PlayerId } from '../../RegistrationList';
+import { PlayerId } from '../../logic/RegistrationList';
 import { SortableList } from './SortableList';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import AddIcon from '@mui/icons-material/Add';

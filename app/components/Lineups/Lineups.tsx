@@ -8,11 +8,9 @@ import {
   Fab,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { PlayerId } from '../../RegistrationList';
-import {
-  getFilterStatus,
-  Lineup as LineupFactoryLineup,
-} from '../../LineupFactory';
+import { PlayerId } from '../../logic/RegistrationList';
+import { getFilterStatus } from '@/app/logic/getFilterStatus';
+import { Lineup as LineupFactoryLineup } from '@/app/logic/Lineup';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { FilterChip } from './FilterChip';
 import { useFilters } from './useFilters';

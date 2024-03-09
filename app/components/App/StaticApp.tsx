@@ -9,12 +9,16 @@ import {
   StaticRegistrationList,
   Team,
 } from '../StaticRegistrationList/StaticRegistrationList';
-import { Lineup, createLineups } from '../../LineupFactory';
+import {
+  createLineupsFor4Players,
+  createLineupsFor6Players,
+} from '../../logic/createLineups';
+import { Lineup } from '@/app/logic/Lineup';
 import {
   Lineup as ComponentLineup,
   Variation,
 } from '../Lineups/VariationComponent';
-import { Player, PlayerId } from '../../RegistrationList';
+import { Player, PlayerId } from '../../logic/RegistrationList';
 import { LineupsComponent } from '../Lineups/Lineups';
 import { useFormatMessage } from '../../MyIntlProvider';
 
@@ -25,8 +29,19 @@ export const StaticApp: React.FunctionComponent<{
   const formatMessage = useFormatMessage();
   const [playerSelection, setPlayerSelection] =
     React.useState<Selection | null>(null);
-  const playerSelectionLengthByStatic = playerSelection?.players.length ?? 0;
-  const lineups = createLineups(playerSelection?.players ?? []);
+  const amountOfSelectedPlayers = playerSelection?.players.length ?? 0;
+  const currentTeam = teams.find(
+    (team) =>
+      playerSelection?.teamId?.id &&
+      playerSelection.teamId.id.equals(team.id.id)
+  );
+
+  var lineups: Lineup<Player>[] = [];
+  if (currentTeam?.size === 6) {
+    lineups = createLineupsFor6Players(playerSelection?.players ?? []);
+  } else if (currentTeam?.size === 4) {
+    lineups = createLineupsFor4Players(playerSelection?.players ?? []);
+  }
   const toLineup = (lineup: Lineup<Player>): ComponentLineup => ({
     activePlayers: lineup.activePlayers.map((player) => ({
       id: player.id,
@@ -65,18 +80,23 @@ export const StaticApp: React.FunctionComponent<{
     ),
   };
 
+  const currentTeamSize = currentTeam?.size;
   const LineupsComponentConfig = {
     disabledHint:
-      playerSelectionLengthByStatic < 6
-        ? formatMessage('lineups.atLeast6PlayersNeeded')
+      !currentTeamSize || amountOfSelectedPlayers < currentTeamSize
+        ? formatMessage('lineups.notEnoughPlayers')
         : undefined,
     title: formatMessage('lineups.title'),
     icon: (
       <Badge
         sx={{ marginTop: '2px' }}
-        invisible={playerSelectionLengthByStatic >= 6}
+        invisible={
+          !currentTeamSize ||
+          amountOfSelectedPlayers == 0 ||
+          amountOfSelectedPlayers >= currentTeamSize
+        }
         color={'secondary'}
-        badgeContent={`${playerSelectionLengthByStatic}/6`}
+        badgeContent={`${amountOfSelectedPlayers}/${currentTeamSize}`}
       >
         <GroupIcon fontSize="large" />
       </Badge>

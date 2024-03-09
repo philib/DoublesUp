@@ -3,7 +3,7 @@ import {
   EditableRegistrationList,
   MeldelistePlayer,
 } from '../EditableRegistrationList/EditableRegistrationList';
-import { PlayerId } from '../../RegistrationList';
+import { PlayerId } from '../../logic/RegistrationList';
 import { useService } from '../ServiceProvider/useRegistrationListServiceFactory';
 
 export const RegistrationComponentWithState: React.FunctionComponent<{}> =

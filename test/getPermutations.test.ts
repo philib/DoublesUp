@@ -1,4 +1,4 @@
-import { getPermutations } from '../app/getPermutations';
+import { getPermutations } from '../app/logic/getPermutations';
 
 describe('getPermutations', () => {
   test('for less then given element return empty array', () => {

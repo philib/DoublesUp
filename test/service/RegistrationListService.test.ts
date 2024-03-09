@@ -1,9 +1,9 @@
-import { PlayerId, RegistrationList } from '../../app/RegistrationList';
-import { getPermutations } from '../../app/getPermutations';
+import { PlayerId, RegistrationList } from '../../app/logic/RegistrationList';
+import { getPermutations } from '../../app/logic/getPermutations';
 import { RegistrationListService } from '../../app/service/RegistrationListService';
 import { RegistrationListRepositoryInMemory } from '../../app/repository/RegistrationListRepositoryInMemory';
 import { every, some } from 'lodash';
-import { InactivePairingFilter } from '../../app/LineupFactory';
+import { InactivePairingFilter } from '@/app/logic/PairingFilter';
 
 describe('RegistrationListService', () => {
   it('get list', () => {

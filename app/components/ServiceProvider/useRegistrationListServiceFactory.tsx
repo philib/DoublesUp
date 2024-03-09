@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { MeldelistePlayer } from '../EditableRegistrationList/EditableRegistrationList';
-import { Player, PlayerId } from '../../RegistrationList';
+import { Player, PlayerId } from '../../logic/RegistrationList';
 import { RegistrationListService } from '../../service/RegistrationListService';
 import { RegistrationListRepository } from '../../repository/RegistrationListRepository';
-import { Lineup } from '../../LineupFactory';
+import { Lineup } from '../../logic/Lineup';
 
 interface ServiceContextType {
   players: MeldelistePlayer[];

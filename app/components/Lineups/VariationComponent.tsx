@@ -1,7 +1,7 @@
 import { Grid, IconButton } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-import { PlayerId } from '../../RegistrationList';
+import { PlayerId } from '../../logic/RegistrationList';
 
 export type Variation = [
   { position: number; value: PlayerId },
