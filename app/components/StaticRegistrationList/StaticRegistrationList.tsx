@@ -13,6 +13,7 @@ import { Id } from '../model/Id';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { useState } from 'react';
+import { sortBy } from 'lodash';
 export type TeamId = { type: 'Team'; id: Id };
 
 export interface Player {
@@ -61,8 +62,20 @@ export const StaticRegistrationList: React.FunctionComponent<
       newChecked.push(player);
     }
 
-    setSelection({ teamId, players: newChecked });
-    onSelectionChanged({ teamId, players: newChecked });
+    const rankByPlayer = Object.entries(
+      teams.find((t) => t.id === teamId)?.registrationList!
+    ).reduce(
+      (acc, [rank, p]) => ({ ...acc, [p.id.value]: Number(rank) }),
+      {} as { [id: string]: number }
+    );
+
+    const sorted = sortBy(
+      newChecked.map((p) => ({ rank: rankByPlayer[p.id.value], player: p })),
+      (it) => it.rank
+    ).map((it) => it.player);
+
+    setSelection({ teamId, players: sorted });
+    onSelectionChanged({ teamId, players: sorted });
   };
   return (
     <List
