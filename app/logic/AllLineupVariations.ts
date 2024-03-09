@@ -12,6 +12,10 @@ export const allLineupVariations = {
       [1, 4],
       [2, 3],
     ],
+    [
+      [2, 3],
+      [1, 4],
+    ],
   ],
   6: [
     [
