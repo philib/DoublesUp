@@ -15,8 +15,11 @@ export default meta;
 
 export const Default = () => {
   const teams = readTeams({
-    'Team 1': { 1: 'Player 1', 2: 'Player 2' },
-    'Team 2': { 3: 'Player 3', 4: 'Player 4' },
+    4: {
+      'Team 1': { 1: 'Player 1', 2: 'Player 2', 3: 'Player 3', 4: 'Player 4' },
+      'Team 2': { 3: 'Player 3', 4: 'Player 4', 1: 'Player 1', 2: 'Player 2' },
+    },
+    6: {},
   });
   return <StaticRegistrationList teams={teams} onSelectionChanged={() => {}} />;
 };
