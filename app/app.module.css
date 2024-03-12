@@ -1,0 +1,11 @@
+.noScrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.roundedCorners {
+    border-radius: 4px;
+}
+
+.fadingOverflow {
+    /*mask-image: linear-gradient(180deg, #000000 100%, transparent);*/
+}

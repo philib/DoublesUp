@@ -5,6 +5,7 @@
   "lineups.notEnoughPlayers": "Select your players",
   "lineups.showFavorites": "Show Favorites",
   "lineup.without": "Without Player",
+  "lineup.single": "Lineup",
   "filterDialog.title": "Filter",
   "filterDialog.pairings": "By Pairings",
   "filterDialog.close": "Close"

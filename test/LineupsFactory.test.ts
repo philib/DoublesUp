@@ -1,8 +1,8 @@
 import { every, some, without } from 'lodash';
 import { createLineupsFor6Players } from '../app/logic/createLineups';
-import { getFilterStatus } from '@/app/logic/getFilterStatus';
-import { filterLineupsByVariations } from '@/app/logic/filterLineupsByVariations';
-import { filterLineupsByPairings } from '@/app/logic/filterLineupsByPairings';
+import { getFilterStatus } from '../app/logic/getFilterStatus';
+import { filterLineupsByVariations } from '../app/logic/filterLineupsByVariations';
+import { filterLineupsByPairings } from '../app/logic/filterLineupsByPairings';
 import { PlayerId } from '../app/logic/RegistrationList';
 import { getPermutations } from '../app/logic/getPermutations';
 

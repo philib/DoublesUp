@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { createLineupsFor6Players } from '../app/logic/createLineups';
-import { Lineup } from '@/app/logic/Lineup';
+import { Lineup } from '../app/logic/Lineup';
 import { LineupsComponent } from '../app/components/Lineups/Lineups';
 import { PlayerId } from '../app/logic/RegistrationList';
 import { Meta } from '@storybook/react';
+import { MyIntlProvider } from '../app/MyIntlProvider';
 
 const meta = {
   title: 'Lineups',
@@ -33,30 +34,32 @@ export const Default = () => {
   );
 
   return (
-    <>
-      <LineupsComponent
-        lineups={lineups.map((lineup) => {
-          const activePlayers = lineup.activePlayers.map((player) => ({
-            id: player,
-          }));
-          const inactivePlayers = lineup.inactivePlayers.map((player) => ({
-            id: player,
-          }));
-          return {
-            activePlayers,
-            inactivePlayers,
-            variations: lineup.variations.map((variation) => {
-              return variation;
-            }),
-          };
-        })}
-        getPlayerNameById={(id) =>
-          Object.values(players).reduce(
-            (acc, players) => ({ ...acc, [players.value]: players.value }),
-            {} as { [id: string]: string }
-          )[id.value]
-        }
-      />
-    </>
+    <MyIntlProvider>
+      <div style={{ height: '100vh' }}>
+        <LineupsComponent
+          lineups={lineups.map((lineup) => {
+            const activePlayers = lineup.activePlayers.map((player) => ({
+              id: player,
+            }));
+            const inactivePlayers = lineup.inactivePlayers.map((player) => ({
+              id: player,
+            }));
+            return {
+              activePlayers,
+              inactivePlayers,
+              variations: lineup.variations.map((variation) => {
+                return variation;
+              }),
+            };
+          })}
+          getPlayerNameById={(id) =>
+            Object.values(players).reduce(
+              (acc, players) => ({ ...acc, [players.value]: players.value }),
+              {} as { [id: string]: string }
+            )[id.value]
+          }
+        />
+      </div>
+    </MyIntlProvider>
   );
 };

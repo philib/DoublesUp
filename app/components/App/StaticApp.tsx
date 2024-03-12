@@ -13,7 +13,7 @@ import {
   createLineupsFor4Players,
   createLineupsFor6Players,
 } from '../../logic/createLineups';
-import { Lineup } from '@/app/logic/Lineup';
+import { Lineup } from '../../logic/Lineup';
 import {
   Lineup as ComponentLineup,
   Variation,

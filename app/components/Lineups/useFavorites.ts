@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { filterLineupsByVariations } from '@/app/logic/filterLineupsByVariations';
-import { Lineup as LineupFactoryLineup } from '@/app/logic/Lineup';
+import { filterLineupsByVariations } from '../../logic/filterLineupsByVariations';
+import { Lineup as LineupFactoryLineup } from '../../logic/Lineup';
 import {
   Variation as TestVariation,
   isEqual,

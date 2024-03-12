@@ -7,6 +7,7 @@ import React, { useEffect, useRef } from 'react';
 import { theme } from '../../theme';
 import SportsTennisIcon from '@mui/icons-material/SportsTennis';
 import { useFormatMessage } from '../../MyIntlProvider';
+import {RoundedFrame} from "../misc/RoundedFrame";
 
 export interface Navigation {
   disabledHint: string | undefined;
@@ -33,7 +34,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
     if (bottomNavigationRef.current) {
       const top = bottomNavigationRef.current.getBoundingClientRect().top;
       setMaxContentHeight(
-        `calc(${top}px - ${headerAndBottomNavigationHeight})`
+        `calc((${top}px - ${headerAndBottomNavigationHeight}))`
       );
     }
   }, [bottomNavigationRef]);
@@ -140,7 +141,9 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
             style={{ height: '100%' }}
             hidden={index != bottomNavigationValue}
           >
-            {it.component}
+              <RoundedFrame test={`test-${index}`}>
+                  {it.component}
+              </RoundedFrame>
           </div>
         ))}
       </div>
