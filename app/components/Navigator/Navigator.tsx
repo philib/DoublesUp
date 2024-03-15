@@ -98,7 +98,7 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
   return (
     <main>
       <>
-        <div style={{ position: 'fixed', top: 0, zIndex: 1000 }}>
+        <div style={{ position: 'fixed', top: 0, zIndex: 1000, width: '100%' }}>
           <div
             style={{
               display: 'flex',
@@ -111,14 +111,6 @@ export const Navigator: React.FunctionComponent<NavigatorProps> = ({
           >
             <div style={{ paddingRight: '20px', paddingLeft: '20px' }}>
               {icon}
-            </div>
-            <div
-              style={{
-                width: '100vw',
-                color: theme.palette.background.default,
-              }}
-            >
-              {formatMessage('app.title')}
             </div>
           </div>
         </div>
