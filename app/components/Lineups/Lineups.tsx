@@ -1,4 +1,5 @@
 import {
+    Badge,
     Button,
     Dialog,
     DialogActions,
@@ -157,19 +158,28 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
                 totalCount={filteredLineups.length}
                 itemContent={renderRow}
             />
-            <Fab
+            <Badge
+                color={'secondary'}
                 style={{
                     position: 'fixed',
                     bottom: `calc(${headerAndBottomNavigationHeight} - 28px)`,
+                    zIndex: 3000,
                 }}
-                color="primary"
-                aria-label="add"
-                onClick={() => {
-                    setDialogOpen(!dialogOpen);
-                }}
+                overlap={'circular'}
+                invisible={filters.length === 0 && !filterFavorites}
+                badgeContent={' '}
             >
-                <FilterAltIcon/>
-            </Fab>
+                <Fab
+                    style={{zIndex:0}}
+                    color="primary"
+                    aria-label="add"
+                    onClick={() => {
+                        setDialogOpen(!dialogOpen);
+                    }}
+                >
+                    <FilterAltIcon/>
+                </Fab>
+            </Badge>
         </div>
     );
 };
