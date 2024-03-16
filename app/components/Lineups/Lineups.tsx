@@ -6,7 +6,7 @@ import {
     DialogContent,
     DialogTitle,
     Divider,
-    Fab,
+    Fab, Typography,
 } from '@mui/material';
 import React, {useEffect, useState} from 'react';
 import {PlayerId} from '../../logic/RegistrationList';
@@ -79,7 +79,11 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
     });
     const filterDialog = (
         <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-            <DialogTitle>{formatMessage('filterDialog.title')}</DialogTitle>
+            <DialogTitle>
+                <Typography>
+                    {formatMessage('filterDialog.title')}
+                </Typography>
+            </DialogTitle>
             <DialogContent>
                 <FilterChip
                     style={{width: '100%'}}
@@ -91,7 +95,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
                         setFilterFavorites(!filterFavorites);
                     }}
                 />
-                <CustomDivider>{formatMessage('filterDialog.pairings')}</CustomDivider>
+                <CustomDivider><Typography>{formatMessage('filterDialog.pairings')}</Typography></CustomDivider>
                 {activeFilters.length > 0 && (
                     <>
                         {activeFilters}
@@ -124,7 +128,9 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => setDialogOpen(false)}>
-                    {formatMessage('filterDialog.close')}
+                    <Typography>
+                        {formatMessage('filterDialog.close')}
+                    </Typography>
                 </Button>
             </DialogActions>
         </Dialog>
@@ -170,7 +176,7 @@ export const LineupsComponent: React.FC<LineupVariationsProps> = ({
                 badgeContent={' '}
             >
                 <Fab
-                    style={{zIndex:0}}
+                    style={{zIndex: 0}}
                     color="primary"
                     aria-label="add"
                     onClick={() => {

@@ -1,26 +1,15 @@
-import { Navigator } from '../Navigator/Navigator';
+import {Navigator} from '../Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GroupIcon from '@mui/icons-material/Group';
-import React, {ReactNode} from 'react';
-import { Badge, ThemeProvider } from '@mui/material';
-import { theme } from '../../theme';
-import {
-  Selection,
-  StaticRegistrationList,
-  Team,
-} from '../StaticRegistrationList/StaticRegistrationList';
-import {
-  createLineupsFor4Players,
-  createLineupsFor6Players,
-} from '../../logic/createLineups';
-import { Lineup } from '../../logic/Lineup';
-import {
-  Lineup as ComponentLineup,
-  Variation,
-} from '../Lineups/VariationComponent';
-import { Player, PlayerId } from '../../logic/RegistrationList';
-import { LineupsComponent } from '../Lineups/Lineups';
-import { useFormatMessage } from '../../MyIntlProvider';
+import React from 'react';
+import {Badge} from '@mui/material';
+import {Selection, StaticRegistrationList, Team,} from '../StaticRegistrationList/StaticRegistrationList';
+import {createLineupsFor4Players, createLineupsFor6Players,} from '../../logic/createLineups';
+import {Lineup} from '../../logic/Lineup';
+import {Lineup as ComponentLineup, Variation,} from '../Lineups/VariationComponent';
+import {Player, PlayerId} from '../../logic/RegistrationList';
+import {LineupsComponent} from '../Lineups/Lineups';
+import {useFormatMessage} from '../../MyIntlProvider';
 
 export const StaticApp: React.FunctionComponent<{
   teams: Team[];
@@ -110,11 +99,9 @@ export const StaticApp: React.FunctionComponent<{
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Navigator
         icon={icon}
         navigations={[RegistrationComponent, LineupsComponentConfig]}
       />
-    </ThemeProvider>
   );
 };

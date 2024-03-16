@@ -1,13 +1,12 @@
-import { Navigator } from '../Navigator/Navigator';
+import {Navigator} from '../Navigator/Navigator';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import React from 'react';
-import { useService } from '../ServiceProvider/useRegistrationListServiceFactory';
-import { Badge, ThemeProvider } from '@mui/material';
-import { theme } from '../../theme';
-import { LineupsComponentWithState } from './LineupsComponentWithState';
-import { RegistrationComponentWithState } from './RegistrationComponentWithState';
-import { useFormatMessage } from '../../MyIntlProvider';
+import {useService} from '../ServiceProvider/useRegistrationListServiceFactory';
+import {Badge} from '@mui/material';
+import {LineupsComponentWithState} from './LineupsComponentWithState';
+import {RegistrationComponentWithState} from './RegistrationComponentWithState';
+import {useFormatMessage} from '../../MyIntlProvider';
 
 export const DynamicApp: React.FunctionComponent<{}> = ({}) => {
   const formatMessage = useFormatMessage();
@@ -39,10 +38,8 @@ export const DynamicApp: React.FunctionComponent<{}> = ({}) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Navigator
         navigations={[RegistrationComponent, LineupsComponentConfig]}
       />
-    </ThemeProvider>
   );
 };

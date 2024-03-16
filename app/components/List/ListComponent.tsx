@@ -7,7 +7,8 @@ export const MyListSubHeader = styled('div')(({theme}) => ({
     position: 'sticky',
     top: 0,
     zIndex: 2,
-    backgroundColor: theme.palette.primary.main
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
 }))
 
 export const MyList: React.FunctionComponent<{
