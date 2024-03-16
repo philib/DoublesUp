@@ -1,4 +1,4 @@
-import {Card, CardContent, ListItem, ListItemButton, ListItemText, Typography,} from '@mui/material';
+import {Card, CardContent, Divider, ListItem, ListItemButton, ListItemText, Typography,} from '@mui/material';
 import {PlayerId} from '../../logic/RegistrationList';
 import {Lineup as LineupFactoryLineup} from '../../logic/Lineup';
 import {Variation as TestVariation} from '../../service/RegistrationListService';
@@ -38,17 +38,20 @@ export const LineupComponent: React.FC<{
                     {player1: pairing[0].value, player2: pairing[1].value},
                 ]);
                 return (
-                    <MyListItem key={`variant ${index}`}>
-                        <ListItemText>
-                            <VariationComponent
-                                variation={v}
-                                getPlayerNameById={getPlayerNameById}
-                                favorize={() => favorize(favorite)}
-                                unfavorize={() => unfavorize(favorite)}
-                                isFavorite={isFavorite(favorite)}
-                            />
-                        </ListItemText>
-                    </MyListItem>
+                    <>
+                        <MyListItem key={`variant ${index}`}>
+                            <div style={{paddingTop: '5px', paddingBottom: '5px', width: '100%'}}>
+                                <VariationComponent
+                                    variation={v}
+                                    getPlayerNameById={getPlayerNameById}
+                                    favorize={() => favorize(favorite)}
+                                    unfavorize={() => unfavorize(favorite)}
+                                    isFavorite={isFavorite(favorite)}
+                                />
+                            </div>
+                        </MyListItem>
+                        <Divider/>
+                    </>
                 );
             })}
         </>

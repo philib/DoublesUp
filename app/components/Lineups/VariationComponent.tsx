@@ -22,9 +22,11 @@ export const VariationComponent: React.FC<{
     favorize: () => void;
     unfavorize: () => void;
 }> = ({variation, getPlayerNameById, favorize, unfavorize, isFavorite}) => {
+    const plus = 0.5;
+    const player = (12/2) - (plus/2)
     return (
-        <Grid item container direction={'row'}>
-            <Grid item>
+        <Grid item container direction={'row'} alignItems={'center'} justifyContent={'center'} wrap={'nowrap'} flexGrow={1}>
+            <Grid item xs={1} paddingRight={6}>
                 {isFavorite ? (
                     <IconButton
                         aria-label="star"
@@ -45,25 +47,33 @@ export const VariationComponent: React.FC<{
                     </IconButton>
                 )}
             </Grid>
-            <Grid item>
-                <Grid item container direction={'column'}>
-                    {variation.map((doublesPairing, index) => (
+            <Grid item xs={11}>
+                <Grid item container direction={'column'} spacing={1}>
+                    {variation.map(([first, second], index) => (
                         <Grid
                             key={`variation-${index}`}
                             item
                             container
                             direction={'row'}
-                            spacing={2}
+                            spacing={0.5}
                             alignItems={'center'}
                         >
-                            <Grid item key={index}>
+                            <Grid item
+                                  key={index} xs={player}>
+                                <Typography noWrap={true}>
+                                    {`(${first.position}) ${getPlayerNameById(first.value)}`}
+                                </Typography>
+                            </Grid>
+                            <Grid item
+                                  key={index} xs={plus}>
                                 <Typography>
-                                    {doublesPairing
-                                        .map(
-                                            (player) =>
-                                                `(${player.position}) ${getPlayerNameById(player.value)}`
-                                        )
-                                        .join(' + ')}
+                                    +
+                                </Typography>
+                            </Grid>
+                            <Grid item
+                                  key={index} xs={player}>
+                                <Typography noWrap={true}>
+                                    {`(${second.position}) ${getPlayerNameById(second.value)}`}
                                 </Typography>
                             </Grid>
                         </Grid>
