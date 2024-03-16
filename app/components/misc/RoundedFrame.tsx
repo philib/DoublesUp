@@ -29,8 +29,7 @@ export const RoundedFrame: React.FunctionComponent<{
                     top: `${padding}px`,
                     right: `-${padding}px`,
                     width: `calc(100% - ${padding * 2}px)`,
-                    height: '100%',
-                    maxHeight: `calc(100% - ${padding * 2}px)`,
+                    height: `calc(100% - ${padding * 2}px)`,
                 }}>
                 {children}
             </div>
