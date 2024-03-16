@@ -11,10 +11,8 @@ export const RoundedFrame: React.FunctionComponent<{
     useEffect(() => {
         if (ref && ref.current && ref.current.clientHeight) {
             setMaxContentHeight(`${Math.min(window.innerHeight, ref.current.clientHeight)}px`)
-            console.log(test, 'ref', ref, 'maxContentHeight', Math.min(window.innerHeight, ref.current.clientHeight))
         }
-    }, [ref, ref.current, ref.current?.clientHeight])
-    console.log("rendered", test)
+    }, [ref])
     const padding = 20;
     return (
         <div
