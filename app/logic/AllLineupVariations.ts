@@ -132,7 +132,7 @@ export const allLineupVariations = {
 } as const;
 
 export enum Mixed {
-    M1 = 1,
+    M1=1,
     M2=2,
     M3=3,
     F1=4,
@@ -154,10 +154,6 @@ export const mixed = {
         [[Mixed.F1, Mixed.M2], [Mixed.M1, Mixed.F3], [Mixed.F2, Mixed.M3]],// 3 4 5
 
         [[Mixed.M1, Mixed.F3], [Mixed.F1, Mixed.M3], [Mixed.F2, Mixed.M2]],// 4 4 4
-        [[Mixed.M1, Mixed.F3], [Mixed.F2, Mixed.M2], [Mixed.F1, Mixed.M3]],// 4 4 4
         [[Mixed.F1, Mixed.M3], [Mixed.M1, Mixed.F3], [Mixed.F2, Mixed.M2]],// 4 4 4
-        [[Mixed.F1, Mixed.M3], [Mixed.F2, Mixed.M2], [Mixed.M1, Mixed.F3]],// 4 4 4
-        [[Mixed.M2, Mixed.F2], [Mixed.M1, Mixed.F3], [Mixed.F1, Mixed.M3]],// 4 4 4
-        [[Mixed.M2, Mixed.F2], [Mixed.F1, Mixed.M3], [Mixed.M1, Mixed.F3]],// 4 4 4
     ],
 }
