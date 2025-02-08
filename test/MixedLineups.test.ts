@@ -31,20 +31,20 @@ describe('MixedLineups', () => {
         let F1 = woman("d", 1);
         let F2 = woman("e", 2);
         let F3 = woman("f", 3);
-        expect(generate2(M1, M2, M3, F1, F2, F3).map((it) => it.map(a => a.sort((b, c) => b.rank - c.rank)))).toEqual([
-            [[M1, F1], [M2, F2], [M3, F3]],// 2 4 6
+        expect(generate2(M1, M2, M3, F1, F2, F3)).toEqual([
+            [[F1, M1], [F2, M2], [F3, M3]],// 2 4 6
 
-            [[M1, F1], [M2, F3], [F2, M3]],// 2 5 5
-            [[M1, F1], [F2, M3], [M2, F3]],// 2 5 5
+            [[F1, M1], [M2, F3], [F2, M3]],// 2 5 5
+            [[F1, M1], [F2, M3], [M2, F3]],// 2 5 5
 
-            [[M1, F2], [F1, M2], [M3, F3]],// 3 3 6
-            [[F1, M2], [M1, F2], [M3, F3]],// 3 3 6
+            [[M1, F2], [F1, M2], [F3, M3]],// 3 3 6
+            [[F1, M2], [M1, F2], [F3, M3]],// 3 3 6
 
             [[M1, F2], [F1, M3], [M2, F3]],// 3 4 5
             [[F1, M2], [M1, F3], [F2, M3]],// 3 4 5
 
-            [[M1, F3], [F1, M3], [M2, F2]],// 4 4 4
-            [[F1, M3], [M1, F3], [M2, F2]],// 4 4 4
+            [[M1, F3], [F1, M3], [F2, M2]],// 4 4 4
+            [[F1, M3], [M1, F3], [F2, M2]],// 4 4 4
         ]);
     });
 });
@@ -87,10 +87,15 @@ function generate2<Man, Woman>(manRank1: Man, manRank2: Man, manRank3: Man, woma
         let [a, b] = pairing.map(transform);
         return [a, b];
     }
-    let players = [null as Man, manRank1, manRank2, manRank3, womanRank1, womanRank2, womanRank3];
-    const transform = getPairing((m) => players[(m.valueOf() as number)])
+    let players = [manRank1, manRank2, manRank3, womanRank1, womanRank2, womanRank3];
+    const transform = getPairing((m) => {
+            let number = (m.valueOf() as number) - 1;
+            let player = players[number];
+            return player
+        }
+    )
     return mixed["6"].map((variation) => {
-        return variation.sort().map((it) => transform(it.sort((a, b) => a - b)));
+        return variation.map((it) => transform(it));
     });
 }
 

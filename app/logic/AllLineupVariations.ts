@@ -142,13 +142,13 @@ export enum Mixed {
 
 export const mixed = {
     6: [
-        [[Mixed.M1, Mixed.F1], [Mixed.M2, Mixed.F2], [Mixed.M3, Mixed.F3]],// 2 4 6
+        [[Mixed.F1, Mixed.M1], [Mixed.F2, Mixed.M2], [Mixed.F3, Mixed.M3]],// 2 4 6
 
-        [[Mixed.M1, Mixed.F1], [Mixed.M2, Mixed.F3], [Mixed.F2, Mixed.M3]],// 2 5 5
-        [[Mixed.M1, Mixed.F1], [Mixed.F2, Mixed.M3], [Mixed.M2, Mixed.F3]],// 2 5 5
+        [[Mixed.F1, Mixed.M1], [Mixed.M2, Mixed.F3], [Mixed.F2, Mixed.M3]],// 2 5 5
+        [[Mixed.F1, Mixed.M1], [Mixed.F2, Mixed.M3], [Mixed.M2, Mixed.F3]],// 2 5 5
 
-        [[Mixed.M1, Mixed.F2], [Mixed.F1, Mixed.M2], [Mixed.M3, Mixed.F3]],// 3 3 6
-        [[Mixed.F1, Mixed.M2], [Mixed.M1, Mixed.F2], [Mixed.M3, Mixed.F3]],// 3 3 6
+        [[Mixed.M1, Mixed.F2], [Mixed.F1, Mixed.M2], [Mixed.F3, Mixed.M3]],// 3 3 6
+        [[Mixed.F1, Mixed.M2], [Mixed.M1, Mixed.F2], [Mixed.F3, Mixed.M3]],// 3 3 6
 
         [[Mixed.M1, Mixed.F2], [Mixed.F1, Mixed.M3], [Mixed.M2, Mixed.F3]],// 3 4 5
         [[Mixed.F1, Mixed.M2], [Mixed.M1, Mixed.F3], [Mixed.F2, Mixed.M3]],// 3 4 5
