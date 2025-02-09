@@ -1,114 +1,70 @@
 export type Spieler = number
 
-export interface AufstellungsPaarung {
-    paarungsWert: number;
-    spielerSortiertNachRang: Spieler[]
-}
-
-export interface AufstellungsVariante {
-    paarungen: AufstellungsPaarung[]
-}
-
 export interface SpielerAufstellung {
     nichtAufgestellteSpieler: Spieler[]
     aufgestellteSpieler: Spieler[]
 }
 
-export interface ValideAufstellung {
-    type: "ValideAufstellung"
-    varianten: AufstellungsVariante[]
-    nichtAufgestellteSpieler: Spieler[]
-    aufgestellteSpieler: Spieler[]
+export interface AufstellungsModifikatoren {
     spielerVonDerAufstellungEntfernen: SpielerEntfernen
     spielerZurAufstellungHinzufuegen: SpielerHinzufuegen
 }
 
-export interface InvalideAufstellung {
+export type ValideAufstellung = {
+    type: "ValideAufstellung"
+} & SpielerAufstellung & AufstellungsModifikatoren
+
+export type InvalideAufstellung = {
     type: "InvalideAufstellung"
-    nichtAufgestellteSpieler: Spieler[]
-    aufgestellteSpieler: Spieler[]
-    spielerVonDerAufstellungEntfernen: SpielerEntfernen
-    spielerZurAufstellungHinzufuegen: SpielerHinzufuegen
-}
+} & SpielerAufstellung & AufstellungsModifikatoren
 
 export interface Fehler {
     type: "Fehler"
     grund: string
 }
 
+export type SpielerEntfernen = (spieler: Spieler) => Aufstellung
+export type SpielerHinzufuegen = (spieler: Spieler) => Aufstellung
+
 export type Aufstellung = ValideAufstellung | InvalideAufstellung | Fehler
 
-export type AufstellungsValidierung = (aufgestellteSpieler: Spieler[]) => ({
-    type: "Valide",
-    berechneVarianten: (spieler: Spieler[]) => AufstellungsVariante[]
-}) | ({ type: "Invalide" })
+export type AufstellungsValidierung = (aufgestellteSpieler: Spieler[]) => "Valide" | "Invalide"
 
-function spielerZurAufstellungHinzufuegen(validierung: AufstellungsValidierung, a: SpielerAufstellung): (spieler: Spieler) => Aufstellung {
+function aufstellungsModifikation(validierung: AufstellungsValidierung, aktuelleSpielerAufstellung: SpielerAufstellung, modifikator: (spieler: Spieler) => SpielerAufstellung): (spieler: Spieler) => Aufstellung {
     return (spieler) => {
-        if (!a.nichtAufgestellteSpieler.includes(spieler) && !a.aufgestellteSpieler.includes(spieler)) {
+        if (!aktuelleSpielerAufstellung.nichtAufgestellteSpieler.includes(spieler) && !aktuelleSpielerAufstellung.aufgestellteSpieler.includes(spieler)) {
             return {
                 type: "Fehler",
                 grund: "Spieler nicht in Meldeliste"
             }
         }
-        const aa = {
-            nichtAufgestellteSpieler: a.nichtAufgestellteSpieler.filter(it => it !== spieler),
-            aufgestellteSpieler: a.aufgestellteSpieler.includes(spieler) ? a.aufgestellteSpieler : [...a.aufgestellteSpieler, spieler].sort()
-        }
-        const neueSpielerAufstellungen = {
-            ...aa,
-            spielerVonDerAufstellungEntfernen: spielerVonDerAufstellungEntfernen(validierung, aa),
-            spielerZurAufstellungHinzufuegen: spielerZurAufstellungHinzufuegen(validierung, aa),
-        }
-        const validerteAufstellung = validierung(neueSpielerAufstellungen.aufgestellteSpieler);
-        return validerteAufstellung.type === "Valide" ? ({
-            type: "ValideAufstellung",
-            varianten: validerteAufstellung.berechneVarianten(neueSpielerAufstellungen.aufgestellteSpieler),
-            ...neueSpielerAufstellungen
-        }) : ({
-            type: "InvalideAufstellung",
-            ...neueSpielerAufstellungen
+        const neueSpielerAufstellung = modifikator(spieler);
+        const validerteAufstellung = validierung(neueSpielerAufstellung.aufgestellteSpieler);
+        return ({
+            type: validerteAufstellung === "Valide" ? "ValideAufstellung" : "InvalideAufstellung",
+            ...neueSpielerAufstellung,
+            spielerVonDerAufstellungEntfernen: spielerVonDerAufstellungEntfernen(validierung, neueSpielerAufstellung),
+            spielerZurAufstellungHinzufuegen: spielerZurAufstellungHinzufuegen(validierung, neueSpielerAufstellung),
         })
     }
 }
 
-type SpielerEntfernen = (spieler: Spieler) => Aufstellung
-type SpielerHinzufuegen = (spieler: Spieler) => Aufstellung
+function spielerZurAufstellungHinzufuegen(validierung: AufstellungsValidierung, aktuelleSpielerAufstellung: SpielerAufstellung): (spieler: Spieler) => Aufstellung {
+    return aufstellungsModifikation(validierung, aktuelleSpielerAufstellung, (spieler) => ({
+        nichtAufgestellteSpieler: aktuelleSpielerAufstellung.nichtAufgestellteSpieler.filter(it => it !== spieler),
+        aufgestellteSpieler: aktuelleSpielerAufstellung.aufgestellteSpieler.includes(spieler) ? aktuelleSpielerAufstellung.aufgestellteSpieler : [...aktuelleSpielerAufstellung.aufgestellteSpieler, spieler].sort()
+    }))
+}
 
 function spielerVonDerAufstellungEntfernen(validierung: AufstellungsValidierung, aufstellung: SpielerAufstellung): (spieler: Spieler) => Aufstellung {
-    return (spieler) => {
-        if (!aufstellung.aufgestellteSpieler.includes(spieler) && !aufstellung.nichtAufgestellteSpieler.includes(spieler)) {
-            return {
-                type: "Fehler",
-                grund: "Spieler nicht in Aufstellung"
-            }
-        }
-        const aa = {
-            nichtAufgestellteSpieler: aufstellung.nichtAufgestellteSpieler.includes(spieler) ? aufstellung.nichtAufgestellteSpieler : [...aufstellung.nichtAufgestellteSpieler, spieler].sort(),
-            aufgestellteSpieler: aufstellung.aufgestellteSpieler.filter(it => it !== spieler)
-        }
-        const neueSpielerAufstellungen = {
-            ...aa,
-            spielerVonDerAufstellungEntfernen: spielerVonDerAufstellungEntfernen(validierung, aa),
-            spielerZurAufstellungHinzufuegen: spielerZurAufstellungHinzufuegen(validierung, aa),
-        }
-        const validierteAufstellung = validierung(neueSpielerAufstellungen.aufgestellteSpieler);
-        return validierteAufstellung.type === "Valide" ? ({
-            type: "ValideAufstellung",
-            varianten: validierteAufstellung.berechneVarianten(neueSpielerAufstellungen.aufgestellteSpieler),
-            ...neueSpielerAufstellungen
-        }) : ({
-            type: "InvalideAufstellung",
-            ...neueSpielerAufstellungen
-        })
-    }
+    return aufstellungsModifikation(validierung, aufstellung, (spieler) => ({
+        nichtAufgestellteSpieler: aufstellung.nichtAufgestellteSpieler.includes(spieler) ? aufstellung.nichtAufgestellteSpieler : [...aufstellung.nichtAufgestellteSpieler, spieler].sort(),
+        aufgestellteSpieler: aufstellung.aufgestellteSpieler.filter(it => it !== spieler)
+    }))
 }
 
-export function initialeAufstellung(meldeListe: Spieler[], validierung: (spieler: Spieler[]) => boolean, variantenBerechnung: (aufstellung: Spieler[]) => AufstellungsVariante[]): InvalideAufstellung {
-    const mapped: AufstellungsValidierung = (spieler: Spieler[]) => validierung(spieler) ? ({
-        type: "Valide",
-        berechneVarianten: variantenBerechnung
-    }) : ({type: "Invalide"})
+export function initialeAufstellung(meldeListe: Spieler[], validierung: (spieler: Spieler[]) => boolean): InvalideAufstellung {
+    const aufstellungsValidierung: AufstellungsValidierung = (spieler: Spieler[]) => validierung(spieler) ? "Valide" : "Invalide";
     const aufstellung = {
         nichtAufgestellteSpieler: meldeListe,
         aufgestellteSpieler: []
@@ -117,9 +73,7 @@ export function initialeAufstellung(meldeListe: Spieler[], validierung: (spieler
         type: "InvalideAufstellung",
         nichtAufgestellteSpieler: meldeListe,
         aufgestellteSpieler: [],
-        spielerVonDerAufstellungEntfernen: spielerVonDerAufstellungEntfernen(mapped, aufstellung),
-        spielerZurAufstellungHinzufuegen: spielerZurAufstellungHinzufuegen(mapped, aufstellung),
+        spielerVonDerAufstellungEntfernen: spielerVonDerAufstellungEntfernen(aufstellungsValidierung, aufstellung),
+        spielerZurAufstellungHinzufuegen: spielerZurAufstellungHinzufuegen(aufstellungsValidierung, aufstellung),
     }
 }
-
-type a = () => (aufstellung: ValideAufstellung) => AufstellungsVariante[]

@@ -1,19 +1,11 @@
 import {
     Aufstellung,
-    initialeAufstellung,
-    InvalideAufstellung,
-    ValideAufstellung
+    initialeAufstellung, InvalideAufstellung, ValideAufstellung,
 } from "@/app/logic/model/Aufstellung";
 
 describe('Aufstellung', () => {
     test('state machine Aufstellung works as expected', () => {
-        const statischeVariante = [{
-            paarungen: [{
-                spielerSortiertNachRang: [1, 2],
-                paarungsWert: 3
-            }]
-        }];
-        let initial = initialeAufstellung([1, 2, 3], (a) => a.length >= 2, (a) => statischeVariante);
+        let initial = initialeAufstellung([1, 2, 3], (a) => a.length >= 2);
         expect(initial.type).toEqual("InvalideAufstellung");
         expect(initial.nichtAufgestellteSpieler).toEqual([1, 2, 3]);
         expect(initial.aufgestellteSpieler).toEqual([]);
@@ -34,7 +26,6 @@ describe('Aufstellung', () => {
         expect(addingSamePlayerTwice.type).toEqual("ValideAufstellung");
         expect(expectNoError(addingSamePlayerTwice).aufgestellteSpieler).toEqual([1, 2]);
         expect(expectNoError(addingSamePlayerTwice).nichtAufgestellteSpieler).toEqual([3]);
-        expect(expectValid(addingSamePlayerTwice).varianten).toEqual(statischeVariante);
 
         let removingPlayer = expectNoError(validAufstellung).spielerVonDerAufstellungEntfernen(2);
         expect(removingPlayer.type).toEqual("InvalideAufstellung");
