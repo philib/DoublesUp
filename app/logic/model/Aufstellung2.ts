@@ -54,7 +54,11 @@ interface Modifikator<T> {
 }
 
 type MixedAufstellungsRegel = (aufstellung: MixedMeldeliste) => AufstellungsRegel;
-type AufstellungsRegel = (aufstellung: Aufstellung) => ValidierteAufstellung;
+type AufstellungsRegel = (aufstellung: Aufstellung) => Boolean;
+const toValidierteAufstellung = (aufstellungRegel: AufstellungsRegel) => (aufstellung: Aufstellung) =>
+    ({
+        validitaet: aufstellungRegel(aufstellung) ? Validitaet.Valide : Validitaet.Invalide
+    })
 type Validator = (aufstellung: Aufstellung) => (ValideAufstellung | InvalideAufstellung) & Aufstellung;
 
 function normalModifikator(meldeListe: Meldeliste, aufstellung: Aufstellung): Modifikator<Aufstellung> {
@@ -84,27 +88,20 @@ function normalNichtAufgestellteSpieler({meldeliste}: Meldeliste, {aufstellung}:
     }
 }
 
-export const mixed6erRegel: MixedAufstellungsRegel = ({meldeliste}: MixedMeldeliste) => ({aufstellung}: Aufstellung): ValidierteAufstellung => {
+export const mixed6erRegel: MixedAufstellungsRegel = ({meldeliste}: MixedMeldeliste) => ({aufstellung}: Aufstellung): boolean => {
     const aufgestellteMaenner = aufstellung.filter(it => meldeliste.maenner.includes(it)).length;
     const aufgestellteFrauen = aufstellung.filter(it => meldeliste.frauen.includes(it)).length;
-    if (aufgestellteMaenner >= 3 && aufgestellteFrauen >= 3) {
-        return {validitaet: Validitaet.Valide};
-    } else {
-        return {validitaet: Validitaet.Invalide}
-    }
+    return aufgestellteMaenner >= 3 && aufgestellteFrauen >= 3
 }
+
 export const normale6erRegel: AufstellungsRegel = ({aufstellung}: Aufstellung) => {
-    if (aufstellung.length >= 6) {
-        return {validitaet: Validitaet.Valide};
-    } else {
-        return {validitaet: Validitaet.Invalide}
-    }
+    return aufstellung.length >= 6;
 }
 
 function validator(regel: AufstellungsRegel): Validator {
     return (aufstellung: Aufstellung) => {
         return {
-            ...regel(aufstellung),
+            ...toValidierteAufstellung(regel)(aufstellung),
             ...aufstellung
         }
     }
