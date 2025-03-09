@@ -1,4 +1,4 @@
-import {initialMixed, initialNormal, mixed6erRegel, normale6erRegel, Validitaet} from "@/app/logic/model/Aufstellung2";
+import {initialMixed, initialNormal, Validitaet} from "@/app/logic/model/Aufstellung2";
 
 describe('Aufstellung2', () => {
     test('state machine Mixed Aufstellung works as expected', () => {
@@ -7,7 +7,7 @@ describe('Aufstellung2', () => {
                 maenner: [1, 2, 3, 4, 5, 6],
                 frauen: [7, 8, 9, 10, 11, 12]
             }
-        }, mixed6erRegel);
+        }, 6);
         expect(initial.validitaet).toEqual(Validitaet.Invalide);
         expect(initial.nichtAufgestellteSpieler).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
         const missingLastPlayer = [1, 7, 2, 8, 3].reduce((acc, spieler) => {
@@ -33,7 +33,7 @@ describe('Aufstellung2', () => {
     test('state machine Normal Aufstellung works as expected', () => {
         const initial = initialNormal({
             meldeliste: [1, 2, 3, 4, 5, 6, 7, 8],
-        }, normale6erRegel);
+        })(6);
         expect(initial.validitaet).toEqual(Validitaet.Invalide);
         expect(initial.nichtAufgestellteSpieler).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
         const missingLastPlayer = [1, 2, 3, 4, 5].reduce((acc, spieler) => {

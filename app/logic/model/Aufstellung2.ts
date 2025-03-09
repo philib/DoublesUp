@@ -21,7 +21,7 @@ interface Meldeliste {
     meldeliste: Spieler[];
 }
 
-type Team =
+export type Team =
     ValidierteAufstellung
     & Aufstellung
     & Meldeliste
@@ -48,12 +48,11 @@ interface NichtAufgestellteSpieler {
 }
 
 
-interface Modifikator<T> {
+export interface Modifikator<T> {
     hinzufuegen: (spieler: Spieler) => T;
     entfernen: (spieler: Spieler) => T;
 }
 
-type MixedAufstellungsRegel = (aufstellung: MixedMeldeliste) => AufstellungsRegel;
 type AufstellungsRegel = (aufstellung: Aufstellung) => Boolean;
 const toValidierteAufstellung = (aufstellungRegel: AufstellungsRegel) => (aufstellung: Aufstellung) =>
     ({
@@ -88,14 +87,14 @@ function normalNichtAufgestellteSpieler({meldeliste}: Meldeliste, {aufstellung}:
     }
 }
 
-export const mixed6erRegel: MixedAufstellungsRegel = ({meldeliste}: MixedMeldeliste) => ({aufstellung}: Aufstellung): boolean => {
+const mixedRegel = (anzahl: number) => ({meldeliste}: MixedMeldeliste) => ({aufstellung}: Aufstellung): boolean => {
     const aufgestellteMaenner = aufstellung.filter(it => meldeliste.maenner.includes(it)).length;
     const aufgestellteFrauen = aufstellung.filter(it => meldeliste.frauen.includes(it)).length;
-    return aufgestellteMaenner >= 3 && aufgestellteFrauen >= 3
+    return aufgestellteMaenner >= anzahl/2 && aufgestellteFrauen >= anzahl/2
 }
 
-export const normale6erRegel: AufstellungsRegel = ({aufstellung}: Aufstellung) => {
-    return aufstellung.length >= 6;
+const normaleRegel = (anzahl: number) => ({aufstellung}: Aufstellung): boolean => {
+    return aufstellung.length >= anzahl
 }
 
 function validator(regel: AufstellungsRegel): Validator {
@@ -108,24 +107,26 @@ function validator(regel: AufstellungsRegel): Validator {
 }
 
 
-export function initialMixed(meldeListe: MixedMeldeliste, regel: MixedAufstellungsRegel): Mixed {
+export const initialMixed = (meldeListe: MixedMeldeliste) => (mannschaftsgroeße: number): Mixed => {
     const normaleMeldeListe: Meldeliste = {
         meldeliste: [...meldeListe.meldeliste.maenner, ...meldeListe.meldeliste.frauen]
     }
     const normaleAufstellung: Aufstellung = {
         aufstellung: []
     }
-    const validiere = validator(regel(meldeListe));
+    const validiere = validator(mixedRegel(mannschaftsgroeße)(meldeListe));
 
     const getNextModifikator = (aktuelleAufstellung: Aufstellung): Modifikator<Mixed> => {
         const modi = normalModifikator(normaleMeldeListe, aktuelleAufstellung)
         return {
             hinzufuegen: (spieler: Spieler) => {
                 const neueAufstellung = modi.hinzufuegen(spieler);
+                console.log(spieler, meldeListe, aktuelleAufstellung, neueAufstellung)
                 return {...validiere(neueAufstellung), ...neueAufstellung, ...normaleMeldeListe, ...mixedNichtAufgestellteSpieler(meldeListe, neueAufstellung), ...getNextModifikator(neueAufstellung)};
             },
             entfernen: (spieler: Spieler) => {
                 const neueAufstellung = modi.entfernen(spieler);
+                console.log(aktuelleAufstellung, neueAufstellung)
                 return {...validiere(neueAufstellung), ...neueAufstellung, ...normaleMeldeListe, ...mixedNichtAufgestellteSpieler(meldeListe, neueAufstellung), ...getNextModifikator(neueAufstellung)};
             }
         }
@@ -140,11 +141,11 @@ export function initialMixed(meldeListe: MixedMeldeliste, regel: MixedAufstellun
     }
 }
 
-export function initialNormal(meldeListe: Meldeliste, regel: AufstellungsRegel): Normal {
+export const initialNormal = (meldeListe: Meldeliste) => (mannschaftsgroeße: number): Normal => {
     const aufstellung: Aufstellung = {
         aufstellung: []
     }
-    const f = validator(regel);
+    const f = validator(normaleRegel(mannschaftsgroeße));
 
     const a = (i: Meldeliste, j: Aufstellung): Modifikator<Normal> => {
         const modi = normalModifikator(i, j)

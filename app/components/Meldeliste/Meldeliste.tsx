@@ -1,53 +1,64 @@
-import {MyList, MyListItem} from "../../components/List/ListComponent";
-import {Checkbox, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {useState} from "react";
+import {initialMixed, initialNormal, Team} from "../../logic/model/Aufstellung2";
+import {MeldelisteComponent} from "./MeldelisteComponent";
 
-type Rang = number;
-
-export interface MeldelisteProps {
-    meldeListe: Rang[];
-    spielerAufstellen: (rang: Rang) => void;
-    spielerVonAufstellungEntfernen: (rang: Rang) => void;
-    istAufgestellt: (rang: Rang) => boolean;
-    name: (rang: Rang) => string;
+interface NormaleMannschaft {
+    [key: number]: string;
 }
 
-export const Meldeliste: React.FunctionComponent<MeldelisteProps> = ({
-                                                                         meldeListe,
-                                                                         spielerAufstellen,
-                                                                         spielerVonAufstellungEntfernen,
-                                                                         istAufgestellt,
-                                                                         name,
-                                                                     }) => {
-    const spielerSelektieren = (rang: Rang, selected: boolean) => {
-        if (selected) {
-            spielerAufstellen(rang);
+interface MixedMannschaft {
+    maenner: { [_: number]: string },
+    frauen: { [_: number]: string }
+}
+
+export interface MannschaftProps {
+    meldeliste: NormaleMannschaft | MixedMannschaft;
+    size: 4 | 6;
+    onValid: (_: Team) => void;
+    onInvalid: () => void;
+}
+
+export const Meldeliste: React.FunctionComponent<MannschaftProps> = ({meldeliste, size, onValid, onInvalid}) => {
+    //if meldeliste is Normal, then meldeliste is of type NormaleMannschaft
+    const getName = (rang: number): string => {
+        if ("maenner" in meldeliste) {
+            if (meldeliste.maenner[rang]) {
+                return meldeliste.maenner[rang];
+            } else {
+                return meldeliste.frauen[rang];
+            }
         } else {
-            spielerVonAufstellungEntfernen(rang)
+            return meldeliste[rang];
         }
     }
-    const spieler = meldeListe.map((rang) => Spieler(rang, name(rang), istAufgestellt(rang), spielerSelektieren));
-    return (<MyList>
-        {spieler}
-    </MyList>);
-};
 
-const Spieler = (rang: Rang, name: string, selected: boolean, onClick: (rang: Rang, selected: boolean) => void) => {
-    return (<MyListItem key={rang}>
-        <ListItemButton
-            role={undefined}
-            onClick={() => onClick(rang, !selected)}
-            dense
-        >
-            <ListItemIcon>
-                <Checkbox
-                    edge="start"
-                    checked={selected}
-                    tabIndex={-1}
-                    disableRipple
-                />
-            </ListItemIcon>
-            <ListItemText id={`${rang}`} primary={name}/>`
-        </ListItemButton>
-    </MyListItem>)
-        ;
-}
+    const createAufstellung = (size: 4 | 6) => {
+        if ("maenner" in meldeliste) {
+            return initialMixed({
+                meldeliste: {
+                    maenner: Object.keys(meldeliste.maenner).map((n) => Number.parseInt(n)),
+                    frauen: Object.keys(meldeliste.frauen).map((n) => Number.parseInt(n))
+                }
+            })(size);
+        } else {
+            return initialNormal({meldeliste: Object.keys(meldeliste).map((n) => Number.parseInt(n))})(size);
+        }
+    }
+
+
+    const [initialeAufstellung, setAufstellung] = useState(createAufstellung(size));
+
+    initialeAufstellung.validitaet === "Valide" ? onValid(initialeAufstellung) : onInvalid();
+    return <MeldelisteComponent meldeListe={initialeAufstellung.meldeliste}
+                                spielerAufstellen={(spieler) => {
+                           setAufstellung(initialeAufstellung.hinzufuegen(spieler))
+                       }}
+                                spielerVonAufstellungEntfernen={(spieler) => {
+                           setAufstellung(initialeAufstellung.entfernen(spieler))
+                       }}
+                                name={(rang) => {
+                           return getName(rang)
+                       }}
+                                istAufgestellt={(spieler) => initialeAufstellung.aufstellung.includes(spieler)}
+    />;
+};
