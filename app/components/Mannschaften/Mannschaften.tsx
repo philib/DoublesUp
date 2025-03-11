@@ -1,8 +1,6 @@
 import {
-    Checkbox,
     Collapse,
     ListItemButton,
-    ListItemIcon,
     ListItemText,
 } from '@mui/material';
 
@@ -11,39 +9,30 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import {MyList, MyListSubHeader} from "../List/ListComponent";
 import styles from '../../app.module.css';
 import {useState} from "react";
-import {Meldeliste} from "../Meldeliste/Meldeliste";
-
-export interface Mannschaft {
-    name: string;
-    anzahlSpieler: 4 | 6;
-}
-
-export interface NormalMannschaft extends Mannschaft {
-    meldeliste: { [_: number]: string }
-}
-
-export interface MixedMannschaft extends Mannschaft {
-    meldeliste: {
-        maenner: { [_: number]: string },
-        frauen: { [_: number]: string }
-    }
-}
+import {UIMannschaft} from "../Mannschaft";
+import {MeldelisteComponent} from "../Meldeliste/MeldelisteComponent";
 
 export interface MannschaftenProps {
-    mannschaften: (NormalMannschaft | MixedMannschaft)[];
+    mannschaften: UIMannschaft[];
 }
 
 export const Mannschaften: React.FC<MannschaftenProps> = (props) => {
-    const [validMannschaften, setValidMannschaften] = useState(props.mannschaften.map((_, index) => false));
-    const updateValidMannschaft = (index: number, valid: boolean) => {
-        if (validMannschaften[index] !== valid) {
-            setValidMannschaften(validMannschaften.map((_, i) => i === index ? valid : validMannschaften[i]))
-        }
-    }
+    const [mannschaften, setMannschaften] = useState(props.mannschaften);
+    return <MannschaftenComponent mannschaften={mannschaften} onUpdate={setMannschaften}/>
+}
 
+export interface MannschaftenComponentProps {
+    mannschaften: UIMannschaft[];
+    onUpdate: (mannschaften: UIMannschaft[]) => void;
+}
+
+export const MannschaftenComponent: React.FC<MannschaftenComponentProps> = (props) => {
     const [openedTeam, setOpenedTeam] = useState<number | null>(
         null
     );
+    const updateMannschaft = (index: number) => (f: (_: number) => UIMannschaft) => (spieler: number) => {
+        props.onUpdate(props.mannschaften.map((m, i) => i === index ? f(spieler) : m));
+    }
 
     return (<MyList
         className={`${styles.fadingOverflow}`}
@@ -71,11 +60,14 @@ export const Mannschaften: React.FC<MannschaftenProps> = (props) => {
                     </div>
                 </MyListSubHeader>
                 <Collapse in={openedTeam === index} timeout="auto" unmountOnExit>
-                         <Meldeliste meldeliste={m.meldeliste} size={m.anzahlSpieler} onValid={(a) => {
-                             updateValidMannschaft(index, true)
-                         }} onInvalid={() => {
-                             updateValidMannschaft(index, false)
-                         }}/>
+                    <MeldelisteComponent
+                        name={m.getSpielerNameByRank}
+                        meldeListe={m.gemeldeteSpieler}
+                        spielerVonAufstellungEntfernen={updateMannschaft(index)(m.entfernen)}
+                        spielerAufstellen={updateMannschaft(index)(m.aufstellen)}
+                        istAufgestellt={m.isSpielerAufgestellt}
+
+                    />
                 </Collapse>
             </>
         ))}

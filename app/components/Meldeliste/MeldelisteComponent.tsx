@@ -18,8 +18,8 @@ export const MeldelisteComponent: React.FunctionComponent<MeldelisteProps> = ({
                                                                          istAufgestellt,
                                                                          name,
                                                                      }) => {
-    const spielerSelektieren = (rang: Rang, selected: boolean) => {
-        if (selected) {
+    const spielerSelektieren = (rang: Rang) => {
+        if (!istAufgestellt(rang)) {
             spielerAufstellen(rang);
         } else {
             spielerVonAufstellungEntfernen(rang)
@@ -31,11 +31,11 @@ export const MeldelisteComponent: React.FunctionComponent<MeldelisteProps> = ({
     </MyList>);
 };
 
-const Spieler = (rang: Rang, name: string, selected: boolean, onClick: (rang: Rang, selected: boolean) => void) => {
+const Spieler = (rang: Rang, name: string, selected: boolean, onClick: (rang: Rang) => void) => {
     return (<MyListItem key={rang}>
         <ListItemButton
             role={undefined}
-            onClick={() => onClick(rang, !selected)}
+            onClick={() => onClick(rang)}
             dense
         >
             <ListItemIcon>

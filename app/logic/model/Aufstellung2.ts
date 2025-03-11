@@ -27,9 +27,9 @@ export type Team =
     & Meldeliste
     & NichtAufgestellteSpieler
 
-type Mixed = Team & Modifikator<Mixed>;
+export type Mixed = Team & Modifikator<Mixed>;
 
-type Normal =
+export type Normal =
     Team
     & Modifikator<Normal>;
 
@@ -121,12 +121,10 @@ export const initialMixed = (meldeListe: MixedMeldeliste) => (mannschaftsgroeße
         return {
             hinzufuegen: (spieler: Spieler) => {
                 const neueAufstellung = modi.hinzufuegen(spieler);
-                console.log(spieler, meldeListe, aktuelleAufstellung, neueAufstellung)
                 return {...validiere(neueAufstellung), ...neueAufstellung, ...normaleMeldeListe, ...mixedNichtAufgestellteSpieler(meldeListe, neueAufstellung), ...getNextModifikator(neueAufstellung)};
             },
             entfernen: (spieler: Spieler) => {
                 const neueAufstellung = modi.entfernen(spieler);
-                console.log(aktuelleAufstellung, neueAufstellung)
                 return {...validiere(neueAufstellung), ...neueAufstellung, ...normaleMeldeListe, ...mixedNichtAufgestellteSpieler(meldeListe, neueAufstellung), ...getNextModifikator(neueAufstellung)};
             }
         }
