@@ -1,14 +1,14 @@
 {
   "4": {
-    "Winter 2024/25 - Damen": {
+    "Sommer 2025 - Damen": {
       "1": "Svenja Pankow",
       "2": "Viktoria Ibach",
       "3": "Sarah Küpferle",
       "4": "Bianca Hurst",
       "5": "Jule Bsdurrek",
       "6": "Beate Walter",
-      "7": "Selin Üzgör",
-      "8": "Christine Ulrich",
+      "7": "Christine Ulrich",
+      "8": "Selin Üzgör",
       "9": "Anna-Lena Pfeifer",
       "10": "Andrea Jelinko",
       "11": "Lilli Carstens",
@@ -17,24 +17,41 @@
       "14": "Olga Strugovshchikova",
       "15": "Anja Schäfer"
     },
-    "Winter 2024/25 - Damen 40": {
+    "Sommer 2025 - Damen 40": {
       "1": "Bianca Hurst",
       "2": "Isabell Esslinger",
-      "3": "Jutta Mast",
+      "3": "Corinna Kaul",
       "4": "Beate Walter",
       "5": "Christel Köppel-Jung",
       "6": "Christine Ulrich",
       "7": "Maja Ullrich",
-      "8": "Corinna Kaul",
-      "9": "Rita Withum",
-      "10": "Bettina Weingartner",
-      "11": "Ilona Zehe",
-      "12": "Iris Hauns",
-      "13": "Andrea Jelinko",
-      "14": "Christiane Leppert",
-      "15": "Petra Hepp"
+      "8": "Bettina Weingartner",
+      "9": "Andrea Jelinko",
+      "10": "Ilona Zehe",
+      "11": "Alexandra Stelzle-Kutschera",
+      "12": "Christiane Leppert",
+      "13": "Petra Hepp",
+      "14": "Gisela Jost"
     },
-    "Winter 2024/25 - Herren 30": {
+    "Sommer 2025 - Herren 60": {
+      "1": "Werner Ernst",
+      "2": "Wolfgang Walter",
+      "3": "Heiko Klenk",
+      "4": "Michael Weiser",
+      "5": "Andreas Rhode",
+      "6": "Franz Schaub",
+      "7": "Oliver Reinhardt",
+      "8": "Joachim Erlebach",
+      "9": "Jürgen Vogel",
+      "10": "Alexander Ernst",
+      "11": "Georg Hepp",
+      "12": "Albert Schmelzle",
+      "13": "Klaus Kübel",
+      "14": "Bernhard Ibach"
+    }
+  },
+  "6": {
+    "Sommer 2025 - Herren 30": {
       "1": "Michael Ruhr",
       "2": "Tobias Kominek",
       "3": "Michael Frank",
@@ -44,20 +61,57 @@
       "7": "Dominik Walter",
       "8": "Frederik Vogel",
       "9": "Jörg Kühnle",
-      "10": "Thorsten Väth",
-      "11": "Michael Weiser",
-      "12": "Lars Lipp",
-      "13": "Mario Binz",
-      "14": "Thorsten Weick",
-      "15": "Philip Schäfer",
-      "16": "Andreas Metzner",
-      "17": "Ralf Küpferle",
+      "10": "Lars Lipp",
+      "11": "Philip Schäfer",
+      "12": "Andreas Metzner",
+      "13": "Ralf Küpferle",
+      "14": "Mario Binz",
+      "15": "Marc Droll",
+      "16": "Lukas Decker-Pankow",
+      "17": "Thorsten Weick",
       "18": "Michael Rady",
-      "19": "Marc Droll",
-      "20": "Niklas Lindemann",
-      "21": "Lars Wiskandt",
-      "22": "Lukas Decker-Pankow"
+      "19": "Mathias Lauterbach",
+      "20": "Gabriel Hurst",
+      "21": "Ludwig Oelze",
+      "22": "Meiko Kosin",
+      "23": "Lars Wiskandt"
+    },
+    "Sommer 2025 - Herren 40": {
+      "1": "Tobias Kaul",
+      "2": "Christian Frank",
+      "3": "Lars Rommel",
+      "4": "Dominik Walter",
+      "5": "Jörg Kühnle",
+      "6": "Thorsten Väth",
+      "7": "Lars Lipp",
+      "8": "Michael Weiser",
+      "9": "Andreas Metzner",
+      "10": "Thorsten Weick",
+      "11": "Michael Rady",
+      "12": "Mathias Lauterbach",
+      "13": "Gabriel Hurst",
+      "14": "Meiko Kosin",
+      "15": "Alexander Ernst"
+    },
+    "Sommer 2025 - Herren 65": {
+      "1": "Werner Ernst",
+      "2": "Wolfgang Walter",
+      "3": "Arey Gehri",
+      "4": "Heiko Klenk",
+      "5": "Hermann Merkel",
+      "6": "Andreas Rhode",
+      "7": "Emil Vuck",
+      "8": "Franz Schaub",
+      "9": "Sergil Petrov",
+      "10": "Jochen Dörr",
+      "11": "Henry Dr. Dazert",
+      "12": "Gerd Hein",
+      "13": "Oliver Reinhardt",
+      "14": "Klaus Rosenberger",
+      "15": "Hans Baust",
+      "16": "Werner Kölz",
+      "17": "Joachim Erlebach",
+      "18": "Fred Dr. Wunschik"
     }
-  },
-  "6": {}
+  }
 }
